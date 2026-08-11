@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>מילים ואיות</title>
+  <title>שיעור מספר 2 – מילים ואיות</title>
   <style>
     :root{--green:#20a663;--dark:#111;--muted:#678074;--pale:#eaf8f0}
     *{box-sizing:border-box}
@@ -57,9 +57,9 @@
 
   <script>
     const words = [
-      ['important','חשוב'], ['cool','מגניב'], ['school','בית ספר'],
-      ['today','היום'], ['week','שבוע'], ['perfect','מושלם'],
-      ['letter','אות'], ['girl','ילדה'], ['boy','ילד'], ['class','כיתה']
+      ['family','משפחה'], ['friend','חבר או חברה'], ['happy','שמח או שמחה'],
+      ['small','קטן או קטנה'], ['big','גדול או גדולה'], ['home','בית'],
+      ['food','אוכל'], ['water','מים'], ['morning','בוקר'], ['night','לילה']
     ];
     const track = document.querySelector('#track');
     const dotsBox = document.querySelector('#dots');
@@ -74,7 +74,7 @@
     const cover = document.createElement('section');
     cover.className = 'card';
     cover.setAttribute('aria-label', 'כרטיסיית שער');
-    cover.innerHTML = `<div class="card-inner cover-inner"><div class="cover-emoji">🦁 💖 🌈</div><h1 class="cover-title">למעיין <span>הלביאה המתוקה</span></h1><p class="cover-message">אבא הכין לך שיעור 🎁<br>נא לעבור לכרטיסייה הבאה 👈</p><div class="cover-count">השיעור: עשר מילים בלבד ⭐</div></div>`;
+    cover.innerHTML = `<div class="card-inner cover-inner"><div class="cover-emoji">🦁 💖 🌈</div><h1 class="cover-title">למעיין <span>הלביאה המתוקה</span></h1><p class="cover-message">אבא הכין לך שיעור 🎁<br>נא לעבור לכרטיסייה הבאה 👈</p><div class="cover-count">שיעור מספר 2: עשר מילים בלבד ⭐</div></div>`;
     track.append(cover);
 
     const lessonCards = words.map(([word, translation], index) => {
@@ -88,7 +88,7 @@
     const finish = document.createElement('section');
     finish.className = 'card';
     finish.setAttribute('aria-label', 'כרטיסיית סיום');
-    finish.innerHTML = `<div class="card-inner finish-inner"><div class="finish-emoji">🎉 🏆 🎊</div><h1 class="finish-title">כל הכבוד, מעיין!</h1><p class="finish-message">סיימת את השיעור בהצלחה! 🌟<br>אבא גאה בך מאוד 💖</p><div class="finish-badge">אלופת המילים 👑</div></div>`;
+    finish.innerHTML = `<div class="card-inner finish-inner"><div class="finish-emoji">🎉 🏆 🎊</div><h1 class="finish-title">כל הכבוד, מעיין!</h1><p class="finish-message">סיימת את שיעור מספר 2 בהצלחה! 🌟<br>אבא גאה בך מאוד 💖</p><div class="finish-badge">אלופת המילים 👑</div></div>`;
     track.append(finish);
     const cards = [cover, ...lessonCards, finish];
 
