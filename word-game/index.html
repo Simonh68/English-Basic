@@ -975,6 +975,8 @@
     let lives = 3;
     let target = null;
     let previousTarget = null;
+    let previousTargetIndex = -1;
+    let recentOptionRounds = [];
     let wrongAttempts = 0;
     let roundToken = 0;
     let speechSequence = 0;
@@ -983,10 +985,18 @@
     let audioContext = null;
     let focusSkillIndex = 0;
     let skillSuccesses = 0;
+    const RECENT_ROUND_WINDOW = 3;
     const stats = new Map(WORDS.map(word => [word.w, { seen: 0, correct: 0, mistakes: 0 }]));
 
     const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-    const shuffle = list => [...list].sort(() => Math.random() - .5);
+    const shuffle = list => {
+      const result = [...list];
+      for (let index = result.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+      }
+      return result;
+    };
 
     function getVoice() {
       const voices = speechSynthesis.getVoices();
@@ -1056,10 +1066,18 @@
       return unseenBonus + retryBonus - masteryPenalty - repeatPenalty + Math.random() * 3;
     }
 
+    function getRecentOptionWords() {
+      return new Set(recentOptionRounds.flat());
+    }
+
     function chooseTarget() {
       const focusSkill = LEARNING_PATH[focusSkillIndex % LEARNING_PATH.length];
       const pool = WORDS.filter(word => word.skill === focusSkill);
-      return [...pool].sort((a, b) => wordScore(b) - wordScore(a))[0];
+      const recentWords = getRecentOptionWords();
+      const differentFromLast = pool.filter(word => !previousTarget || word.w !== previousTarget.w);
+      const fresh = differentFromLast.filter(word => !recentWords.has(word.w));
+      const candidates = fresh.length ? fresh : (differentFromLast.length ? differentFromLast : pool);
+      return [...candidates].sort((a, b) => wordScore(b) - wordScore(a))[0];
     }
 
     function chooseDistractors(currentTarget, amount) {
@@ -1067,16 +1085,34 @@
         LEARNING_PATH[(focusSkillIndex - 1 + LEARNING_PATH.length) % LEARNING_PATH.length],
         LEARNING_PATH[(focusSkillIndex + 1) % LEARNING_PATH.length]
       ]);
+      const recentWords = getRecentOptionWords();
       const pool = WORDS.filter(word => word.w !== currentTarget.w);
-      const ranked = pool.map(word => {
+      const rankWords = words => words.map(word => {
         let score = Math.random() * 2;
         if (word.skill === currentTarget.skill) score += 12;
         if (word.tier === currentTarget.tier) score += 4;
         if (neighboringSkills.has(word.skill)) score += 2;
         if (word.w.length === currentTarget.w.length) score += 3;
         return { word, score };
-      }).sort((a, b) => b.score - a.score);
-      return shuffle(ranked.slice(0, Math.max(amount + 7, 20)).map(item => item.word)).slice(0, amount);
+      }).sort((a, b) => b.score - a.score).map(item => item.word);
+      const fresh = rankWords(pool.filter(word => !recentWords.has(word.w)));
+      const repeats = rankWords(pool.filter(word => recentWords.has(word.w)));
+      return [...fresh, ...repeats].slice(0, amount);
+    }
+
+    function arrangeOptions(currentTarget, distractors, optionCount) {
+      const availableIndexes = Array.from({ length: optionCount }, (_, index) => index)
+        .filter(index => index !== previousTargetIndex);
+      const targetIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+      const options = shuffle(distractors);
+      options.splice(targetIndex, 0, currentTarget);
+      previousTargetIndex = targetIndex;
+      return options;
+    }
+
+    function rememberOptions(options) {
+      recentOptionRounds.push(options.map(word => word.w));
+      recentOptionRounds = recentOptionRounds.slice(-RECENT_ROUND_WINDOW);
     }
 
     function renderLevel() {
@@ -1138,7 +1174,8 @@
       target = chooseTarget();
       stats.get(target.w).seen += 1;
       const optionCount = LEVEL_COUNTS[level];
-      const options = shuffle([target, ...chooseDistractors(target, optionCount - 1)]);
+      const options = arrangeOptions(target, chooseDistractors(target, optionCount - 1), optionCount);
+      rememberOptions(options);
       renderLevel();
       renderChoices(options);
       setChoicesEnabled(true);
