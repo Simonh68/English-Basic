@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#6c5ce7">
   <title>Listen &amp; Find – Basic English Reading</title>
-  <meta name="description" content="A colorful listening and word-recognition game for beginning English readers.">
+  <meta name="description" content="A colorful 180-word phonics and word-recognition game for beginning English readers.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Listen &amp; Find – Basic English Reading">
-  <meta property="og:description" content="Listen to an English word and find it on the screen.">
-  <meta property="og:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png">
+  <meta property="og:description" content="Listen, read, and progress through 180 carefully sequenced phonics words.">
+  <meta property="og:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=180">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Listen and Find – a colorful basic English reading game">
   <meta property="og:url" content="https://simonh68.github.io/English-Basic/word-game/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Listen &amp; Find – Basic English Reading">
-  <meta name="twitter:description" content="Listen to an English word and find it on the screen.">
-  <meta name="twitter:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png">
+  <meta name="twitter:description" content="Listen, read, and progress through 180 carefully sequenced phonics words.">
+  <meta name="twitter:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=180">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
@@ -211,8 +211,8 @@
       align-self: stretch;
       min-height: 0;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-auto-rows: minmax(78px, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(68px, 1fr));
       gap: clamp(8px, 1.8vw, 16px);
       padding: clamp(2px, 1vw, 8px);
     }
@@ -221,7 +221,7 @@
       --card: #fff;
       position: relative;
       min-width: 0;
-      min-height: 78px;
+      min-height: 68px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -237,6 +237,7 @@
       cursor: pointer;
       transform: translateY(0);
       transition: transform .16s, box-shadow .16s, opacity .2s, background .2s;
+      animation: cardReveal .4s cubic-bezier(.2, .8, .2, 1) both;
     }
 
     .choice::after {
@@ -295,11 +296,66 @@
       opacity: .76;
     }
 
-    .choices[data-count="7"] .choice-word,
-    .choices[data-count="9"] .choice-word { font-size: clamp(1.2rem, 4.4vw, 2.4rem); }
+    .choices[data-count="6"] .choice-word,
+    .choices[data-count="12"] .choice-word { font-size: clamp(1.15rem, 3.6vw, 2.15rem); }
 
-    .choices[data-count="7"] .choice-emoji,
-    .choices[data-count="9"] .choice-emoji { font-size: clamp(1.05rem, 3.6vw, 1.9rem); opacity: .63; }
+    .choices[data-count="6"] .choice-emoji,
+    .choices[data-count="12"] .choice-emoji { font-size: clamp(1rem, 3vw, 1.75rem); opacity: .63; }
+
+    .card-back {
+      --back-a: #7565e8;
+      --back-b: #b24ad1;
+      position: relative;
+      min-width: 0;
+      min-height: 68px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border: 3px solid #ffffffd9;
+      border-radius: clamp(18px, 4vw, 28px);
+      background:
+        radial-gradient(circle at 25% 22%, #ffffff42 0 7%, transparent 8%),
+        radial-gradient(circle at 78% 74%, #ffffff2e 0 6%, transparent 7%),
+        linear-gradient(145deg, var(--back-a), var(--back-b));
+      box-shadow: 0 8px 0 #514397, 0 13px 23px #42376a29;
+      opacity: .62;
+      filter: saturate(.78);
+      animation: cardBackIn .45s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    .card-back:nth-child(3n + 1) { --back-a: #df5a9d; --back-b: #8a62e9; }
+    .card-back:nth-child(3n + 2) { --back-a: #4fc7aa; --back-b: #6578e9; }
+
+    .card-back::before,
+    .card-back::after {
+      position: absolute;
+      content: "";
+      inset: 10px;
+      border: 2px solid #ffffff74;
+      border-radius: clamp(12px, 3vw, 20px);
+    }
+
+    .card-back::after {
+      inset: 16px;
+      border-style: dotted;
+      opacity: .7;
+    }
+
+    .card-back-symbol {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: clamp(35px, 7vw, 58px);
+      aspect-ratio: 1;
+      border: 2px solid #ffffffa8;
+      border-radius: 50%;
+      background: #ffffff20;
+      color: #fff;
+      font-size: clamp(1.25rem, 3.8vw, 2.25rem);
+      font-weight: 700;
+      text-shadow: 0 3px 8px #42306e66;
+    }
 
     .start-screen {
       position: fixed;
@@ -393,6 +449,78 @@
       animation: winPop .82s cubic-bezier(.2, .9, .2, 1) forwards;
     }
 
+    .level-up {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #fff8baed 0 8%, #ffc928c9 24%, #8a5bd9de 67%, #3c2b7af2 100%);
+      animation: levelFade 2.45s ease both;
+    }
+
+    .level-up::before {
+      position: absolute;
+      width: 150vmax;
+      height: 150vmax;
+      content: "";
+      background: repeating-conic-gradient(from 0deg, #fff8 0 7deg, transparent 7deg 18deg);
+      animation: goldenSpin 9s linear infinite;
+    }
+
+    .level-up-card {
+      position: relative;
+      z-index: 2;
+      width: min(440px, 88vw);
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      padding: 24px 18px 30px;
+      border: 6px solid #fff;
+      border-radius: 40px;
+      background: linear-gradient(150deg, #fffdf2f5, #fff0b7f2);
+      box-shadow: 0 22px 55px #2c195a80, inset 0 0 0 5px #ffd24f;
+      transform: scale(0);
+      animation: trophyCard 2.2s cubic-bezier(.2, .9, .2, 1) forwards;
+    }
+
+    .level-trophy {
+      font: clamp(4.8rem, 18vw, 8.5rem)/1 system-ui, sans-serif;
+      filter: drop-shadow(0 10px 5px #9d5d2244);
+      animation: trophyRock .75s ease-in-out 2 .35s;
+    }
+
+    .level-numbers {
+      color: #6a43c5;
+      font-size: clamp(2.1rem, 9vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 3px 0 #fff;
+    }
+
+    .golden-buzzer {
+      position: relative;
+      width: clamp(92px, 22vw, 124px);
+      height: clamp(46px, 11vw, 62px);
+      margin-top: 9px;
+      border: 5px solid #fff8b5;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 28%, #fff9a8, #ffd228 38%, #e89700 73%);
+      box-shadow: 0 12px 0 #a65c00, 0 18px 30px #9d5c2355, 0 0 26px #ffd83a;
+      animation: buzzerPress .72s ease .78s both;
+    }
+
+    .golden-buzzer::after {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      content: "★";
+      color: #fff;
+      font: 700 clamp(1.6rem, 6vw, 2.5rem)/1 system-ui, sans-serif;
+      transform: translate(-50%, -50%);
+      text-shadow: 0 2px 0 #b97800;
+    }
+
     .retry-symbol {
       position: fixed;
       z-index: 15;
@@ -434,6 +562,13 @@
     @keyframes startBounce { 50% { transform: translateY(-8px) scale(1.03); } }
     @keyframes drift { to { transform: translate(7vmin, -5vmin) rotate(35deg); } }
     @keyframes winPop { 45% { transform: translate(-50%, -50%) scale(1.13) rotate(-7deg); } 72% { transform: translate(-50%, -50%) scale(.96) rotate(4deg); } 100% { transform: translate(-50%, -50%) scale(1); } }
+    @keyframes cardReveal { from { opacity: 0; transform: rotateY(80deg) scale(.8); } to { opacity: 1; transform: rotateY(0) scale(1); } }
+    @keyframes cardBackIn { from { opacity: 0; transform: translateY(15px) scale(.88); } to { opacity: .62; transform: translateY(0) scale(1); } }
+    @keyframes levelFade { 0%, 100% { opacity: 0; } 10%, 88% { opacity: 1; } }
+    @keyframes goldenSpin { to { transform: rotate(360deg); } }
+    @keyframes trophyCard { 0% { transform: scale(0) rotate(-12deg); } 25% { transform: scale(1.08) rotate(3deg); } 38%, 90% { transform: scale(1) rotate(0); } 100% { transform: scale(.82); opacity: 0; } }
+    @keyframes trophyRock { 25% { transform: rotate(-10deg) scale(1.08); } 75% { transform: rotate(10deg) scale(1.08); } }
+    @keyframes buzzerPress { 0% { transform: translateY(-15px) scale(.85); opacity: 0; } 55% { transform: translateY(10px) scale(1.05); opacity: 1; box-shadow: 0 2px 0 #a65c00, 0 8px 20px #9d5c2355, 0 0 42px #fff06e; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
     @keyframes retryPop { 25% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(-20deg); } 65% { opacity: 1; transform: translate(-50%, -50%) scale(.95) rotate(20deg); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(.7); } }
     @keyframes burst {
       0% { opacity: 0; transform: translate(-50%, -50%) scale(.3) rotate(0); }
@@ -449,6 +584,8 @@
       .listen-button { border-width: 4px; box-shadow: 0 7px 0 #bd2c72, 0 12px 23px #9c30673b; }
       .streak { min-height: 23px; }
       .choice { border-width: 2px; border-radius: 17px; box-shadow: 0 6px 0 color-mix(in srgb, var(--card) 68%, #4d4466), 0 9px 16px #42376a22; }
+      .choices { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(58px, 1fr)); }
+      .card-back { border-width: 2px; border-radius: 17px; box-shadow: 0 6px 0 #514397, 0 9px 16px #42376a22; }
     }
 
     @media (max-height: 680px) {
@@ -459,8 +596,9 @@
       .listen-button { width: 65px; height: 65px; font-size: 2rem; border-width: 4px; }
       .streak { min-height: 19px; }
       .streak-star { font-size: 1rem; }
-      .choices { gap: 7px; grid-auto-rows: minmax(57px, 1fr); }
+      .choices { gap: 7px; grid-template-rows: repeat(4, minmax(50px, 1fr)); }
       .choice { min-height: 57px; padding: 4px; }
+      .card-back { min-height: 50px; }
       .choice-word { font-size: clamp(1.1rem, 4.2vw, 2.1rem); }
       .choice-emoji { font-size: clamp(.95rem, 3.5vw, 1.5rem); }
     }
@@ -476,9 +614,8 @@
       <a class="home" href="../" aria-label="Back to English Basic">⌂</a>
       <div class="levels" id="levels" aria-label="Difficulty level">
         <span class="level-pill active">3</span>
-        <span class="level-pill">5</span>
-        <span class="level-pill">7</span>
-        <span class="level-pill">9</span>
+        <span class="level-pill">6</span>
+        <span class="level-pill">12</span>
       </div>
       <button class="sound-toggle" id="soundToggle" type="button" aria-label="Turn sound effects off">♪</button>
     </header>
@@ -508,76 +645,218 @@
   <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
 
   <script>
-    const LEVEL_COUNTS = [3, 5, 7, 9];
+    const LEVEL_COUNTS = [3, 6, 12];
     const CARD_COLORS = ["#fff0a8", "#c9f4df", "#cfe7ff", "#f8d2e7", "#e5d7ff", "#ffd7ba", "#d7f3f5", "#f5e6b8", "#dce7ff"];
+    const CARD_BACK_SYMBOLS = ["★", "A", "B", "C", "✦", "a", "b", "c", "♪"];
 
-    // The levels move from short, regular words to common school words and actions.
+    // A teacher-built phonics sequence: short vowels, blends and digraphs,
+    // then long vowels, vowel teams, r-controlled patterns and two-syllable words.
+    const LEARNING_PATH = [
+      "short-a", "short-e", "short-i", "short-o", "short-u",
+      "l-blends", "r-blends", "s-blends", "digraph-sh", "digraph-ch", "digraph-th", "endings",
+      "silent-a", "silent-i", "silent-ou", "ai-ay", "ee-ea", "oa-ow", "r-diphthong", "two-syllable"
+    ];
+
     const WORDS = [
-      { w: "cat", emoji: "🐱", tier: 0, pattern: "cvc" },
-      { w: "dog", emoji: "🐶", tier: 0, pattern: "cvc" },
-      { w: "sun", emoji: "☀️", tier: 0, pattern: "cvc" },
-      { w: "hat", emoji: "👒", tier: 0, pattern: "cvc" },
-      { w: "pig", emoji: "🐷", tier: 0, pattern: "cvc" },
-      { w: "cup", emoji: "🥤", tier: 0, pattern: "cvc" },
-      { w: "bed", emoji: "🛏️", tier: 0, pattern: "cvc" },
-      { w: "bus", emoji: "🚌", tier: 0, pattern: "cvc" },
-      { w: "pen", emoji: "🖊️", tier: 0, pattern: "cvc" },
-      { w: "box", emoji: "📦", tier: 0, pattern: "cvc" },
-      { w: "map", emoji: "🗺️", tier: 0, pattern: "cvc" },
-      { w: "egg", emoji: "🥚", tier: 0, pattern: "short" },
-      { w: "fish", emoji: "🐟", tier: 0, pattern: "digraph" },
-      { w: "red", emoji: "🔴", tier: 0, pattern: "cvc" },
+      { w: "cat", emoji: "🐱", tier: 0, skill: "short-a" },
+      { w: "hat", emoji: "👒", tier: 0, skill: "short-a" },
+      { w: "bat", emoji: "🦇", tier: 0, skill: "short-a" },
+      { w: "map", emoji: "🗺️", tier: 0, skill: "short-a" },
+      { w: "bag", emoji: "🎒", tier: 0, skill: "short-a" },
+      { w: "jam", emoji: "🍓", tier: 0, skill: "short-a" },
+      { w: "van", emoji: "🚐", tier: 0, skill: "short-a" },
+      { w: "cap", emoji: "🧢", tier: 0, skill: "short-a" },
+      { w: "fan", emoji: "🪭", tier: 0, skill: "short-a" },
+      { w: "man", emoji: "👨", tier: 0, skill: "short-a" },
+      { w: "rat", emoji: "🐀", tier: 0, skill: "short-a" },
+      { w: "pan", emoji: "🍳", tier: 0, skill: "short-a" },
 
-      { w: "book", emoji: "📘", tier: 1, pattern: "double" },
-      { w: "ball", emoji: "⚽", tier: 1, pattern: "double" },
-      { w: "tree", emoji: "🌳", tier: 1, pattern: "long" },
-      { w: "car", emoji: "🚗", tier: 1, pattern: "r" },
-      { w: "moon", emoji: "🌙", tier: 1, pattern: "long" },
-      { w: "hand", emoji: "✋", tier: 1, pattern: "blend" },
-      { w: "bird", emoji: "🐦", tier: 1, pattern: "r" },
-      { w: "milk", emoji: "🥛", tier: 1, pattern: "blend" },
-      { w: "cake", emoji: "🍰", tier: 1, pattern: "magic-e" },
-      { w: "star", emoji: "⭐", tier: 1, pattern: "blend" },
-      { w: "frog", emoji: "🐸", tier: 1, pattern: "blend" },
-      { w: "duck", emoji: "🦆", tier: 1, pattern: "digraph" },
-      { w: "shoe", emoji: "👟", tier: 1, pattern: "digraph" },
-      { w: "rain", emoji: "🌧️", tier: 1, pattern: "vowel-team" },
-      { w: "boat", emoji: "⛵", tier: 1, pattern: "vowel-team" },
-      { w: "apple", emoji: "🍎", tier: 1, pattern: "two-syllable" },
+      { w: "bed", emoji: "🛏️", tier: 0, skill: "short-e" },
+      { w: "red", emoji: "🔴", tier: 0, skill: "short-e" },
+      { w: "pen", emoji: "🖊️", tier: 0, skill: "short-e" },
+      { w: "hen", emoji: "🐔", tier: 0, skill: "short-e" },
+      { w: "leg", emoji: "🦵", tier: 0, skill: "short-e" },
+      { w: "net", emoji: "🥅", tier: 0, skill: "short-e" },
+      { w: "ten", emoji: "🔟", tier: 0, skill: "short-e" },
+      { w: "wet", emoji: "💦", tier: 0, skill: "short-e" },
+      { w: "pet", emoji: "🐕", tier: 0, skill: "short-e" },
+      { w: "jet", emoji: "✈️", tier: 0, skill: "short-e" },
+      { w: "web", emoji: "🕸️", tier: 0, skill: "short-e" },
+      { w: "bell", emoji: "🔔", tier: 0, skill: "short-e" },
 
-      { w: "home", emoji: "🏠", tier: 2, pattern: "magic-e" },
-      { w: "bike", emoji: "🚲", tier: 2, pattern: "magic-e" },
-      { w: "train", emoji: "🚆", tier: 2, pattern: "vowel-team" },
-      { w: "chair", emoji: "🪑", tier: 2, pattern: "vowel-team" },
-      { w: "clock", emoji: "🕒", tier: 2, pattern: "blend" },
-      { w: "bread", emoji: "🍞", tier: 2, pattern: "vowel-team" },
-      { w: "green", emoji: "🟢", tier: 2, pattern: "vowel-team" },
-      { w: "black", emoji: "⚫", tier: 2, pattern: "blend" },
-      { w: "flower", emoji: "🌸", tier: 2, pattern: "two-syllable" },
-      { w: "school", emoji: "🏫", tier: 2, pattern: "digraph" },
-      { w: "house", emoji: "🏡", tier: 2, pattern: "vowel-team" },
-      { w: "mouse", emoji: "🐭", tier: 2, pattern: "vowel-team" },
-      { w: "baby", emoji: "👶", tier: 2, pattern: "two-syllable" },
-      { w: "water", emoji: "💧", tier: 2, pattern: "two-syllable" },
-      { w: "table", emoji: "🍽️", tier: 2, pattern: "two-syllable" },
-      { w: "window", emoji: "🪟", tier: 2, pattern: "two-syllable" },
+      { w: "pig", emoji: "🐷", tier: 0, skill: "short-i" },
+      { w: "big", emoji: "🐘", tier: 0, skill: "short-i" },
+      { w: "sit", emoji: "🪑", tier: 0, skill: "short-i" },
+      { w: "six", emoji: "6️⃣", tier: 0, skill: "short-i" },
+      { w: "fin", emoji: "🐟", tier: 0, skill: "short-i" },
+      { w: "pin", emoji: "📌", tier: 0, skill: "short-i" },
+      { w: "lip", emoji: "👄", tier: 0, skill: "short-i" },
+      { w: "kid", emoji: "🧒", tier: 0, skill: "short-i" },
+      { w: "win", emoji: "🏆", tier: 0, skill: "short-i" },
+      { w: "mix", emoji: "🥣", tier: 0, skill: "short-i" },
+      { w: "zip", emoji: "🤐", tier: 0, skill: "short-i" },
+      { w: "hill", emoji: "⛰️", tier: 0, skill: "short-i" },
 
-      { w: "run", emoji: "🏃", tier: 3, pattern: "action" },
-      { w: "jump", emoji: "🦘", tier: 3, pattern: "action" },
-      { w: "read", emoji: "📖", tier: 3, pattern: "action" },
-      { w: "write", emoji: "✍️", tier: 3, pattern: "action" },
-      { w: "swim", emoji: "🏊", tier: 3, pattern: "action" },
-      { w: "sleep", emoji: "😴", tier: 3, pattern: "action" },
-      { w: "play", emoji: "🛝", tier: 3, pattern: "action" },
-      { w: "smile", emoji: "😊", tier: 3, pattern: "action" },
-      { w: "look", emoji: "👀", tier: 3, pattern: "action" },
-      { w: "listen", emoji: "👂", tier: 3, pattern: "action" },
-      { w: "help", emoji: "🤝", tier: 3, pattern: "action" },
-      { w: "eat", emoji: "🍽️", tier: 3, pattern: "action" },
-      { w: "drink", emoji: "🥤", tier: 3, pattern: "action" },
-      { w: "walk", emoji: "🚶", tier: 3, pattern: "action" },
-      { w: "friend", emoji: "🧑‍🤝‍🧑", tier: 3, pattern: "school" },
-      { w: "teacher", emoji: "🧑‍🏫", tier: 3, pattern: "school" }
+      { w: "dog", emoji: "🐶", tier: 0, skill: "short-o" },
+      { w: "log", emoji: "🪵", tier: 0, skill: "short-o" },
+      { w: "box", emoji: "📦", tier: 0, skill: "short-o" },
+      { w: "fox", emoji: "🦊", tier: 0, skill: "short-o" },
+      { w: "hot", emoji: "🔥", tier: 0, skill: "short-o" },
+      { w: "pot", emoji: "🍲", tier: 0, skill: "short-o" },
+      { w: "top", emoji: "🔝", tier: 0, skill: "short-o" },
+      { w: "mop", emoji: "🧹", tier: 0, skill: "short-o" },
+      { w: "hop", emoji: "🐇", tier: 0, skill: "short-o" },
+      { w: "cot", emoji: "🛏️", tier: 0, skill: "short-o" },
+      { w: "doll", emoji: "🪆", tier: 0, skill: "short-o" },
+      { w: "sock", emoji: "🧦", tier: 0, skill: "short-o" },
+
+      { w: "sun", emoji: "☀️", tier: 0, skill: "short-u" },
+      { w: "bus", emoji: "🚌", tier: 0, skill: "short-u" },
+      { w: "cup", emoji: "🥤", tier: 0, skill: "short-u" },
+      { w: "run", emoji: "🏃", tier: 0, skill: "short-u" },
+      { w: "bug", emoji: "🐛", tier: 0, skill: "short-u" },
+      { w: "rug", emoji: "🧶", tier: 0, skill: "short-u" },
+      { w: "nut", emoji: "🌰", tier: 0, skill: "short-u" },
+      { w: "mud", emoji: "🟫", tier: 0, skill: "short-u" },
+      { w: "hug", emoji: "🤗", tier: 0, skill: "short-u" },
+      { w: "cut", emoji: "✂️", tier: 0, skill: "short-u" },
+      { w: "duck", emoji: "🦆", tier: 0, skill: "short-u" },
+      { w: "bun", emoji: "🥯", tier: 0, skill: "short-u" },
+
+      { w: "flag", emoji: "🚩", tier: 1, skill: "l-blends" },
+      { w: "clap", emoji: "👏", tier: 1, skill: "l-blends" },
+      { w: "glass", emoji: "🥛", tier: 1, skill: "l-blends" },
+      { w: "plant", emoji: "🌱", tier: 1, skill: "l-blends" },
+      { w: "blue", emoji: "🔵", tier: 1, skill: "l-blends" },
+      { w: "black", emoji: "⚫", tier: 1, skill: "l-blends" },
+      { w: "clock", emoji: "🕒", tier: 1, skill: "l-blends" },
+      { w: "cloud", emoji: "☁️", tier: 1, skill: "l-blends" },
+      { w: "flower", emoji: "🌸", tier: 1, skill: "l-blends" },
+      { w: "frog", emoji: "🐸", tier: 1, skill: "l-blends" },
+
+      { w: "crab", emoji: "🦀", tier: 1, skill: "r-blends" },
+      { w: "drum", emoji: "🥁", tier: 1, skill: "r-blends" },
+      { w: "branch", emoji: "🌿", tier: 1, skill: "r-blends" },
+      { w: "brick", emoji: "🧱", tier: 1, skill: "r-blends" },
+      { w: "bread", emoji: "🍞", tier: 1, skill: "r-blends" },
+      { w: "green", emoji: "🟢", tier: 1, skill: "r-blends" },
+      { w: "grape", emoji: "🍇", tier: 1, skill: "r-blends" },
+      { w: "tree", emoji: "🌳", tier: 1, skill: "r-blends" },
+      { w: "train", emoji: "🚆", tier: 1, skill: "r-blends" },
+      { w: "truck", emoji: "🚚", tier: 1, skill: "r-blends" },
+
+      { w: "star", emoji: "⭐", tier: 1, skill: "s-blends" },
+      { w: "stop", emoji: "🛑", tier: 1, skill: "s-blends" },
+      { w: "swim", emoji: "🏊", tier: 1, skill: "s-blends" },
+      { w: "snake", emoji: "🐍", tier: 1, skill: "s-blends" },
+      { w: "snow", emoji: "❄️", tier: 1, skill: "s-blends" },
+      { w: "spoon", emoji: "🥄", tier: 1, skill: "s-blends" },
+      { w: "school", emoji: "🏫", tier: 1, skill: "s-blends" },
+      { w: "skate", emoji: "🛹", tier: 1, skill: "s-blends" },
+      { w: "smile", emoji: "😊", tier: 1, skill: "s-blends" },
+      { w: "spider", emoji: "🕷️", tier: 1, skill: "s-blends" },
+
+      { w: "ship", emoji: "🚢", tier: 1, skill: "digraph-sh" },
+      { w: "shop", emoji: "🛍️", tier: 1, skill: "digraph-sh" },
+      { w: "fish", emoji: "🐟", tier: 1, skill: "digraph-sh" },
+      { w: "shell", emoji: "🐚", tier: 1, skill: "digraph-sh" },
+      { w: "shoe", emoji: "👟", tier: 1, skill: "digraph-sh" },
+      { w: "sheep", emoji: "🐑", tier: 1, skill: "digraph-sh" },
+
+      { w: "chip", emoji: "🍟", tier: 1, skill: "digraph-ch" },
+      { w: "chair", emoji: "🪑", tier: 1, skill: "digraph-ch" },
+      { w: "chick", emoji: "🐥", tier: 1, skill: "digraph-ch" },
+      { w: "cheese", emoji: "🧀", tier: 1, skill: "digraph-ch" },
+      { w: "lunch", emoji: "🥪", tier: 1, skill: "digraph-ch" },
+      { w: "peach", emoji: "🍑", tier: 1, skill: "digraph-ch" },
+
+      { w: "thin", emoji: "📏", tier: 1, skill: "digraph-th" },
+      { w: "bath", emoji: "🛁", tier: 1, skill: "digraph-th" },
+      { w: "moth", emoji: "🦋", tier: 1, skill: "digraph-th" },
+      { w: "three", emoji: "3️⃣", tier: 1, skill: "digraph-th" },
+      { w: "thumb", emoji: "👍", tier: 1, skill: "digraph-th" },
+      { w: "teeth", emoji: "🦷", tier: 1, skill: "digraph-th" },
+
+      { w: "king", emoji: "👑", tier: 1, skill: "endings" },
+      { w: "ring", emoji: "💍", tier: 1, skill: "endings" },
+      { w: "sing", emoji: "🎤", tier: 1, skill: "endings" },
+      { w: "pink", emoji: "🩷", tier: 1, skill: "endings" },
+      { w: "bank", emoji: "🏦", tier: 1, skill: "endings" },
+      { w: "drink", emoji: "🥤", tier: 1, skill: "endings" },
+      { w: "hand", emoji: "✋", tier: 1, skill: "endings" },
+      { w: "lamp", emoji: "🪔", tier: 1, skill: "endings" },
+      { w: "nest", emoji: "🪺", tier: 1, skill: "endings" },
+      { w: "mask", emoji: "😷", tier: 1, skill: "endings" },
+      { w: "gift", emoji: "🎁", tier: 1, skill: "endings" },
+      { w: "milk", emoji: "🥛", tier: 1, skill: "endings" },
+
+      { w: "cake", emoji: "🍰", tier: 2, skill: "silent-a" },
+      { w: "game", emoji: "🎮", tier: 2, skill: "silent-a" },
+      { w: "name", emoji: "🏷️", tier: 2, skill: "silent-a" },
+      { w: "plane", emoji: "✈️", tier: 2, skill: "silent-a" },
+      { w: "plate", emoji: "🍽️", tier: 2, skill: "silent-a" },
+      { w: "lake", emoji: "🏞️", tier: 2, skill: "silent-a" },
+      { w: "gate", emoji: "🚪", tier: 2, skill: "silent-a" },
+      { w: "wave", emoji: "🌊", tier: 2, skill: "silent-a" },
+
+      { w: "bike", emoji: "🚲", tier: 2, skill: "silent-i" },
+      { w: "five", emoji: "5️⃣", tier: 2, skill: "silent-i" },
+      { w: "kite", emoji: "🪁", tier: 2, skill: "silent-i" },
+      { w: "line", emoji: "➖", tier: 2, skill: "silent-i" },
+      { w: "time", emoji: "⏰", tier: 2, skill: "silent-i" },
+      { w: "nine", emoji: "9️⃣", tier: 2, skill: "silent-i" },
+      { w: "rice", emoji: "🍚", tier: 2, skill: "silent-i" },
+      { w: "pipe", emoji: "🚰", tier: 2, skill: "silent-i" },
+
+      { w: "home", emoji: "🏠", tier: 2, skill: "silent-ou" },
+      { w: "nose", emoji: "👃", tier: 2, skill: "silent-ou" },
+      { w: "rope", emoji: "🪢", tier: 2, skill: "silent-ou" },
+      { w: "rose", emoji: "🌹", tier: 2, skill: "silent-ou" },
+      { w: "bone", emoji: "🦴", tier: 2, skill: "silent-ou" },
+      { w: "cone", emoji: "🍦", tier: 2, skill: "silent-ou" },
+      { w: "cube", emoji: "🧊", tier: 2, skill: "silent-ou" },
+      { w: "mule", emoji: "🫏", tier: 2, skill: "silent-ou" },
+
+      { w: "rain", emoji: "🌧️", tier: 2, skill: "ai-ay" },
+      { w: "tail", emoji: "🐕", tier: 2, skill: "ai-ay" },
+      { w: "snail", emoji: "🐌", tier: 2, skill: "ai-ay" },
+      { w: "chain", emoji: "⛓️", tier: 2, skill: "ai-ay" },
+      { w: "mail", emoji: "✉️", tier: 2, skill: "ai-ay" },
+      { w: "day", emoji: "📅", tier: 2, skill: "ai-ay" },
+      { w: "play", emoji: "🛝", tier: 2, skill: "ai-ay" },
+      { w: "paint", emoji: "🎨", tier: 2, skill: "ai-ay" },
+
+      { w: "feet", emoji: "🦶", tier: 2, skill: "ee-ea" },
+      { w: "seed", emoji: "🌱", tier: 2, skill: "ee-ea" },
+      { w: "bee", emoji: "🐝", tier: 2, skill: "ee-ea" },
+      { w: "see", emoji: "👀", tier: 2, skill: "ee-ea" },
+      { w: "leaf", emoji: "🍃", tier: 2, skill: "ee-ea" },
+      { w: "sea", emoji: "🌊", tier: 2, skill: "ee-ea" },
+      { w: "team", emoji: "👥", tier: 2, skill: "ee-ea" },
+      { w: "read", emoji: "📖", tier: 2, skill: "ee-ea" },
+
+      { w: "boat", emoji: "⛵", tier: 2, skill: "oa-ow" },
+      { w: "coat", emoji: "🧥", tier: 2, skill: "oa-ow" },
+      { w: "goat", emoji: "🐐", tier: 2, skill: "oa-ow" },
+      { w: "road", emoji: "🛣️", tier: 2, skill: "oa-ow" },
+      { w: "soap", emoji: "🧼", tier: 2, skill: "oa-ow" },
+      { w: "toast", emoji: "🍞", tier: 2, skill: "oa-ow" },
+      { w: "crow", emoji: "🐦‍⬛", tier: 2, skill: "oa-ow" },
+      { w: "yellow", emoji: "🟡", tier: 2, skill: "oa-ow" },
+
+      { w: "car", emoji: "🚗", tier: 2, skill: "r-diphthong" },
+      { w: "farm", emoji: "🚜", tier: 2, skill: "r-diphthong" },
+      { w: "bird", emoji: "🐦", tier: 2, skill: "r-diphthong" },
+      { w: "girl", emoji: "👧", tier: 2, skill: "r-diphthong" },
+      { w: "horse", emoji: "🐎", tier: 2, skill: "r-diphthong" },
+      { w: "house", emoji: "🏡", tier: 2, skill: "r-diphthong" },
+
+      { w: "apple", emoji: "🍎", tier: 2, skill: "two-syllable" },
+      { w: "baby", emoji: "👶", tier: 2, skill: "two-syllable" },
+      { w: "water", emoji: "💧", tier: 2, skill: "two-syllable" },
+      { w: "rabbit", emoji: "🐇", tier: 2, skill: "two-syllable" },
+      { w: "lemon", emoji: "🍋", tier: 2, skill: "two-syllable" },
+      { w: "tiger", emoji: "🐯", tier: 2, skill: "two-syllable" }
     ];
 
     const choicesBox = document.querySelector("#choices");
@@ -603,6 +882,8 @@
     let inputLocked = true;
     let soundEffects = true;
     let audioContext = null;
+    let focusSkillIndex = 0;
+    let skillSuccesses = 0;
     const stats = new Map(WORDS.map(word => [word.w, { seen: 0, correct: 0, mistakes: 0 }]));
 
     const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -633,7 +914,7 @@
 
     function setChoicesEnabled(enabled) {
       inputLocked = !enabled;
-      [...choicesBox.children].forEach(button => button.disabled = !enabled);
+      [...choicesBox.querySelectorAll("button.choice")].forEach(button => button.disabled = !enabled);
     }
 
     async function readTarget(repetitions = 3) {
@@ -660,26 +941,31 @@
       const unseenBonus = record.seen === 0 ? 8 : 0;
       const retryBonus = record.mistakes * 4;
       const masteryPenalty = record.correct * 1.4;
-      const levelBonus = word.tier === level ? 3 : 0;
       const repeatPenalty = previousTarget && word.w === previousTarget.w ? 20 : 0;
-      return unseenBonus + retryBonus - masteryPenalty + levelBonus - repeatPenalty + Math.random() * 3;
+      return unseenBonus + retryBonus - masteryPenalty - repeatPenalty + Math.random() * 3;
     }
 
     function chooseTarget() {
-      const pool = WORDS.filter(word => word.tier <= level);
+      const focusSkill = LEARNING_PATH[focusSkillIndex % LEARNING_PATH.length];
+      const pool = WORDS.filter(word => word.skill === focusSkill);
       return [...pool].sort((a, b) => wordScore(b) - wordScore(a))[0];
     }
 
     function chooseDistractors(currentTarget, amount) {
-      const pool = WORDS.filter(word => word.w !== currentTarget.w && word.tier <= level);
+      const neighboringSkills = new Set([
+        LEARNING_PATH[(focusSkillIndex - 1 + LEARNING_PATH.length) % LEARNING_PATH.length],
+        LEARNING_PATH[(focusSkillIndex + 1) % LEARNING_PATH.length]
+      ]);
+      const pool = WORDS.filter(word => word.w !== currentTarget.w);
       const ranked = pool.map(word => {
         let score = Math.random() * 2;
-        if (word.pattern === currentTarget.pattern) score += 5;
+        if (word.skill === currentTarget.skill) score += 12;
+        if (word.tier === currentTarget.tier) score += 4;
+        if (neighboringSkills.has(word.skill)) score += 2;
         if (word.w.length === currentTarget.w.length) score += 3;
-        if (word.tier === currentTarget.tier) score += 2;
         return { word, score };
       }).sort((a, b) => b.score - a.score);
-      return shuffle(ranked.slice(0, Math.max(amount + 4, 12)).map(item => item.word)).slice(0, amount);
+      return shuffle(ranked.slice(0, Math.max(amount + 7, 20)).map(item => item.word)).slice(0, amount);
     }
 
     function renderLevel() {
@@ -698,11 +984,20 @@
         button.type = "button";
         button.className = "choice";
         button.style.setProperty("--card", CARD_COLORS[index % CARD_COLORS.length]);
+        button.style.animationDelay = `${index * 35}ms`;
         button.setAttribute("aria-label", word.w);
         button.innerHTML = `<span class="choice-word" lang="en">${word.w}</span><span class="choice-emoji" aria-hidden="true">${word.emoji}</span>`;
         button.addEventListener("click", () => checkChoice(word, button));
         choicesBox.append(button);
       });
+      for (let index = words.length; index < 12; index++) {
+        const cardBack = document.createElement("div");
+        cardBack.className = "card-back";
+        cardBack.setAttribute("aria-hidden", "true");
+        cardBack.style.animationDelay = `${index * 35}ms`;
+        cardBack.innerHTML = `<span class="card-back-symbol">${CARD_BACK_SYMBOLS[index % CARD_BACK_SYMBOLS.length]}</span>`;
+        choicesBox.append(cardBack);
+      }
     }
 
     async function newRound() {
@@ -752,6 +1047,20 @@
       tone(big ? 1046.5 : 783.99, now + .22, .3, .075, "triangle");
     }
 
+    function playLevelUpMelody() {
+      ensureAudio();
+      if (!audioContext || !soundEffects) return;
+      const now = audioContext.currentTime;
+      tone(130.81, now, .48, .045, "sawtooth");
+      tone(261.63, now, .19, .06, "triangle");
+      tone(329.63, now + .16, .2, .065, "triangle");
+      tone(392, now + .32, .23, .07, "triangle");
+      tone(523.25, now + .52, .27, .075, "triangle");
+      tone(659.25, now + .72, .3, .075, "triangle");
+      tone(783.99, now + .92, .45, .085, "triangle");
+      tone(1046.5, now + 1.08, .55, .08, "sine");
+    }
+
     function playTryAgainSound() {
       ensureAudio();
       if (!audioContext) return;
@@ -760,14 +1069,22 @@
       tone(277, now + .1, .16, .03, "sine");
     }
 
-    function showCelebration(big = false) {
+    function showCelebration(levelTransition = null, skillAdvanced = false) {
       celebration.replaceChildren();
-      const center = document.createElement("div");
-      center.className = "center-win";
-      center.textContent = big ? "🏆" : "⭐";
-      celebration.append(center);
-      const symbols = big ? ["⭐", "✨", "🌟", "🎉", "🏆"] : ["⭐", "✨", "🌟"];
-      const count = big ? 20 : 13;
+      if (levelTransition) {
+        const overlay = document.createElement("div");
+        overlay.className = "level-up";
+        overlay.innerHTML = `<div class="level-up-card"><div class="level-trophy">🏆</div><div class="level-numbers">${LEVEL_COUNTS[levelTransition.from]} → ${LEVEL_COUNTS[levelTransition.to]}</div><div class="golden-buzzer"></div></div>`;
+        celebration.append(overlay);
+      } else {
+        const center = document.createElement("div");
+        center.className = "center-win";
+        center.textContent = skillAdvanced ? "🌟" : "⭐";
+        celebration.append(center);
+      }
+      const big = Boolean(levelTransition) || skillAdvanced;
+      const symbols = big ? ["⭐", "✨", "🌟", "🎉", "🏆", "✦"] : ["⭐", "✨", "🌟"];
+      const count = levelTransition ? 32 : (skillAdvanced ? 20 : 13);
       for (let i = 0; i < count; i++) {
         const star = document.createElement("span");
         const angle = (Math.PI * 2 * i / count) + Math.random() * .25;
@@ -780,7 +1097,7 @@
         star.style.animationDelay = `${Math.random() * .12}s`;
         celebration.append(star);
       }
-      setTimeout(() => celebration.replaceChildren(), 1200);
+      setTimeout(() => celebration.replaceChildren(), levelTransition ? 2550 : 1200);
     }
 
     function showRetry() {
@@ -789,43 +1106,59 @@
       retrySymbol.classList.add("show");
     }
 
+    function updateLearningProgress(cleanAnswer) {
+      if (!cleanAnswer) return false;
+      skillSuccesses += 1;
+      if (skillSuccesses < 5) return false;
+      skillSuccesses = 0;
+      focusSkillIndex = (focusSkillIndex + 1) % LEARNING_PATH.length;
+      return true;
+    }
+
     function updateAdaptiveLevel(cleanAnswer) {
-      let bigCelebration = false;
+      const result = { levelUp: false, from: level, to: level };
 
       if (wrongAttempts >= 2 && level > 0) {
         recoveryTarget = Math.max(recoveryTarget ?? level, level);
         level -= 1;
         recoveryWins = 0;
         cleanStreak = 0;
-        return bigCelebration;
+        result.to = level;
+        return result;
       }
 
       if (!cleanAnswer) {
         cleanStreak = 0;
         recoveryWins = 0;
-        return bigCelebration;
+        return result;
       }
 
       if (recoveryTarget !== null) {
         recoveryWins += 1;
         cleanStreak = Math.min(2, recoveryWins);
         if (recoveryWins >= 2) {
+          result.from = level;
           level = Math.min(recoveryTarget, level + 1);
           recoveryWins = 0;
           cleanStreak = 0;
-          bigCelebration = true;
+          result.levelUp = true;
+          result.to = level;
           if (level >= recoveryTarget) recoveryTarget = null;
         }
-        return bigCelebration;
+        return result;
       }
 
       cleanStreak += 1;
       if (cleanStreak >= 3) {
         cleanStreak = 0;
-        if (level < LEVEL_COUNTS.length - 1) level += 1;
-        bigCelebration = true;
+        if (level < LEVEL_COUNTS.length - 1) {
+          result.from = level;
+          level += 1;
+          result.to = level;
+          result.levelUp = true;
+        }
       }
-      return bigCelebration;
+      return result;
     }
 
     async function checkChoice(word, button) {
@@ -852,12 +1185,14 @@
       const cleanAnswer = wrongAttempts === 0;
       stats.get(target.w).correct += 1;
       button.classList.add("correct");
-      const bigCelebration = updateAdaptiveLevel(cleanAnswer);
+      const skillAdvanced = updateLearningProgress(cleanAnswer);
+      const levelTransition = updateAdaptiveLevel(cleanAnswer);
       renderLevel();
-      playSuccessSound(bigCelebration);
-      showCelebration(bigCelebration);
-      liveStatus.textContent = bigCelebration ? "Excellent! New level." : "Correct!";
-      await wait(bigCelebration ? 1500 : 1050);
+      if (levelTransition.levelUp) playLevelUpMelody();
+      else playSuccessSound(skillAdvanced);
+      showCelebration(levelTransition.levelUp ? levelTransition : null, skillAdvanced);
+      liveStatus.textContent = levelTransition.levelUp ? "Excellent! New level." : "Correct!";
+      await wait(levelTransition.levelUp ? 2600 : (skillAdvanced ? 1250 : 1050));
       newRound();
     }
 

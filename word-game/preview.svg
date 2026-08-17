@@ -43,17 +43,15 @@
   <g font-family="Nimbus Sans, Arial, Helvetica, sans-serif">
     <text x="520" y="214" fill="url(#title)" font-size="92" font-weight="800" letter-spacing="1">LISTEN</text>
     <text x="520" y="309" fill="url(#title)" font-size="92" font-weight="800" letter-spacing="1">&amp; FIND</text>
-    <text x="524" y="367" fill="#35415d" font-size="32" font-weight="700">Basic English Reading Game</text>
+    <text x="524" y="367" fill="#35415d" font-size="32" font-weight="700">180-Word Phonics Reading Game</text>
 
     <g transform="translate(520 414)" font-size="27" font-weight="800" text-anchor="middle">
       <rect x="0" y="0" width="88" height="54" rx="27" fill="#6c5ce7"/>
       <text x="44" y="37" fill="#fff">3</text>
-      <rect x="104" y="0" width="88" height="54" rx="27" fill="#d9d1ff"/>
-      <text x="148" y="37" fill="#5a4bd6">5</text>
-      <rect x="208" y="0" width="88" height="54" rx="27" fill="#ffd2e5"/>
-      <text x="252" y="37" fill="#c52f73">7</text>
-      <rect x="312" y="0" width="88" height="54" rx="27" fill="#c9f4df"/>
-      <text x="356" y="37" fill="#13865a">9</text>
+      <rect x="106" y="0" width="88" height="54" rx="27" fill="#ffd2e5"/>
+      <text x="150" y="37" fill="#c52f73">6</text>
+      <rect x="212" y="0" width="104" height="54" rx="27" fill="#c9f4df"/>
+      <text x="264" y="37" fill="#13865a">12</text>
     </g>
 
     <g transform="translate(935 416)">
