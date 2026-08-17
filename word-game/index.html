@@ -323,6 +323,17 @@
       box-shadow: 0 8px 0 #d94353, 0 13px 25px #bd374442;
     }
 
+    .choice.eliminating {
+      pointer-events: none;
+      animation: wrongVanish .56s ease-in forwards;
+    }
+
+    .choice.eliminated {
+      visibility: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
     .choice-word {
       position: relative;
       z-index: 1;
@@ -682,6 +693,7 @@
     @keyframes soundRing { from { transform: scale(.75); opacity: .8; } to { transform: scale(1.42); opacity: 0; } }
     @keyframes correctPop { 35% { transform: scale(1.08) rotate(-2deg); } 70% { transform: scale(.98) rotate(1deg); } }
     @keyframes shake { 20%, 60% { transform: translateX(-9px); } 40%, 80% { transform: translateX(9px); } }
+    @keyframes wrongVanish { 0% { opacity: 1; transform: scale(1); filter: saturate(1); } 45% { opacity: .72; transform: scale(.9) rotate(-3deg); filter: saturate(.6) blur(1px); } 100% { opacity: 0; transform: scale(.3) rotate(8deg); filter: saturate(0) blur(7px); } }
     @keyframes startBounce { 50% { transform: translateY(-8px) scale(1.03); } }
     @keyframes drift { to { transform: translate(7vmin, -5vmin) rotate(35deg); } }
     @keyframes winPop { 45% { transform: translate(-50%, -50%) scale(1.13) rotate(-7deg); } 72% { transform: translate(-50%, -50%) scale(.96) rotate(4deg); } 100% { transform: translate(-50%, -50%) scale(1); } }
@@ -1088,7 +1100,9 @@
 
     function setChoicesEnabled(enabled) {
       inputLocked = !enabled;
-      [...choicesBox.querySelectorAll("button.choice")].forEach(button => button.disabled = !enabled);
+      [...choicesBox.querySelectorAll("button.choice")].forEach(button => {
+        button.disabled = !enabled || button.classList.contains("eliminated") || button.classList.contains("eliminating");
+      });
     }
 
     async function readTarget(repetitions = 3) {
@@ -1465,6 +1479,16 @@
         renderLives(lives);
         button.classList.add("wrong");
         playTryAgainSound();
+        if (lives > 0) showRetry();
+        await wait(430);
+        button.classList.remove("wrong");
+        button.classList.add("eliminating");
+        await wait(560);
+        button.classList.remove("eliminating");
+        button.classList.add("eliminated");
+        button.disabled = true;
+        button.setAttribute("aria-hidden", "true");
+        button.setAttribute("tabindex", "-1");
         if (lives === 0) {
           const from = level;
           level = Math.max(0, level - 1);
@@ -1478,10 +1502,7 @@
           return;
         }
 
-        showRetry();
         liveStatus.textContent = `${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
-        await wait(560);
-        button.classList.remove("wrong");
         setChoicesEnabled(true);
         readTarget(1);
         return;
