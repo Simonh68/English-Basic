@@ -243,6 +243,8 @@
 
     .score-display.bump { animation: scoreBump .58s ease; }
 
+    .score-display.penalty { animation: scorePenalty .58s ease; }
+
     .score-pop {
       position: absolute;
       left: 50%;
@@ -256,6 +258,8 @@
     }
 
     .score-pop.show { animation: scoreRise .9s ease-out; }
+
+    .score-pop.penalty { color: #d94353; }
 
     .life-heart {
       font: 1.45rem/1 system-ui, sans-serif;
@@ -731,6 +735,7 @@
     @keyframes listenPulse { 50% { transform: scale(1.07); } }
     @keyframes soundRing { from { transform: scale(.75); opacity: .8; } to { transform: scale(1.42); opacity: 0; } }
     @keyframes correctPop { 35% { transform: scale(1.08) rotate(-2deg); } 70% { transform: scale(.98) rotate(1deg); } }
+    @keyframes scorePenalty { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
     @keyframes shake { 20%, 60% { transform: translateX(-9px); } 40%, 80% { transform: translateX(9px); } }
     @keyframes wrongVanish { 0% { opacity: 1; transform: scale(1); filter: saturate(1); } 45% { opacity: .72; transform: scale(.9) rotate(-3deg); filter: saturate(.6) blur(1px); } 100% { opacity: 0; transform: scale(.3) rotate(8deg); filter: saturate(0) blur(7px); } }
     @keyframes startBounce { 50% { transform: translateY(-8px) scale(1.03); } }
@@ -1290,24 +1295,34 @@
       renderLives();
     }
 
-    function renderScore(pointsAwarded = 0) {
+    function renderScore(pointsChanged = 0) {
       scoreValue.textContent = String(score);
       scoreDisplay.setAttribute("aria-label", `${score} points`);
       scoreDisplay.classList.remove("bump");
+      scoreDisplay.classList.remove("penalty");
       scorePop.classList.remove("show");
-      if (pointsAwarded > 0) {
+      scorePop.classList.remove("penalty");
+      if (pointsChanged !== 0) {
         void scoreDisplay.offsetWidth;
-        scorePop.textContent = `+${pointsAwarded}`;
-        scoreDisplay.classList.add("bump");
+        scorePop.textContent = pointsChanged > 0 ? `+${pointsChanged}` : String(pointsChanged);
+        scoreDisplay.classList.add(pointsChanged > 0 ? "bump" : "penalty");
+        scorePop.classList.toggle("penalty", pointsChanged < 0);
         scorePop.classList.add("show");
       }
     }
 
     function awardPoints() {
-      const points = Math.max(1, LEVEL_BASE_POINTS[level] - wrongAttempts * 4);
+      const points = LEVEL_BASE_POINTS[level];
       score += points;
       renderScore(points);
       return points;
+    }
+
+    function deductPoints() {
+      const pointsDeducted = Math.min(score, LEVEL_BASE_POINTS[level]);
+      score -= pointsDeducted;
+      renderScore(-pointsDeducted);
+      return pointsDeducted;
     }
 
     function renderChoices(words) {
@@ -1546,6 +1561,7 @@
 
       if (word.w !== target.w) {
         wrongAttempts += 1;
+        const pointsDeducted = deductPoints();
         lives = Math.max(0, lives - 1);
         stats.get(target.w).mistakes += 1;
         cleanStreak = 0;
@@ -1569,14 +1585,14 @@
           renderLevel();
           playLivesOverSound();
           showLevelDown(from, level);
-          liveStatus.textContent = "No lives left. Moving down one level.";
+          liveStatus.textContent = `${pointsDeducted} points lost. No lives left. Moving down one level.`;
           await wait(2200);
           resetLives();
           newRound();
           return;
         }
 
-        liveStatus.textContent = `${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
+        liveStatus.textContent = `${pointsDeducted} points lost. ${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
         setChoicesEnabled(true);
         readTarget(1);
         return;
