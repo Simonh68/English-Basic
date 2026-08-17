@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="background" x1="90" y1="35" x2="1110" y2="605" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8d7cf4"/>
+      <stop offset="0.52" stop-color="#f45da2"/>
+      <stop offset="1" stop-color="#41d2a1"/>
+    </linearGradient>
+    <linearGradient id="button" x1="182" y1="142" x2="423" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff83bd"/>
+      <stop offset="1" stop-color="#df397f"/>
+    </linearGradient>
+    <linearGradient id="title" x1="520" y1="166" x2="1030" y2="401" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5a4bd6"/>
+      <stop offset="1" stop-color="#e73e8a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="20" stdDeviation="22" flood-color="#403064" flood-opacity="0.28"/>
+    </filter>
+    <filter id="buttonShadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="15" stdDeviation="12" flood-color="#9d275f" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="0" fill="url(#background)"/>
+  <circle cx="88" cy="92" r="130" fill="#fff6a8" opacity="0.42"/>
+  <circle cx="1132" cy="82" r="175" fill="#ffc5df" opacity="0.36"/>
+  <circle cx="1085" cy="592" r="210" fill="#aee8ff" opacity="0.34"/>
+  <path d="M0 510C180 448 283 596 474 547C654 501 739 430 925 474C1053 504 1124 550 1200 541V630H0Z" fill="#fff" opacity="0.16"/>
+
+  <g filter="url(#shadow)">
+    <rect x="76" y="66" width="1048" height="500" rx="66" fill="#fff" fill-opacity="0.91" stroke="#fff" stroke-width="7"/>
+  </g>
+
+  <g transform="translate(150 130)">
+    <circle cx="168" cy="168" r="145" fill="#bd2c72" opacity="0.34" transform="translate(0 14)"/>
+    <circle cx="168" cy="168" r="145" fill="url(#button)" stroke="#fff" stroke-width="14" filter="url(#buttonShadow)"/>
+    <path d="M92 142H130L181 101V235L130 194H92Z" fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-width="8"/>
+    <path d="M213 131C229 145 229 192 213 207" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="14"/>
+    <path d="M245 103C277 133 278 202 245 234" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="14" opacity="0.9"/>
+    <path d="M157 5L170 35L203 38L178 59L185 92L157 74L129 92L136 59L111 38L144 35Z" fill="#ffd34e" stroke="#fff" stroke-linejoin="round" stroke-width="7" transform="translate(98 -16) rotate(12 157 48)"/>
+  </g>
+
+  <g font-family="Nimbus Sans, Arial, Helvetica, sans-serif">
+    <text x="520" y="214" fill="url(#title)" font-size="92" font-weight="800" letter-spacing="1">LISTEN</text>
+    <text x="520" y="309" fill="url(#title)" font-size="92" font-weight="800" letter-spacing="1">&amp; FIND</text>
+    <text x="524" y="367" fill="#35415d" font-size="32" font-weight="700">Basic English Reading Game</text>
+
+    <g transform="translate(520 414)" font-size="27" font-weight="800" text-anchor="middle">
+      <rect x="0" y="0" width="88" height="54" rx="27" fill="#6c5ce7"/>
+      <text x="44" y="37" fill="#fff">3</text>
+      <rect x="104" y="0" width="88" height="54" rx="27" fill="#d9d1ff"/>
+      <text x="148" y="37" fill="#5a4bd6">5</text>
+      <rect x="208" y="0" width="88" height="54" rx="27" fill="#ffd2e5"/>
+      <text x="252" y="37" fill="#c52f73">7</text>
+      <rect x="312" y="0" width="88" height="54" rx="27" fill="#c9f4df"/>
+      <text x="356" y="37" fill="#13865a">9</text>
+    </g>
+
+    <g transform="translate(935 416)">
+      <path d="M25 0L32 17L51 19L36 31L41 50L25 40L9 50L14 31L0 19L18 17Z" fill="#ffd34e"/>
+      <path d="M91 0L98 17L117 19L102 31L107 50L91 40L75 50L80 31L66 19L84 17Z" fill="#ffd34e"/>
+      <path d="M157 0L164 17L183 19L168 31L173 50L157 40L141 50L146 31L132 19L150 17Z" fill="#ffd34e"/>
+    </g>
+
+    <text x="524" y="521" fill="#6d7082" font-size="22" font-weight="700" letter-spacing="2.5">HEAR • READ • PLAY</text>
+  </g>
+</svg>
