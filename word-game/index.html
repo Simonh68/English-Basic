@@ -235,6 +235,10 @@
       color: var(--ink);
       box-shadow: 0 8px 0 color-mix(in srgb, var(--card) 68%, #4d4466), 0 13px 23px #42376a29;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
       transform: translateY(0);
       transition: transform .16s, box-shadow .16s, opacity .2s, background .2s;
       animation: cardReveal .4s cubic-bezier(.2, .8, .2, 1) both;
@@ -249,7 +253,11 @@
       content: "";
       border-radius: 50%;
       background: #ffffff50;
+      pointer-events: none;
     }
+
+    .choice-word,
+    .choice-emoji { pointer-events: none; }
 
     .choice:not(:disabled):hover { transform: translateY(-3px); }
 
@@ -882,6 +890,7 @@
     let previousTarget = null;
     let wrongAttempts = 0;
     let roundToken = 0;
+    let speechSequence = 0;
     let inputLocked = true;
     let soundEffects = true;
     let audioContext = null;
@@ -900,19 +909,32 @@
         || null;
     }
 
-    function speak(word, token) {
+    function speak(word, token, sequence) {
       return new Promise(resolve => {
-        if (token !== roundToken) return resolve();
+        if (token !== roundToken || sequence !== speechSequence) return resolve();
         const utterance = new SpeechSynthesisUtterance(word);
         utterance.lang = "en-US";
-        utterance.rate = .72;
+        utterance.rate = .8;
         utterance.pitch = 1.02;
         const voice = getVoice();
         if (voice) utterance.voice = voice;
-        utterance.onend = resolve;
-        utterance.onerror = resolve;
+        let fallback;
+        const finish = () => {
+          clearTimeout(fallback);
+          resolve();
+        };
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        fallback = setTimeout(finish, 3500);
         speechSynthesis.speak(utterance);
       });
+    }
+
+    function stopReading() {
+      speechSequence += 1;
+      speechSynthesis.cancel();
+      listenButton.classList.remove("speaking");
+      listenButton.setAttribute("aria-label", "Hear the word again");
     }
 
     function setChoicesEnabled(enabled) {
@@ -923,19 +945,18 @@
     async function readTarget(repetitions = 3) {
       if (!target) return;
       const token = roundToken;
+      const sequence = ++speechSequence;
       speechSynthesis.cancel();
-      setChoicesEnabled(false);
       listenButton.classList.add("speaking");
       listenButton.setAttribute("aria-label", "Listening");
       for (let i = 0; i < repetitions; i++) {
-        if (token !== roundToken) return;
-        await speak(target.w, token);
+        if (token !== roundToken || sequence !== speechSequence) return;
+        await speak(target.w, token, sequence);
         if (i < repetitions - 1) await wait(2000);
       }
-      if (token !== roundToken) return;
+      if (token !== roundToken || sequence !== speechSequence) return;
       listenButton.classList.remove("speaking");
       listenButton.setAttribute("aria-label", "Hear the word again");
-      setChoicesEnabled(true);
       liveStatus.textContent = "Choose the word you heard.";
     }
 
@@ -1005,7 +1026,8 @@
 
     async function newRound() {
       roundToken += 1;
-      speechSynthesis.cancel();
+      stopReading();
+      const token = roundToken;
       inputLocked = true;
       wrongAttempts = 0;
       previousTarget = target;
@@ -1015,7 +1037,9 @@
       const options = shuffle([target, ...chooseDistractors(target, optionCount - 1)]);
       renderLevel();
       renderChoices(options);
+      setChoicesEnabled(true);
       await wait(280);
+      if (token !== roundToken || inputLocked) return;
       readTarget(3);
     }
 
@@ -1166,10 +1190,11 @@
 
     async function checkChoice(word, button) {
       if (inputLocked) return;
+      setChoicesEnabled(false);
+      stopReading();
       ensureAudio();
 
       if (word.w !== target.w) {
-        inputLocked = true;
         wrongAttempts += 1;
         stats.get(target.w).mistakes += 1;
         cleanStreak = 0;
@@ -1180,11 +1205,11 @@
         liveStatus.textContent = "Try again.";
         await wait(560);
         button.classList.remove("wrong");
-        await readTarget(1);
+        setChoicesEnabled(true);
+        readTarget(1);
         return;
       }
 
-      setChoicesEnabled(false);
       const cleanAnswer = wrongAttempts === 0;
       stats.get(target.w).correct += 1;
       button.classList.add("correct");
