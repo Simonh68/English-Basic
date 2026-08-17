@@ -184,12 +184,42 @@
 
     .listen-button.speaking::after { animation-delay: .55s; }
 
+    .status-row {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(10px, 3vw, 22px);
+    }
+
+    .lives,
     .streak {
       min-height: 27px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
+      padding: 3px 10px;
+      border: 2px solid #fff;
+      border-radius: 999px;
+      background: #ffffffa8;
+      box-shadow: 0 4px 10px #44356d1c;
+    }
+
+    .life-heart {
+      font: 1.45rem/1 system-ui, sans-serif;
+      filter: drop-shadow(0 2px 1px #a92a4640);
+      transform: scale(1);
+      transition: opacity .3s, filter .3s, transform .3s;
+    }
+
+    .life-heart.lost {
+      opacity: .2;
+      filter: grayscale(1);
+      transform: scale(.72);
+    }
+
+    .life-heart.losing { animation: loseHeart .62s ease both; }
     }
 
     .streak-star {
@@ -299,9 +329,10 @@
       position: relative;
       z-index: 1;
       font-family: system-ui, sans-serif;
-      font-size: clamp(1.25rem, 4.5vw, 2.5rem);
+      font-size: clamp(2rem, 6.5vw, 4.25rem);
       line-height: 1;
-      opacity: .76;
+      opacity: 1;
+      filter: drop-shadow(0 4px 3px #3b31532c);
     }
 
     .choices[data-count="6"] .choice-word,
@@ -310,7 +341,7 @@
 
     .choices[data-count="6"] .choice-emoji,
     .choices[data-count="9"] .choice-emoji,
-    .choices[data-count="12"] .choice-emoji { font-size: clamp(1rem, 3vw, 1.75rem); opacity: .63; }
+    .choices[data-count="12"] .choice-emoji { font-size: clamp(1.5rem, 4.6vw, 2.8rem); opacity: .98; }
 
     .card-back {
       --back-a: #7565e8;
@@ -442,6 +473,12 @@
       animation: burst 1s cubic-bezier(.1, .75, .25, 1) forwards;
     }
 
+    .burst-star.level-burst {
+      font-size: clamp(2rem, 7vw, 4.6rem);
+      animation-name: grandBurst;
+      animation-duration: 2.25s;
+    }
+
     .center-win {
       position: absolute;
       left: 50%;
@@ -466,7 +503,7 @@
       place-items: center;
       overflow: hidden;
       background: radial-gradient(circle at 50% 50%, #fff8baed 0 8%, #ffc928c9 24%, #8a5bd9de 67%, #3c2b7af2 100%);
-      animation: levelFade 2.45s ease both;
+      animation: levelFade 4.45s ease both;
     }
 
     .level-up::before {
@@ -481,23 +518,23 @@
     .level-up-card {
       position: relative;
       z-index: 2;
-      width: min(440px, 88vw);
+      width: min(520px, 91vw);
       display: grid;
       justify-items: center;
-      gap: 7px;
-      padding: 24px 18px 30px;
-      border: 6px solid #fff;
-      border-radius: 40px;
+      gap: 11px;
+      padding: 30px 20px 38px;
+      border: 8px solid #fff;
+      border-radius: 46px;
       background: linear-gradient(150deg, #fffdf2f5, #fff0b7f2);
       box-shadow: 0 22px 55px #2c195a80, inset 0 0 0 5px #ffd24f;
       transform: scale(0);
-      animation: trophyCard 2.2s cubic-bezier(.2, .9, .2, 1) forwards;
+      animation: trophyCard 4.15s cubic-bezier(.2, .9, .2, 1) forwards;
     }
 
     .level-trophy {
-      font: clamp(4.8rem, 18vw, 8.5rem)/1 system-ui, sans-serif;
+      font: clamp(6rem, 23vw, 10.5rem)/1 system-ui, sans-serif;
       filter: drop-shadow(0 10px 5px #9d5d2244);
-      animation: trophyRock .75s ease-in-out 2 .35s;
+      animation: trophyRock .85s ease-in-out 4 .42s;
     }
 
     .level-numbers {
@@ -510,14 +547,45 @@
 
     .golden-buzzer {
       position: relative;
-      width: clamp(92px, 22vw, 124px);
-      height: clamp(46px, 11vw, 62px);
+      width: clamp(112px, 28vw, 152px);
+      height: clamp(56px, 14vw, 76px);
       margin-top: 9px;
       border: 5px solid #fff8b5;
       border-radius: 50%;
       background: radial-gradient(circle at 38% 28%, #fff9a8, #ffd228 38%, #e89700 73%);
       box-shadow: 0 12px 0 #a65c00, 0 18px 30px #9d5c2355, 0 0 26px #ffd83a;
       animation: buzzerPress .72s ease .78s both;
+    }
+
+    .level-down {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle, #fff9 0 14%, #7f6bcbd9 62%, #382b70ed 100%);
+      animation: levelFade 2.1s ease both;
+    }
+
+    .level-down-card {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      min-width: min(360px, 82vw);
+      padding: 28px;
+      border: 6px solid #fff;
+      border-radius: 38px;
+      background: #fffdf2ed;
+      box-shadow: 0 20px 50px #2c195a70;
+      animation: downCard 1.9s ease both;
+    }
+
+    .broken-heart { font: clamp(5rem, 22vw, 8.5rem)/1 system-ui, sans-serif; }
+
+    .level-down-numbers {
+      color: #7054c5;
+      font-size: clamp(2.2rem, 10vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
     }
 
     .golden-buzzer::after {
@@ -574,16 +642,23 @@
     @keyframes winPop { 45% { transform: translate(-50%, -50%) scale(1.13) rotate(-7deg); } 72% { transform: translate(-50%, -50%) scale(.96) rotate(4deg); } 100% { transform: translate(-50%, -50%) scale(1); } }
     @keyframes cardReveal { from { opacity: 0; transform: rotateY(80deg) scale(.8); } to { opacity: 1; transform: rotateY(0) scale(1); } }
     @keyframes cardBackIn { from { opacity: 0; transform: translateY(15px) scale(.88); } to { opacity: .62; transform: translateY(0) scale(1); } }
+    @keyframes loseHeart { 20% { opacity: 1; transform: scale(1.42) rotate(-12deg); } 100% { opacity: .2; filter: grayscale(1); transform: scale(.72) translateY(8px); } }
     @keyframes levelFade { 0%, 100% { opacity: 0; } 10%, 88% { opacity: 1; } }
     @keyframes goldenSpin { to { transform: rotate(360deg); } }
     @keyframes trophyCard { 0% { transform: scale(0) rotate(-12deg); } 25% { transform: scale(1.08) rotate(3deg); } 38%, 90% { transform: scale(1) rotate(0); } 100% { transform: scale(.82); opacity: 0; } }
     @keyframes trophyRock { 25% { transform: rotate(-10deg) scale(1.08); } 75% { transform: rotate(10deg) scale(1.08); } }
     @keyframes buzzerPress { 0% { transform: translateY(-15px) scale(.85); opacity: 0; } 55% { transform: translateY(10px) scale(1.05); opacity: 1; box-shadow: 0 2px 0 #a65c00, 0 8px 20px #9d5c2355, 0 0 42px #fff06e; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes downCard { 0% { opacity: 0; transform: scale(.55); } 22%, 78% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.82); } }
     @keyframes retryPop { 25% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(-20deg); } 65% { opacity: 1; transform: translate(-50%, -50%) scale(.95) rotate(20deg); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(.7); } }
     @keyframes burst {
       0% { opacity: 0; transform: translate(-50%, -50%) scale(.3) rotate(0); }
       16% { opacity: 1; }
       100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.15) rotate(var(--r)); }
+    }
+    @keyframes grandBurst {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(.2) rotate(0); }
+      12%, 48% { opacity: 1; }
+      100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.35) rotate(var(--r)); }
     }
 
     @media (max-width: 520px) {
@@ -592,7 +667,9 @@
       .home, .sound-toggle { width: 40px; height: 40px; border-radius: 13px; font-size: 1.18rem; }
       .level-pill { min-width: 34px; height: 29px; font-size: .9rem; }
       .listen-button { border-width: 4px; box-shadow: 0 7px 0 #bd2c72, 0 12px 23px #9c30673b; }
-      .streak { min-height: 23px; }
+      .status-row { min-height: 31px; gap: 8px; }
+      .lives, .streak { min-height: 25px; padding: 2px 8px; gap: 5px; }
+      .life-heart { font-size: 1.2rem; }
       .choice { border-width: 2px; border-radius: 17px; box-shadow: 0 6px 0 color-mix(in srgb, var(--card) 68%, #4d4466), 0 9px 16px #42376a22; }
       .choices { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(58px, 1fr)); }
       .card-back { border-width: 2px; border-radius: 17px; box-shadow: 0 6px 0 #514397, 0 9px 16px #42376a22; }
@@ -604,13 +681,15 @@
       .home, .sound-toggle { width: 36px; height: 36px; border-radius: 12px; font-size: 1.05rem; }
       .level-pill { height: 27px; min-width: 33px; }
       .listen-button { width: 65px; height: 65px; font-size: 2rem; border-width: 4px; }
-      .streak { min-height: 19px; }
+      .status-row { min-height: 23px; }
+      .lives, .streak { min-height: 21px; padding: 1px 7px; }
+      .life-heart { font-size: 1rem; }
       .streak-star { font-size: 1rem; }
       .choices { gap: 7px; grid-template-rows: repeat(4, minmax(50px, 1fr)); }
       .choice { min-height: 57px; padding: 4px; }
       .card-back { min-height: 50px; }
       .choice-word { font-size: clamp(1.1rem, 4.2vw, 2.1rem); }
-      .choice-emoji { font-size: clamp(.95rem, 3.5vw, 1.5rem); }
+      .choice-emoji { font-size: clamp(1.35rem, 4vw, 1.9rem); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -633,10 +712,17 @@
 
     <section class="listen-zone">
       <button class="listen-button" id="listenButton" type="button" aria-label="Hear the word again">🔊</button>
-      <div class="streak" id="streak" aria-label="Three correct answers to level up">
-        <span class="streak-star">★</span>
-        <span class="streak-star">★</span>
-        <span class="streak-star">★</span>
+      <div class="status-row">
+        <div class="lives" id="lives" aria-label="3 lives remaining">
+          <span class="life-heart">❤️</span>
+          <span class="life-heart">❤️</span>
+          <span class="life-heart">❤️</span>
+        </div>
+        <div class="streak" id="streak" aria-label="Three correct answers to level up">
+          <span class="streak-star">★</span>
+          <span class="streak-star">★</span>
+          <span class="streak-star">★</span>
+        </div>
       </div>
     </section>
 
@@ -874,6 +960,8 @@
     const listenButton = document.querySelector("#listenButton");
     const levelsBox = document.querySelector("#levels");
     const levelPills = [...levelsBox.children];
+    const livesBox = document.querySelector("#lives");
+    const lifeHearts = [...document.querySelectorAll(".life-heart")];
     const streakStars = [...document.querySelectorAll(".streak-star")];
     const startScreen = document.querySelector("#startScreen");
     const startButton = document.querySelector("#startButton");
@@ -884,8 +972,7 @@
 
     let level = 0;
     let cleanStreak = 0;
-    let recoveryTarget = null;
-    let recoveryWins = 0;
+    let lives = 3;
     let target = null;
     let previousTarget = null;
     let wrongAttempts = 0;
@@ -1000,6 +1087,23 @@
       streakStars.forEach((star, index) => star.classList.toggle("on", index < cleanStreak));
     }
 
+    function renderLives(lostIndex = null) {
+      lifeHearts.forEach((heart, index) => {
+        heart.classList.toggle("lost", index >= lives);
+        heart.classList.remove("losing");
+        if (index === lostIndex) {
+          void heart.offsetWidth;
+          heart.classList.add("losing");
+        }
+      });
+      livesBox.setAttribute("aria-label", `${lives} ${lives === 1 ? "life" : "lives"} remaining`);
+    }
+
+    function resetLives() {
+      lives = 3;
+      renderLives();
+    }
+
     function renderChoices(words) {
       choicesBox.replaceChildren();
       choicesBox.dataset.count = String(words.length);
@@ -1078,14 +1182,31 @@
       ensureAudio();
       if (!audioContext || !soundEffects) return;
       const now = audioContext.currentTime;
-      tone(130.81, now, .48, .045, "sawtooth");
-      tone(261.63, now, .19, .06, "triangle");
-      tone(329.63, now + .16, .2, .065, "triangle");
-      tone(392, now + .32, .23, .07, "triangle");
-      tone(523.25, now + .52, .27, .075, "triangle");
-      tone(659.25, now + .72, .3, .075, "triangle");
-      tone(783.99, now + .92, .45, .085, "triangle");
-      tone(1046.5, now + 1.08, .55, .08, "sine");
+      tone(130.81, now, .58, .045, "sawtooth");
+      tone(261.63, now, .22, .06, "triangle");
+      tone(329.63, now + .18, .22, .065, "triangle");
+      tone(392, now + .36, .25, .07, "triangle");
+      tone(523.25, now + .58, .28, .075, "triangle");
+      tone(392, now + .86, .2, .065, "triangle");
+      tone(523.25, now + 1.04, .24, .075, "triangle");
+      tone(659.25, now + 1.24, .3, .078, "triangle");
+      tone(783.99, now + 1.5, .38, .085, "triangle");
+      tone(659.25, now + 1.86, .22, .075, "triangle");
+      tone(783.99, now + 2.06, .26, .082, "triangle");
+      tone(987.77, now + 2.28, .32, .086, "triangle");
+      tone(1046.5, now + 2.56, .46, .09, "sine");
+      tone(1318.51, now + 2.92, .7, .085, "sine");
+      tone(1567.98, now + 3.16, .78, .075, "sine");
+    }
+
+    function playLivesOverSound() {
+      ensureAudio();
+      if (!audioContext) return;
+      const now = audioContext.currentTime;
+      tone(392, now, .24, .045, "sine");
+      tone(329.63, now + .2, .27, .04, "sine");
+      tone(261.63, now + .43, .31, .04, "sine");
+      tone(196, now + .7, .55, .035, "triangle");
     }
 
     function playTryAgainSound() {
@@ -1110,21 +1231,35 @@
         celebration.append(center);
       }
       const big = Boolean(levelTransition) || skillAdvanced;
-      const symbols = big ? ["⭐", "✨", "🌟", "🎉", "🏆", "✦"] : ["⭐", "✨", "🌟"];
-      const count = levelTransition ? 32 : (skillAdvanced ? 20 : 13);
+      const symbols = big ? ["⭐", "✨", "🌟", "🎉", "🏆", "🎊", "🥳", "🎈", "👑", "✦"] : ["⭐", "✨", "🌟"];
+      const count = levelTransition ? 56 : (skillAdvanced ? 20 : 13);
       for (let i = 0; i < count; i++) {
         const star = document.createElement("span");
         const angle = (Math.PI * 2 * i / count) + Math.random() * .25;
-        const distance = (big ? 30 : 23) + Math.random() * 28;
-        star.className = "burst-star";
+        const distance = (big ? 36 : 23) + Math.random() * (levelTransition ? 42 : 28);
+        star.className = levelTransition ? "burst-star level-burst" : "burst-star";
         star.textContent = symbols[i % symbols.length];
         star.style.setProperty("--x", `${Math.cos(angle) * distance}vmin`);
         star.style.setProperty("--y", `${Math.sin(angle) * distance}vmin`);
         star.style.setProperty("--r", `${Math.round(Math.random() * 240 - 120)}deg`);
-        star.style.animationDelay = `${Math.random() * .12}s`;
+        star.style.animationDelay = levelTransition
+          ? `${(i % 2) * 1.35 + Math.random() * .22}s`
+          : `${Math.random() * .12}s`;
         celebration.append(star);
       }
-      setTimeout(() => celebration.replaceChildren(), levelTransition ? 2550 : 1200);
+      setTimeout(() => celebration.replaceChildren(), levelTransition ? 4550 : 1200);
+    }
+
+    function showLevelDown(from, to) {
+      celebration.replaceChildren();
+      const overlay = document.createElement("div");
+      overlay.className = "level-down";
+      const change = from === to
+        ? `${LEVEL_COUNTS[from]} ↻`
+        : `${LEVEL_COUNTS[from]} → ${LEVEL_COUNTS[to]}`;
+      overlay.innerHTML = `<div class="level-down-card"><div class="broken-heart">💔</div><div class="level-down-numbers">${change}</div></div>`;
+      celebration.append(overlay);
+      setTimeout(() => celebration.replaceChildren(), 2150);
     }
 
     function showRetry() {
@@ -1145,33 +1280,8 @@
     function updateAdaptiveLevel(cleanAnswer) {
       const result = { levelUp: false, from: level, to: level };
 
-      if (wrongAttempts >= 2 && level > 0) {
-        recoveryTarget = Math.max(recoveryTarget ?? level, level);
-        level -= 1;
-        recoveryWins = 0;
-        cleanStreak = 0;
-        result.to = level;
-        return result;
-      }
-
       if (!cleanAnswer) {
         cleanStreak = 0;
-        recoveryWins = 0;
-        return result;
-      }
-
-      if (recoveryTarget !== null) {
-        recoveryWins += 1;
-        cleanStreak = Math.min(2, recoveryWins);
-        if (recoveryWins >= 2) {
-          result.from = level;
-          level = Math.min(recoveryTarget, level + 1);
-          recoveryWins = 0;
-          cleanStreak = 0;
-          result.levelUp = true;
-          result.to = level;
-          if (level >= recoveryTarget) recoveryTarget = null;
-        }
         return result;
       }
 
@@ -1196,13 +1306,28 @@
 
       if (word.w !== target.w) {
         wrongAttempts += 1;
+        lives = Math.max(0, lives - 1);
         stats.get(target.w).mistakes += 1;
         cleanStreak = 0;
         renderLevel();
+        renderLives(lives);
         button.classList.add("wrong");
+        if (lives === 0) {
+          const from = level;
+          level = Math.max(0, level - 1);
+          renderLevel();
+          playLivesOverSound();
+          showLevelDown(from, level);
+          liveStatus.textContent = "No lives left. Moving down one level.";
+          await wait(2200);
+          resetLives();
+          newRound();
+          return;
+        }
+
         playTryAgainSound();
         showRetry();
-        liveStatus.textContent = "Try again.";
+        liveStatus.textContent = `${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
         await wait(560);
         button.classList.remove("wrong");
         setChoicesEnabled(true);
@@ -1215,12 +1340,13 @@
       button.classList.add("correct");
       const skillAdvanced = updateLearningProgress(cleanAnswer);
       const levelTransition = updateAdaptiveLevel(cleanAnswer);
+      if (levelTransition.levelUp) resetLives();
       renderLevel();
       if (levelTransition.levelUp) playLevelUpMelody();
       else playSuccessSound(skillAdvanced);
       showCelebration(levelTransition.levelUp ? levelTransition : null, skillAdvanced);
       liveStatus.textContent = levelTransition.levelUp ? "Excellent! New level." : "Correct!";
-      await wait(levelTransition.levelUp ? 2600 : (skillAdvanced ? 1250 : 1050));
+      await wait(levelTransition.levelUp ? 4600 : (skillAdvanced ? 1250 : 1050));
       newRound();
     }
 
@@ -1239,6 +1365,7 @@
     startButton.addEventListener("click", () => {
       ensureAudio();
       speechSynthesis.getVoices();
+      resetLives();
       startScreen.classList.add("hidden");
       newRound();
     }, { once: true });
