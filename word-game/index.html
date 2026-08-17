@@ -297,9 +297,11 @@
     }
 
     .choices[data-count="6"] .choice-word,
+    .choices[data-count="9"] .choice-word,
     .choices[data-count="12"] .choice-word { font-size: clamp(1.15rem, 3.6vw, 2.15rem); }
 
     .choices[data-count="6"] .choice-emoji,
+    .choices[data-count="9"] .choice-emoji,
     .choices[data-count="12"] .choice-emoji { font-size: clamp(1rem, 3vw, 1.75rem); opacity: .63; }
 
     .card-back {
@@ -615,6 +617,7 @@
       <div class="levels" id="levels" aria-label="Difficulty level">
         <span class="level-pill active">3</span>
         <span class="level-pill">6</span>
+        <span class="level-pill">9</span>
         <span class="level-pill">12</span>
       </div>
       <button class="sound-toggle" id="soundToggle" type="button" aria-label="Turn sound effects off">♪</button>
@@ -645,7 +648,7 @@
   <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
 
   <script>
-    const LEVEL_COUNTS = [3, 6, 12];
+    const LEVEL_COUNTS = [3, 6, 9, 12];
     const CARD_COLORS = ["#fff0a8", "#c9f4df", "#cfe7ff", "#f8d2e7", "#e5d7ff", "#ffd7ba", "#d7f3f5", "#f5e6b8", "#dce7ff"];
     const CARD_BACK_SYMBOLS = ["★", "A", "B", "C", "✦", "a", "b", "c", "♪"];
 
