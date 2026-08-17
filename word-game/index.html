@@ -206,6 +206,18 @@
       box-shadow: 0 4px 10px #44356d1c;
     }
 
+    .lives {
+      position: fixed;
+      z-index: 12;
+      left: max(10px, env(safe-area-inset-left));
+      top: calc(max(10px, env(safe-area-inset-top)) + 56px);
+      min-height: 38px;
+      padding: 5px 12px;
+      background: #fff8;
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+
     .life-heart {
       font: 1.45rem/1 system-ui, sans-serif;
       filter: drop-shadow(0 2px 1px #a92a4640);
@@ -214,13 +226,12 @@
     }
 
     .life-heart.lost {
-      opacity: .2;
+      opacity: 0;
       filter: grayscale(1);
-      transform: scale(.72);
+      transform: scale(.18);
     }
 
-    .life-heart.losing { animation: loseHeart .62s ease both; }
-    }
+    .life-heart.losing { animation: heartSourceExplode .72s ease-out both; }
 
     .streak-star {
       color: #ddd4c0;
@@ -464,6 +475,40 @@
       pointer-events: none;
     }
 
+    .heart-fx {
+      position: fixed;
+      z-index: 45;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .heart-explosion {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+    }
+
+    .heart-explosion-core,
+    .heart-shard {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-family: system-ui, sans-serif;
+      line-height: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .heart-explosion-core {
+      font-size: 2.2rem;
+      animation: heartExplosionCore .8s ease-out forwards;
+    }
+
+    .heart-shard {
+      font-size: clamp(.75rem, 2.8vw, 1.35rem);
+      animation: heartShard .95s cubic-bezier(.1, .75, .25, 1) forwards;
+    }
+
     .burst-star {
       position: absolute;
       left: 50%;
@@ -642,7 +687,9 @@
     @keyframes winPop { 45% { transform: translate(-50%, -50%) scale(1.13) rotate(-7deg); } 72% { transform: translate(-50%, -50%) scale(.96) rotate(4deg); } 100% { transform: translate(-50%, -50%) scale(1); } }
     @keyframes cardReveal { from { opacity: 0; transform: rotateY(80deg) scale(.8); } to { opacity: 1; transform: rotateY(0) scale(1); } }
     @keyframes cardBackIn { from { opacity: 0; transform: translateY(15px) scale(.88); } to { opacity: .62; transform: translateY(0) scale(1); } }
-    @keyframes loseHeart { 20% { opacity: 1; transform: scale(1.42) rotate(-12deg); } 100% { opacity: .2; filter: grayscale(1); transform: scale(.72) translateY(8px); } }
+    @keyframes heartSourceExplode { 24% { opacity: 1; transform: scale(1.55) rotate(-13deg); } 100% { opacity: 0; filter: none; transform: scale(0) rotate(34deg); } }
+    @keyframes heartExplosionCore { 0% { opacity: 1; transform: translate(-50%, -50%) scale(.7); } 38% { opacity: 1; transform: translate(-50%, -50%) scale(2.05) rotate(-12deg); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(3.1) rotate(22deg); filter: blur(2px); } }
+    @keyframes heartShard { 0% { opacity: 1; transform: translate(-50%, -50%) scale(.35) rotate(0); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--hx)), calc(-50% + var(--hy))) scale(1.15) rotate(var(--hr)); } }
     @keyframes levelFade { 0%, 100% { opacity: 0; } 10%, 88% { opacity: 1; } }
     @keyframes goldenSpin { to { transform: rotate(360deg); } }
     @keyframes trophyCard { 0% { transform: scale(0) rotate(-12deg); } 25% { transform: scale(1.08) rotate(3deg); } 38%, 90% { transform: scale(1) rotate(0); } 100% { transform: scale(.82); opacity: 0; } }
@@ -669,6 +716,7 @@
       .listen-button { border-width: 4px; box-shadow: 0 7px 0 #bd2c72, 0 12px 23px #9c30673b; }
       .status-row { min-height: 31px; gap: 8px; }
       .lives, .streak { min-height: 25px; padding: 2px 8px; gap: 5px; }
+      .lives { top: calc(max(10px, env(safe-area-inset-top)) + 50px); min-height: 33px; padding: 4px 9px; }
       .life-heart { font-size: 1.2rem; }
       .choice { border-width: 2px; border-radius: 17px; box-shadow: 0 6px 0 color-mix(in srgb, var(--card) 68%, #4d4466), 0 9px 16px #42376a22; }
       .choices { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(58px, 1fr)); }
@@ -683,6 +731,7 @@
       .listen-button { width: 65px; height: 65px; font-size: 2rem; border-width: 4px; }
       .status-row { min-height: 23px; }
       .lives, .streak { min-height: 21px; padding: 1px 7px; }
+      .lives { top: calc(max(7px, env(safe-area-inset-top)) + 41px); min-height: 28px; padding: 3px 8px; }
       .life-heart { font-size: 1rem; }
       .streak-star { font-size: 1rem; }
       .choices { gap: 7px; grid-template-rows: repeat(4, minmax(50px, 1fr)); }
@@ -710,14 +759,15 @@
       <button class="sound-toggle" id="soundToggle" type="button" aria-label="Turn sound effects off">♪</button>
     </header>
 
+    <div class="lives" id="lives" aria-label="3 lives remaining">
+      <span class="life-heart">❤️</span>
+      <span class="life-heart">❤️</span>
+      <span class="life-heart">❤️</span>
+    </div>
+
     <section class="listen-zone">
       <button class="listen-button" id="listenButton" type="button" aria-label="Hear the word again">🔊</button>
       <div class="status-row">
-        <div class="lives" id="lives" aria-label="3 lives remaining">
-          <span class="life-heart">❤️</span>
-          <span class="life-heart">❤️</span>
-          <span class="life-heart">❤️</span>
-        </div>
         <div class="streak" id="streak" aria-label="Three correct answers to level up">
           <span class="streak-star">★</span>
           <span class="streak-star">★</span>
@@ -738,6 +788,7 @@
   </section>
 
   <div class="celebration" id="celebration" aria-hidden="true"></div>
+  <div class="heart-fx" id="heartFx" aria-hidden="true"></div>
   <div class="retry-symbol" id="retrySymbol" aria-hidden="true">↻</div>
   <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
 
@@ -966,6 +1017,7 @@
     const startScreen = document.querySelector("#startScreen");
     const startButton = document.querySelector("#startButton");
     const celebration = document.querySelector("#celebration");
+    const heartFx = document.querySelector("#heartFx");
     const retrySymbol = document.querySelector("#retrySymbol");
     const liveStatus = document.querySelector("#liveStatus");
     const soundToggle = document.querySelector("#soundToggle");
@@ -1123,8 +1175,38 @@
       streakStars.forEach((star, index) => star.classList.toggle("on", index < cleanStreak));
     }
 
+    function explodeHeart(heart) {
+      const rect = heart.getBoundingClientRect();
+      const burst = document.createElement("div");
+      burst.className = "heart-explosion";
+      burst.style.left = `${rect.left + rect.width / 2}px`;
+      burst.style.top = `${rect.top + rect.height / 2}px`;
+
+      const core = document.createElement("span");
+      core.className = "heart-explosion-core";
+      core.textContent = "❤️";
+      burst.append(core);
+
+      const symbols = ["❤", "💥", "✦", "✨"];
+      for (let index = 0; index < 16; index++) {
+        const shard = document.createElement("span");
+        const angle = Math.PI * 2 * index / 16 + Math.random() * .2;
+        const distance = 34 + Math.random() * 42;
+        shard.className = "heart-shard";
+        shard.textContent = symbols[index % symbols.length];
+        shard.style.setProperty("--hx", `${Math.cos(angle) * distance}px`);
+        shard.style.setProperty("--hy", `${Math.sin(angle) * distance}px`);
+        shard.style.setProperty("--hr", `${Math.round(Math.random() * 260 - 130)}deg`);
+        shard.style.animationDelay = `${Math.random() * .07}s`;
+        burst.append(shard);
+      }
+      heartFx.append(burst);
+      setTimeout(() => burst.remove(), 1100);
+    }
+
     function renderLives(lostIndex = null) {
       lifeHearts.forEach((heart, index) => {
+        if (index === lostIndex) explodeHeart(heart);
         heart.classList.toggle("lost", index >= lives);
         heart.classList.remove("losing");
         if (index === lostIndex) {
@@ -1206,6 +1288,36 @@
       oscillator.stop(start + duration + .03);
     }
 
+    function noiseBurst(start, duration, volume = .14) {
+      if (!soundEffects || !audioContext?.createBuffer || !audioContext?.createBufferSource) return;
+      const sampleRate = audioContext.sampleRate || 44100;
+      const buffer = audioContext.createBuffer(1, Math.ceil(sampleRate * duration), sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let index = 0; index < data.length; index++) {
+        const fade = 1 - index / data.length;
+        data[index] = (Math.random() * 2 - 1) * fade * fade;
+      }
+
+      const source = audioContext.createBufferSource();
+      const gain = audioContext.createGain();
+      source.buffer = buffer;
+      gain.gain.setValueAtTime(volume, start);
+      gain.gain.exponentialRampToValueAtTime(.001, start + duration);
+
+      if (audioContext.createBiquadFilter) {
+        const filter = audioContext.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1250, start);
+        filter.frequency.exponentialRampToValueAtTime(90, start + duration);
+        source.connect(filter);
+        filter.connect(gain);
+      } else {
+        source.connect(gain);
+      }
+      gain.connect(audioContext.destination);
+      source.start(start);
+    }
+
     function playSuccessSound(big = false) {
       ensureAudio();
       if (!audioContext) return;
@@ -1250,8 +1362,11 @@
       ensureAudio();
       if (!audioContext) return;
       const now = audioContext.currentTime;
-      tone(330, now, .12, .035, "sine");
-      tone(277, now + .1, .16, .03, "sine");
+      noiseBurst(now, .9, .16);
+      tone(145, now, .5, .11, "sawtooth");
+      tone(82, now + .06, .82, .13, "sine");
+      tone(240, now, .2, .075, "square");
+      tone(58, now + .16, .92, .11, "triangle");
     }
 
     function showCelebration(levelTransition = null, skillAdvanced = false) {
@@ -1349,6 +1464,7 @@
         renderLevel();
         renderLives(lives);
         button.classList.add("wrong");
+        playTryAgainSound();
         if (lives === 0) {
           const from = level;
           level = Math.max(0, level - 1);
@@ -1362,7 +1478,6 @@
           return;
         }
 
-        playTryAgainSound();
         showRetry();
         liveStatus.textContent = `${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
         await wait(560);
