@@ -1,5 +1,25 @@
 (()=>{
 const course=window.ENGLISH_BASIC_COURSE;
+// Level 5 revisits difficult spellings inside longer, fluent-reading words.
+course.levels[4].lessons[7]={
+ focus:'TH ו־OUGH במילים ארוכות',
+ words:[
+  ['although','אף על פי ש'],['throughout','לאורך כל'],['thoughtful','מתחשב'],
+  ['thoroughly','ביסודיות'],['something','משהו'],['another','נוסף'],
+  ['together','ביחד'],['without','בלי'],['understand','להבין'],['important','חשוב']
+ ],
+ transfer:[
+  ['anything','כל דבר'],['nothing','שום דבר'],['somewhere','איפשהו'],
+  ['grandmother','סבתא'],['underground','מתחת לאדמה']
+ ],
+ sentences:[
+  'Although it was difficult, we worked together.',
+  'Read the important instructions thoroughly.',
+  'She was thoughtful throughout the lesson.',
+  'You cannot understand the story without reading it.'
+ ],
+ passage:'Although the task looked difficult, we worked together throughout the lesson. We read every important word thoroughly. Then we understood something new without asking for help.'
+};
 const modes=[
  ['cards','כרטיסיות'],['listen','שמיעה'],['read','קריאה'],['transfer','מילים חדשות'],
  ['sentences','משפטים'],['text','טקסט'],['check','בדיקת שליטה']
