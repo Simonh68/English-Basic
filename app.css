@@ -15,3 +15,11 @@
 /* Keep carousel geometry LTR while card content remains RTL. */
 .card-track{direction:ltr}
 .study-card{direction:rtl}
+
+/* A calm visual identity for each level. */
+body{transition:background .35s ease}
+body[data-level="1"]{background:linear-gradient(145deg,#eef8f4,#f3f8ff 58%,#fff9ec)}
+body[data-level="2"]{background:linear-gradient(145deg,#edf7ff,#f2f4ff 58%,#f8f3ff)}
+body[data-level="3"]{background:linear-gradient(145deg,#f2efff,#f9f2ff 58%,#fff3f7)}
+body[data-level="4"]{background:linear-gradient(145deg,#fff4ec,#fff8e9 58%,#fff2f2)}
+body[data-level="5"]{background:linear-gradient(145deg,#eef7f0,#edf8f7 58%,#f4f7e9)}
