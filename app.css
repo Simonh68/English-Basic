@@ -23,3 +23,15 @@ body[data-level="2"]{background:linear-gradient(145deg,#edf7ff,#f2f4ff 58%,#f8f3
 body[data-level="3"]{background:linear-gradient(145deg,#f2efff,#f9f2ff 58%,#fff3f7)}
 body[data-level="4"]{background:linear-gradient(145deg,#fff4ec,#fff8e9 58%,#fff2f2)}
 body[data-level="5"]{background:linear-gradient(145deg,#eef7f0,#edf8f7 58%,#f4f7e9)}
+
+/* Make the level identity visible across the full learning card. */
+body[data-level="1"]{--level-card:linear-gradient(145deg,#e4f7ee,#eef8ff 62%,#fff4d9)}
+body[data-level="2"]{--level-card:linear-gradient(145deg,#e1f2ff,#edf0ff 62%,#f4eaff)}
+body[data-level="3"]{--level-card:linear-gradient(145deg,#ebe5ff,#f6e9ff 62%,#ffe9f1)}
+body[data-level="4"]{--level-card:linear-gradient(145deg,#ffeadc,#fff2d5 62%,#ffe4e6)}
+body[data-level="5"]{--level-card:linear-gradient(145deg,#dff2e5,#e0f4f1 62%,#edf1d8)}
+body[data-level] .study-card,
+body[data-level] .study-card.cover,
+body[data-level] .study-card.finish{background:var(--level-card)}
+.card-stage{touch-action:pan-y}
+.card-arrow{direction:ltr;unicode-bidi:isolate}
