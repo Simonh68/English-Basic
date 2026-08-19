@@ -54,7 +54,7 @@ function setupSelectors(){
  modeNav.onclick=e=>{const b=e.target.closest('[data-mode]');if(b)setMode(b.dataset.mode)};
 }
 function setMode(next){stopSpeech();mode=next;setURL();document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));$('#'+mode+'Panel').classList.add('active');renderMode()}
-function renderAll(){stopSpeech();setURL();levelSelect.value=level;lessonSelect.value=lesson;const lev=course.levels[level-1],u=current();document.title=`רמה ${level} · שיעור ${lesson} – Basic English Reading`;$('#lessonHeading').textContent=`רמה ${level} · שיעור ${lesson}`;$('#lessonFocus').textContent=`${lev.name} — ${u.focus}`;updateProgress();setMode(mode)}
+function renderAll(){stopSpeech();setURL();document.body.dataset.level=level;levelSelect.value=level;lessonSelect.value=lesson;const lev=course.levels[level-1],u=current();document.title=`רמה ${level} · שיעור ${lesson} – Basic English Reading`;$('#lessonHeading').textContent=`רמה ${level} · שיעור ${lesson}`;$('#lessonFocus').textContent=`${lev.name} — ${u.focus}`;updateProgress();setMode(mode)}
 function lessonMove(delta){let l=level,u=lesson+delta;if(u>10){if(l<5){l++;u=1}else u=10}if(u<1){if(l>1){l--;u=10}else u=1}level=l;lesson=u;cardIndex=0;renderAll()}
 
 function renderMode(){
