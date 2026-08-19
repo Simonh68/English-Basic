@@ -69,10 +69,15 @@ function renderCards(){
   ...u.words.map(([w,h])=>`<article class="study-card"><div class="word" lang="en">${esc(w)}</div><div class="translation">${esc(h)}</div><div class="letters" aria-label="${esc(w)}">${[...w].map(x=>`<span class="letter">${esc(x.toUpperCase())}</span>`).join('')}</div><div class="card-status" role="status"></div></article>`),
   `<article class="study-card finish"><span class="eyebrow">הכרטיסיות הושלמו</span><h2>מצוין</h2><p>אפשר להמשיך לתרגול, לחזור על הכרטיסיות, או לעבור ישירות לשיעור הבא.</p><div class="cover-actions"><button class="secondary" data-card-reset>חזרה על הכרטיסיות</button><button class="primary" data-mode-jump="listen">מעבר לתרגול</button><button class="secondary" data-lesson="1">השיעור הבא</button></div></article>`
  ];
- panel.innerHTML=`<div class="card-stage"><div class="card-track">${cards.join('')}</div><button class="card-arrow card-prev" aria-label="הכרטיס הקודם">‹</button><button class="card-arrow card-next" aria-label="הכרטיס הבא">›</button><div class="card-dots">${cards.map((_,i)=>`<button class="card-dot" data-card="${i}" aria-label="כרטיס ${i+1}"></button>`).join('')}</div></div>`;
+ panel.innerHTML=`<div class="card-stage"><div class="card-track">${cards.join('')}</div><button class="card-arrow card-prev" aria-label="הכרטיס הקודם">&#x2039;</button><button class="card-arrow card-next" aria-label="הכרטיס הבא">&#x203A;</button><div class="card-dots">${cards.map((_,i)=>`<button class="card-dot" data-card="${i}" aria-label="כרטיס ${i+1}"></button>`).join('')}</div></div>`;
  const stage=panel.querySelector('.card-stage');
- stage.addEventListener('pointerdown',e=>touchX=e.clientX);
- stage.addEventListener('pointerup',e=>{if(touchX===null)return;const d=e.clientX-touchX;touchX=null;if(Math.abs(d)>45)goCard(cardIndex+(d<0?1:-1))});
+ let swipeX=null,swipeY=null;
+ const finishSwipe=(x,y)=>{if(swipeX===null)return;const dx=x-swipeX,dy=y-swipeY;swipeX=swipeY=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2)goCard(cardIndex+(dx<0?1:-1))};
+ stage.addEventListener('touchstart',e=>{const t=e.changedTouches[0];swipeX=t.clientX;swipeY=t.clientY},{passive:true});
+ stage.addEventListener('touchend',e=>{const t=e.changedTouches[0];finishSwipe(t.clientX,t.clientY)},{passive:true});
+ stage.addEventListener('touchcancel',()=>{swipeX=swipeY=null},{passive:true});
+ stage.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){swipeX=e.clientX;swipeY=e.clientY}});
+ stage.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')finishSwipe(e.clientX,e.clientY)});
  panel.querySelector('.card-prev').onclick=()=>goCard(cardIndex-1);
  panel.querySelector('.card-next').onclick=()=>goCard(cardIndex+1);
  panel.onclick=e=>{const dot=e.target.closest('[data-card]'),move=e.target.closest('[data-lesson]'),jump=e.target.closest('[data-mode-jump]');if(dot)goCard(Number(dot.dataset.card));if(move)lessonMove(Number(move.dataset.lesson));if(jump)setMode(jump.dataset.mode);if(e.target.closest('[data-card-start]'))goCard(1);if(e.target.closest('[data-card-reset]'))goCard(0)};
