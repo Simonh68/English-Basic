@@ -26,14 +26,18 @@
     grid.innerHTML = course.levels.map((level, index) => {
       const progress = levelProgress(level.id);
       const status = progress.complete ? `${progress.percent}% הושלמו` : 'אפשר להתחיל כאן';
-      return `<a class="level-card level-tone-${level.id}" href="lesson.html?level=${level.id}&amp;lesson=1&amp;mode=cards" aria-label="רמה ${level.id}: ${level.name}. ${status}">
-        <div class="level-card-top"><span class="level-number">0${level.id}</span><span class="level-status">${status}</span></div>
-        <span class="level-label">${levelLabels[index]}</span>
-        <h3>${level.name}</h3>
-        <p>${level.subtitle}</p>
-        <div class="level-progress" role="progressbar" aria-label="התקדמות ברמה ${level.id}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
-        <span class="level-go">10 שיעורים <span aria-hidden="true">←</span></span>
-      </a>`;
+      const gameLink = `<a class="level-game-link" href="${window.ENGLISH_BASIC_WORDS.makeGameHref(level.id)}" aria-label="משחק שמיעה וקריאה לרמה ${level.id}"><span aria-hidden="true">🎧</span> משחק תרגול לרמה <span>${level.id}</span> <span aria-hidden="true">←</span></a>`;
+      return `<article class="level-card level-tone-${level.id}">
+        <a class="level-card-main" href="lesson.html?level=${level.id}&amp;lesson=1&amp;mode=cards" aria-label="רמה ${level.id}: ${level.name}. ${status}">
+          <div class="level-card-top"><span class="level-number">0${level.id}</span><span class="level-status">${status}</span></div>
+          <span class="level-label">${levelLabels[index]}</span>
+          <h3>${level.name}</h3>
+          <p>${level.subtitle}</p>
+          <div class="level-progress" role="progressbar" aria-label="התקדמות ברמה ${level.id}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
+          <span class="level-go">10 שיעורים <span aria-hidden="true">←</span></span>
+        </a>
+        ${gameLink}
+      </article>`;
     }).join('');
   }
 

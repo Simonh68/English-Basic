@@ -1,25 +1,5 @@
 (()=>{
 const course=window.ENGLISH_BASIC_COURSE,progressApi=window.EBR_PROGRESS;
-// Level 5 revisits difficult spellings inside longer, fluent-reading words.
-course.levels[4].lessons[7]={
- focus:'TH ו־OUGH במילים ארוכות',
- words:[
-  ['although','אף על פי ש'],['throughout','לאורך כל'],['thoughtful','מתחשב'],
-  ['thoroughly','ביסודיות'],['something','משהו'],['another','נוסף'],
-  ['together','ביחד'],['without','בלי'],['understand','להבין'],['important','חשוב']
- ],
- transfer:[
-  ['anything','כל דבר'],['nothing','שום דבר'],['somewhere','איפשהו'],
-  ['grandmother','סבתא'],['underground','מתחת לאדמה']
- ],
- sentences:[
-  'Although it was difficult, we worked together.',
-  'Read the important instructions thoroughly.',
-  'She was thoughtful throughout the lesson.',
-  'You cannot understand the story without reading it.'
- ],
- passage:'Although the task looked difficult, we worked together throughout the lesson. We read every important word thoroughly. Then we understood something new without asking for help.'
-};
 const modes=[
  ['cards','כרטיסיות'],['listen','שמיעה'],['read','קריאה'],['transfer','מילים חדשות'],
  ['sentences','משפטים'],['text','טקסט'],['check','בדיקת שליטה']
@@ -96,7 +76,7 @@ function renderCards(){
  const cards=[
   `<article class="study-card cover"><span class="eyebrow">רמה ${level} · שיעור ${lesson}</span><h2>${esc(u.focus)}</h2><p>עשר מילים לתרגול קריאה ואיות. אפשר לעבור בכל עת לשיעור או לרמה אחרים.</p><div class="cover-actions cover-actions--lesson"><button class="primary" data-card-start>מתחילים בכרטיסיות</button><button class="secondary" data-lesson="-1">השיעור הקודם</button><button class="secondary" data-lesson="1">השיעור הבא</button></div></article>`,
   ...u.words.map(([w,h])=>`<article class="study-card"><div class="word" lang="en">${esc(w)}</div><div class="translation">${esc(h)}</div><div class="letters" aria-label="${esc(w)}">${[...w].map(x=>`<span class="letter">${esc(x.toUpperCase())}</span>`).join('')}</div><div class="card-status" role="status"></div></article>`),
-  `<article class="study-card finish"><span class="eyebrow">הכרטיסיות הושלמו</span><h2>מצוין</h2><p>אפשר להמשיך לתרגול, לחזור על הכרטיסיות, או לעבור ישירות לשיעור הבא.</p><div class="cover-actions cover-actions--lesson"><button class="primary" type="button" data-mode-jump="listen">לתרגול שמיעה</button><button class="secondary" type="button" data-card-reset>חזרה על הכרטיסיות</button><button class="secondary" type="button" data-lesson="1">השיעור הבא</button></div></article>`
+  `<article class="study-card finish"><span class="eyebrow">הכרטיסיות הושלמו</span><h2>מצוין</h2><p>אפשר להמשיך לתרגול, לחזור על הכרטיסיות, או לנסות משחק קצר על אותן מילים ודפוסים.</p><div class="cover-actions cover-actions--lesson"><button class="primary" type="button" data-mode-jump="listen">לתרגול שמיעה</button><button class="secondary" type="button" data-game-mode>🎧 משחק חיזוק לרמה ${level}</button><button class="secondary" type="button" data-card-reset>חזרה על הכרטיסיות</button><button class="secondary" type="button" data-lesson="1">השיעור הבא</button></div></article>`
  ];
  panel.innerHTML=`<div class="card-stage"><div class="card-track">${cards.join('')}</div><button class="card-arrow card-prev" aria-label="הכרטיס הקודם">&#x2039;</button><button class="card-arrow card-next" aria-label="הכרטיס הבא">&#x203A;</button><div class="card-dots">${cards.map((_,i)=>`<button class="card-dot" data-card="${i}" aria-label="כרטיס ${i+1}"></button>`).join('')}</div><div class="card-position"><span class="card-count" aria-live="polite"></span><span class="card-progress" aria-hidden="true"><span></span></span></div></div>`;
  const stage=panel.querySelector('.card-stage');
@@ -109,7 +89,7 @@ function renderCards(){
  stage.addEventListener('pointerup',e=>{if(e.pointerType==='mouse')finishSwipe(e.clientX,e.clientY)});
  panel.querySelector('.card-prev').onclick=()=>goCard(cardIndex-1);
  panel.querySelector('.card-next').onclick=()=>goCard(cardIndex+1);
- panel.onclick=e=>{const dot=e.target.closest('[data-card]'),move=e.target.closest('[data-lesson]'),jump=e.target.closest('[data-mode-jump]');if(dot)goCard(Number(dot.dataset.card));if(move)lessonMove(Number(move.dataset.lesson));if(jump)setMode(jump.dataset.mode);if(e.target.closest('[data-card-start]'))goCard(1);if(e.target.closest('[data-card-reset]'))goCard(0)};
+ panel.onclick=e=>{const dot=e.target.closest('[data-card]'),move=e.target.closest('[data-lesson]'),jump=e.target.closest('[data-mode-jump]');if(dot)goCard(Number(dot.dataset.card));if(move)lessonMove(Number(move.dataset.lesson));if(jump)setMode(jump.dataset.mode);if(e.target.closest('[data-game-mode]'))location.href=window.ENGLISH_BASIC_WORDS.makeGameHref(level,lesson);if(e.target.closest('[data-card-start]'))goCard(1);if(e.target.closest('[data-card-reset]'))goCard(0)};
  goCard(cardIndex,false);
 }
 function goCard(i,read=true){

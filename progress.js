@@ -23,6 +23,10 @@
       activeDays: [],
       completedStages: 0,
       gameCorrect: 0,
+      gameSessions: 0,
+      gameRounds: 0,
+      gameLevelUps: 0,
+      gameLevelDowns: 0,
       bestGameScore: 0,
       lastLocation: null,
       daily: {},
@@ -82,9 +86,15 @@
   function ensureDaily(profile) {
     const today = dateKey();
     if (!profile.daily[today]) profile.daily[today] = { activities: 0, gameCorrect: 0, textReads: 0 };
+    const daily = profile.daily[today];
+    daily.activities = Number(daily.activities) || 0;
+    daily.gameCorrect = Number(daily.gameCorrect) || 0;
+    daily.textReads = Number(daily.textReads) || 0;
+    daily.gameSessions = Number(daily.gameSessions) || 0;
+    daily.gameRounds = Number(daily.gameRounds) || 0;
     const keys = Object.keys(profile.daily).sort();
     keys.slice(0, Math.max(0, keys.length - 14)).forEach(key => delete profile.daily[key]);
-    return profile.daily[today];
+    return daily;
   }
 
   function touch(profile) {
@@ -119,22 +129,35 @@
     return write(profile, { xpGained: gained, activity: stage });
   }
 
-  function recordGame(correct, points = 0) {
+  function startGameSession(detail = {}) {
     const profile = getProfile();
     touch(profile);
     const daily = ensureDaily(profile);
+    profile.gameSessions += 1;
+    daily.gameSessions += 1;
+    return write(profile, { activity: 'game_session', ...detail });
+  }
+
+  function recordGame(correct, points = 0, detail = {}) {
+    const profile = getProfile();
+    touch(profile);
+    const daily = ensureDaily(profile);
+    profile.gameRounds += 1;
+    daily.gameRounds += 1;
     if (correct) {
       daily.gameCorrect += 1;
       profile.gameCorrect += 1;
       profile.xp += 4;
     }
+    if (detail.levelUp) profile.gameLevelUps += 1;
+    if (detail.levelDown) profile.gameLevelDowns += 1;
     profile.bestGameScore = Math.max(profile.bestGameScore, Number(points) || 0);
-    return write(profile, { xpGained: correct ? 4 : 0, activity: 'game' });
+    return write(profile, { xpGained: correct ? 4 : 0, activity: 'game', ...detail });
   }
 
   function getToday(profile = getProfile()) {
-    return profile.daily[dateKey()] || { activities: 0, gameCorrect: 0, textReads: 0 };
+    return profile.daily[dateKey()] || { activities: 0, gameCorrect: 0, textReads: 0, gameSessions: 0, gameRounds: 0 };
   }
 
-  window.EBR_PROGRESS = { STAGES, dateKey, getProfile, getToday, setLastLocation, recordPractice, recordGame };
+  window.EBR_PROGRESS = { STAGES, dateKey, getProfile, getToday, setLastLocation, recordPractice, startGameSession, recordGame };
 })();

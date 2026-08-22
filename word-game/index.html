@@ -865,6 +865,13 @@
       text-align: center;
       font: 700 clamp(.98rem, 3.5vw, 1.14rem)/1.6 Arial, sans-serif;
     }
+    .game-context {
+      margin: -5px 0 0;
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 800;
+      text-align: center;
+    }
     .game-start-details { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
     .game-start-details span {
       padding: 7px 11px;
@@ -947,7 +954,8 @@
       <p class="game-start-kicker">אתגר קריאה ושמיעה · כ־3 דקות</p>
       <h1 class="game-start-title" lang="en" dir="ltr">Listen &amp; Find</h1>
       <p class="game-start-copy">שומעים מילה באנגלית ובוחרים אותה. מתחילים בשלוש אפשרויות ומתקדמים עד שתים־עשרה.</p>
-      <div class="game-start-details" aria-label="כללי המשחק"><span>3 חיים</span><span>נקודות על הצלחה</span><span>180 מילים</span></div>
+      <p class="game-context" id="gameContext"></p>
+      <div class="game-start-details" aria-label="כללי המשחק"><span>3 חיים</span><span>נקודות על הצלחה</span><span id="gamePoolDetail">מילים מהרמה</span></div>
       <button class="start-button" id="startButton" type="button">מתחילים <span aria-hidden="true">◀</span></button>
       <a class="game-home-link" href="../">חזרה למסלול הלמידה</a>
     </div>
@@ -958,221 +966,30 @@
   <div class="retry-symbol" id="retrySymbol" aria-hidden="true">↻</div>
   <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
 
-  <script src="../progress.js?v=1"></script>
+  <script src="../progress.js?v=2"></script>
+  <script src="../curriculum-data.js?v=2"></script>
+  <script src="../word-data.js?v=2"></script>
   <script>
     const LEVEL_COUNTS = [3, 6, 9, 12];
     const CARD_COLORS = ["#fff0a8", "#c9f4df", "#cfe7ff", "#f8d2e7", "#e5d7ff", "#ffd7ba", "#d7f3f5", "#f5e6b8", "#dce7ff"];
     const CARD_BACK_SYMBOLS = ["★", "A", "B", "C", "✦", "a", "b", "c", "♪"];
 
-    // A teacher-built phonics sequence: short vowels, blends and digraphs,
-    // then long vowels, vowel teams, r-controlled patterns and two-syllable words.
-    const LEARNING_PATH = [
-      "short-a", "short-e", "short-i", "short-o", "short-u",
-      "l-blends", "r-blends", "s-blends", "digraph-sh", "digraph-ch", "digraph-th", "endings",
-      "silent-a", "silent-i", "silent-ou", "ai-ay", "ee-ea", "oa-ow", "r-diphthong", "two-syllable"
-    ];
-
-    const WORDS = [
-      { w: "cat", emoji: "🐱", tier: 0, skill: "short-a" },
-      { w: "hat", emoji: "🎩", tier: 0, skill: "short-a" },
-      { w: "bat", emoji: "🦇", tier: 0, skill: "short-a" },
-      { w: "map", emoji: "🗺️", tier: 0, skill: "short-a" },
-      { w: "bag", emoji: "🎒", tier: 0, skill: "short-a" },
-      { w: "jam", emoji: "🍓🫙", tier: 0, skill: "short-a" },
-      { w: "van", emoji: "🚐", tier: 0, skill: "short-a" },
-      { w: "cap", emoji: "🧢", tier: 0, skill: "short-a" },
-      { w: "fan", emoji: "🪭", tier: 0, skill: "short-a" },
-      { w: "man", emoji: "👨", tier: 0, skill: "short-a" },
-      { w: "rat", emoji: "🐀", tier: 0, skill: "short-a" },
-      { w: "pan", emoji: "🍳", tier: 0, skill: "short-a" },
-
-      { w: "bed", emoji: "🛏️", tier: 0, skill: "short-e" },
-      { w: "red", emoji: "🔴", tier: 0, skill: "short-e" },
-      { w: "pen", emoji: "🖊️", tier: 0, skill: "short-e" },
-      { w: "hen", emoji: "🐔", tier: 0, skill: "short-e" },
-      { w: "leg", emoji: "🦵", tier: 0, skill: "short-e" },
-      { w: "net", emoji: "🥅", tier: 0, skill: "short-e" },
-      { w: "ten", emoji: "🔟", tier: 0, skill: "short-e" },
-      { w: "wet", emoji: "💦", tier: 0, skill: "short-e" },
-      { w: "pet", emoji: "🐕", tier: 0, skill: "short-e" },
-      { w: "jet", emoji: "✈️", tier: 0, skill: "short-e" },
-      { w: "web", emoji: "🕸️", tier: 0, skill: "short-e" },
-      { w: "bell", emoji: "🔔", tier: 0, skill: "short-e" },
-
-      { w: "pig", emoji: "🐷", tier: 0, skill: "short-i" },
-      { w: "big", emoji: "🐘", tier: 0, skill: "short-i" },
-      { w: "sit", emoji: "🪑", tier: 0, skill: "short-i" },
-      { w: "six", emoji: "6️⃣", tier: 0, skill: "short-i" },
-      { w: "fin", emoji: "🐟", tier: 0, skill: "short-i" },
-      { w: "pin", emoji: "📌", tier: 0, skill: "short-i" },
-      { w: "lip", emoji: "👄", tier: 0, skill: "short-i" },
-      { w: "kid", emoji: "🧒", tier: 0, skill: "short-i" },
-      { w: "win", emoji: "🏆", tier: 0, skill: "short-i" },
-      { w: "mix", emoji: "🥣", tier: 0, skill: "short-i" },
-      { w: "zip", emoji: "🤐", tier: 0, skill: "short-i" },
-      { w: "hill", emoji: "⛰️", tier: 0, skill: "short-i" },
-
-      { w: "dog", emoji: "🐶", tier: 0, skill: "short-o" },
-      { w: "log", emoji: "🪵", tier: 0, skill: "short-o" },
-      { w: "box", emoji: "📦", tier: 0, skill: "short-o" },
-      { w: "fox", emoji: "🦊", tier: 0, skill: "short-o" },
-      { w: "hot", emoji: "🔥", tier: 0, skill: "short-o" },
-      { w: "pot", emoji: "🍲", tier: 0, skill: "short-o" },
-      { w: "top", emoji: "🔝", tier: 0, skill: "short-o" },
-      { w: "mop", emoji: "🧹", tier: 0, skill: "short-o" },
-      { w: "hop", emoji: "🦶⬆️", tier: 0, skill: "short-o" },
-      { w: "cot", emoji: "🛏️", tier: 0, skill: "short-o" },
-      { w: "doll", emoji: "🪆", tier: 0, skill: "short-o" },
-      { w: "sock", emoji: "🧦", tier: 0, skill: "short-o" },
-
-      { w: "sun", emoji: "☀️", tier: 0, skill: "short-u" },
-      { w: "bus", emoji: "🚌", tier: 0, skill: "short-u" },
-      { w: "cup", emoji: "🥤", tier: 0, skill: "short-u" },
-      { w: "run", emoji: "🏃", tier: 0, skill: "short-u" },
-      { w: "bug", emoji: "🐛", tier: 0, skill: "short-u" },
-      { w: "rug", emoji: "🧶", tier: 0, skill: "short-u" },
-      { w: "nut", emoji: "🌰", tier: 0, skill: "short-u" },
-      { w: "mud", emoji: "🟫", tier: 0, skill: "short-u" },
-      { w: "hug", emoji: "🤗", tier: 0, skill: "short-u" },
-      { w: "cut", emoji: "✂️", tier: 0, skill: "short-u" },
-      { w: "duck", emoji: "🦆", tier: 0, skill: "short-u" },
-      { w: "bun", emoji: "🥯", tier: 0, skill: "short-u" },
-
-      { w: "flag", emoji: "🚩", tier: 1, skill: "l-blends" },
-      { w: "clap", emoji: "👏", tier: 1, skill: "l-blends" },
-      { w: "glass", emoji: "🥛", tier: 1, skill: "l-blends" },
-      { w: "plant", emoji: "🌱", tier: 1, skill: "l-blends" },
-      { w: "blue", emoji: "🔵", tier: 1, skill: "l-blends" },
-      { w: "black", emoji: "⚫", tier: 1, skill: "l-blends" },
-      { w: "clock", emoji: "🕒", tier: 1, skill: "l-blends" },
-      { w: "cloud", emoji: "☁️", tier: 1, skill: "l-blends" },
-      { w: "flower", emoji: "🌸", tier: 1, skill: "l-blends" },
-      { w: "frog", emoji: "🐸", tier: 1, skill: "l-blends" },
-
-      { w: "crab", emoji: "🦀", tier: 1, skill: "r-blends" },
-      { w: "drum", emoji: "🥁", tier: 1, skill: "r-blends" },
-      { w: "branch", emoji: "🌿", tier: 1, skill: "r-blends" },
-      { w: "brick", emoji: "🧱", tier: 1, skill: "r-blends" },
-      { w: "bread", emoji: "🍞", tier: 1, skill: "r-blends" },
-      { w: "green", emoji: "🟢", tier: 1, skill: "r-blends" },
-      { w: "grape", emoji: "🍇", tier: 1, skill: "r-blends" },
-      { w: "tree", emoji: "🌳", tier: 1, skill: "r-blends" },
-      { w: "train", emoji: "🚆", tier: 1, skill: "r-blends" },
-      { w: "truck", emoji: "🚚", tier: 1, skill: "r-blends" },
-
-      { w: "star", emoji: "⭐", tier: 1, skill: "s-blends" },
-      { w: "stop", emoji: "🛑", tier: 1, skill: "s-blends" },
-      { w: "swim", emoji: "🏊", tier: 1, skill: "s-blends" },
-      { w: "snake", emoji: "🐍", tier: 1, skill: "s-blends" },
-      { w: "snow", emoji: "❄️", tier: 1, skill: "s-blends" },
-      { w: "spoon", emoji: "🥄", tier: 1, skill: "s-blends" },
-      { w: "school", emoji: "🏫", tier: 1, skill: "s-blends" },
-      { w: "skate", emoji: "🛹", tier: 1, skill: "s-blends" },
-      { w: "smile", emoji: "😊", tier: 1, skill: "s-blends" },
-      { w: "spider", emoji: "🕷️", tier: 1, skill: "s-blends" },
-
-      { w: "ship", emoji: "🚢", tier: 1, skill: "digraph-sh" },
-      { w: "shop", emoji: "🛍️", tier: 1, skill: "digraph-sh" },
-      { w: "fish", emoji: "🐟", tier: 1, skill: "digraph-sh" },
-      { w: "shell", emoji: "🐚", tier: 1, skill: "digraph-sh" },
-      { w: "shoe", emoji: "👟", tier: 1, skill: "digraph-sh" },
-      { w: "sheep", emoji: "🐑", tier: 1, skill: "digraph-sh" },
-
-      { w: "chip", emoji: "🍟", tier: 1, skill: "digraph-ch" },
-      { w: "chair", emoji: "🪑", tier: 1, skill: "digraph-ch" },
-      { w: "chick", emoji: "🐥", tier: 1, skill: "digraph-ch" },
-      { w: "cheese", emoji: "🧀", tier: 1, skill: "digraph-ch" },
-      { w: "lunch", emoji: "🥪", tier: 1, skill: "digraph-ch" },
-      { w: "peach", emoji: "🍑", tier: 1, skill: "digraph-ch" },
-
-      { w: "thin", emoji: "📏", tier: 1, skill: "digraph-th" },
-      { w: "bath", emoji: "🛁", tier: 1, skill: "digraph-th" },
-      { w: "moth", emoji: "🦋", tier: 1, skill: "digraph-th" },
-      { w: "three", emoji: "3️⃣", tier: 1, skill: "digraph-th" },
-      { w: "thumb", emoji: "👍", tier: 1, skill: "digraph-th" },
-      { w: "teeth", emoji: "🦷", tier: 1, skill: "digraph-th" },
-
-      { w: "king", emoji: "👑", tier: 1, skill: "endings" },
-      { w: "ring", emoji: "💍", tier: 1, skill: "endings" },
-      { w: "sing", emoji: "🎤", tier: 1, skill: "endings" },
-      { w: "pink", emoji: "🩷", tier: 1, skill: "endings" },
-      { w: "bank", emoji: "🏦", tier: 1, skill: "endings" },
-      { w: "drink", emoji: "🥤", tier: 1, skill: "endings" },
-      { w: "hand", emoji: "✋", tier: 1, skill: "endings" },
-      { w: "lamp", emoji: "🪔", tier: 1, skill: "endings" },
-      { w: "nest", emoji: "🪺", tier: 1, skill: "endings" },
-      { w: "mask", emoji: "😷", tier: 1, skill: "endings" },
-      { w: "gift", emoji: "🎁", tier: 1, skill: "endings" },
-      { w: "milk", emoji: "🥛", tier: 1, skill: "endings" },
-
-      { w: "cake", emoji: "🍰", tier: 2, skill: "silent-a" },
-      { w: "game", emoji: "🎮", tier: 2, skill: "silent-a" },
-      { w: "name", emoji: "🏷️", tier: 2, skill: "silent-a" },
-      { w: "plane", emoji: "✈️", tier: 2, skill: "silent-a" },
-      { w: "plate", emoji: "🍽️", tier: 2, skill: "silent-a" },
-      { w: "lake", emoji: "🏞️", tier: 2, skill: "silent-a" },
-      { w: "gate", emoji: "🚪", tier: 2, skill: "silent-a" },
-      { w: "wave", emoji: "🌊", tier: 2, skill: "silent-a" },
-
-      { w: "bike", emoji: "🚲", tier: 2, skill: "silent-i" },
-      { w: "five", emoji: "5️⃣", tier: 2, skill: "silent-i" },
-      { w: "kite", emoji: "🪁", tier: 2, skill: "silent-i" },
-      { w: "line", emoji: "➖", tier: 2, skill: "silent-i" },
-      { w: "time", emoji: "⏰", tier: 2, skill: "silent-i" },
-      { w: "nine", emoji: "9️⃣", tier: 2, skill: "silent-i" },
-      { w: "rice", emoji: "🍚", tier: 2, skill: "silent-i" },
-      { w: "pipe", emoji: "🚰", tier: 2, skill: "silent-i" },
-
-      { w: "home", emoji: "🏠", tier: 2, skill: "silent-ou" },
-      { w: "nose", emoji: "👃", tier: 2, skill: "silent-ou" },
-      { w: "rope", emoji: "🪢", tier: 2, skill: "silent-ou" },
-      { w: "rose", emoji: "🌹", tier: 2, skill: "silent-ou" },
-      { w: "bone", emoji: "🦴", tier: 2, skill: "silent-ou" },
-      { w: "cone", emoji: "🍦", tier: 2, skill: "silent-ou" },
-      { w: "cube", emoji: "🧊", tier: 2, skill: "silent-ou" },
-      { w: "mule", emoji: "🫏", tier: 2, skill: "silent-ou" },
-
-      { w: "rain", emoji: "🌧️", tier: 2, skill: "ai-ay" },
-      { w: "tail", emoji: "🐕", tier: 2, skill: "ai-ay" },
-      { w: "snail", emoji: "🐌", tier: 2, skill: "ai-ay" },
-      { w: "chain", emoji: "⛓️", tier: 2, skill: "ai-ay" },
-      { w: "mail", emoji: "✉️", tier: 2, skill: "ai-ay" },
-      { w: "day", emoji: "📅", tier: 2, skill: "ai-ay" },
-      { w: "play", emoji: "🛝", tier: 2, skill: "ai-ay" },
-      { w: "paint", emoji: "🎨", tier: 2, skill: "ai-ay" },
-
-      { w: "feet", emoji: "🦶", tier: 2, skill: "ee-ea" },
-      { w: "seed", emoji: "🌱", tier: 2, skill: "ee-ea" },
-      { w: "bee", emoji: "🐝", tier: 2, skill: "ee-ea" },
-      { w: "see", emoji: "👀", tier: 2, skill: "ee-ea" },
-      { w: "leaf", emoji: "🍃", tier: 2, skill: "ee-ea" },
-      { w: "sea", emoji: "🌊", tier: 2, skill: "ee-ea" },
-      { w: "team", emoji: "👥", tier: 2, skill: "ee-ea" },
-      { w: "read", emoji: "📖", tier: 2, skill: "ee-ea" },
-
-      { w: "boat", emoji: "⛵", tier: 2, skill: "oa-ow" },
-      { w: "coat", emoji: "🧥", tier: 2, skill: "oa-ow" },
-      { w: "goat", emoji: "🐐", tier: 2, skill: "oa-ow" },
-      { w: "road", emoji: "🛣️", tier: 2, skill: "oa-ow" },
-      { w: "soap", emoji: "🧼", tier: 2, skill: "oa-ow" },
-      { w: "toast", emoji: "🍞", tier: 2, skill: "oa-ow" },
-      { w: "crow", emoji: "🐦‍⬛", tier: 2, skill: "oa-ow" },
-      { w: "yellow", emoji: "🟡", tier: 2, skill: "oa-ow" },
-
-      { w: "car", emoji: "🚗", tier: 2, skill: "r-diphthong" },
-      { w: "farm", emoji: "🚜", tier: 2, skill: "r-diphthong" },
-      { w: "bird", emoji: "🐦", tier: 2, skill: "r-diphthong" },
-      { w: "girl", emoji: "👧", tier: 2, skill: "r-diphthong" },
-      { w: "horse", emoji: "🐎", tier: 2, skill: "r-diphthong" },
-      { w: "house", emoji: "🏡", tier: 2, skill: "r-diphthong" },
-
-      { w: "apple", emoji: "🍎", tier: 2, skill: "two-syllable" },
-      { w: "baby", emoji: "👶", tier: 2, skill: "two-syllable" },
-      { w: "water", emoji: "💧", tier: 2, skill: "two-syllable" },
-      { w: "rabbit", emoji: "🐇", tier: 2, skill: "two-syllable" },
-      { w: "lemon", emoji: "🍋", tier: 2, skill: "two-syllable" },
-      { w: "tiger", emoji: "🐯", tier: 2, skill: "two-syllable" }
-    ];
+    // The shared course data supplies the level words and ten lesson skills.
+    const gameParams = new URLSearchParams(location.search);
+    const gameCourseLevel = Math.min(5, Math.max(1, Number(gameParams.get("courseLevel")) || 0)) || 1;
+    const gameLesson = Math.min(10, Math.max(1, Number(gameParams.get("lesson")) || 0)) || null;
+    const WORDS = window.ENGLISH_BASIC_WORDS.getGameWords({ courseLevel: gameCourseLevel, lesson: gameLesson });
+    const LEARNING_PATH = window.ENGLISH_BASIC_WORDS.getSkillPath(gameCourseLevel);
+    const gameLocation = window.ENGLISH_BASIC_WORDS.makeGameHref(gameCourseLevel, gameLesson);
+    const courseLevelData = gameCourseLevel ? window.ENGLISH_BASIC_COURSE?.levels?.[gameCourseLevel - 1] : null;
+    const gameContext = document.querySelector("#gameContext");
+    const gamePoolDetail = document.querySelector("#gamePoolDetail");
+    if (gameContext) {
+      gameContext.textContent = gameCourseLevel
+        ? `משחק חיזוק לרמה ${gameCourseLevel} · ${courseLevelData?.name || ""}${gameLesson ? ` · שיעור ${gameLesson}` : ""}`
+        : "משחק חיזוק לכל מסלול הקריאה";
+    }
+    if (gamePoolDetail) gamePoolDetail.textContent = `${WORDS.length} מילים מהרמה`;
 
     const progressApi = window.EBR_PROGRESS;
     const choicesBox = document.querySelector("#choices");
@@ -1207,11 +1024,34 @@
     let inputLocked = true;
     let soundEffects = true;
     let audioContext = null;
-    let focusSkillIndex = 0;
+    let focusSkillIndex = gameLesson ? gameLesson - 1 : 0;
     let skillSuccesses = 0;
+    let gameStartedAt = 0;
+    let gameRounds = 0;
+    let maxLevelReached = 0;
     const RECENT_ROUND_WINDOW = 3;
     const LEVEL_BASE_POINTS = [10, 12, 15, 18];
     const stats = new Map(WORDS.map(word => [word.w, { seen: 0, correct: 0, mistakes: 0 }]));
+
+    function trackGame(event, detail = {}) {
+      window.EFNAnalytics?.send?.(event, {
+        courseLevel: gameCourseLevel || "all",
+        lesson: gameLesson || "all",
+        optionCount: LEVEL_COUNTS[level],
+        ...detail
+      });
+    }
+
+    function recordGameAnswer(correct, detail = {}) {
+      gameRounds += 1;
+      progressApi.recordGame(correct, score, detail);
+      trackGame("game_answer", {
+        outcome: correct ? "correct" : "incorrect",
+        skill: target?.skill || "",
+        wrongAttempts,
+        ...detail
+      });
+    }
 
     const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
     const shuffle = list => {
@@ -1664,7 +1504,6 @@
       if (word.w !== target.w) {
         wrongAttempts += 1;
         const pointsDeducted = deductPoints();
-        progressApi.recordGame(false, score);
         lives = Math.max(0, lives - 1);
         stats.get(target.w).mistakes += 1;
         cleanStreak = 0;
@@ -1685,6 +1524,8 @@
         if (lives === 0) {
           const from = level;
           level = Math.max(0, level - 1);
+          recordGameAnswer(false, { levelDown: from !== level });
+          trackGame("game_level_down", { from, to: level });
           renderLevel();
           playLivesOverSound();
           showLevelDown(from, level);
@@ -1695,6 +1536,7 @@
           return;
         }
 
+        recordGameAnswer(false, { levelDown: false });
         liveStatus.textContent = `${pointsDeducted} points lost. ${lives} ${lives === 1 ? "life" : "lives"} left. Try again.`;
         setChoicesEnabled(true);
         readTarget(1);
@@ -1703,12 +1545,20 @@
 
       const cleanAnswer = wrongAttempts === 0;
       const pointsAwarded = awardPoints();
-      progressApi.recordGame(true, score);
       stats.get(target.w).correct += 1;
       button.classList.add("correct");
       const skillAdvanced = updateLearningProgress(cleanAnswer);
       const levelTransition = updateAdaptiveLevel(cleanAnswer);
+      recordGameAnswer(true, {
+        clean: cleanAnswer,
+        levelUp: levelTransition.levelUp,
+        levelDown: false
+      });
       if (levelTransition.levelUp) resetLives();
+      if (levelTransition.levelUp) {
+        maxLevelReached = Math.max(maxLevelReached, levelTransition.to);
+        trackGame("game_level_up", { from: levelTransition.from, to: levelTransition.to, skill: target.skill });
+      }
       renderLevel();
       if (levelTransition.levelUp) playLevelUpMelody();
       else playSuccessSound(skillAdvanced);
@@ -1736,14 +1586,26 @@
       ensureAudio();
       speechSynthesis.getVoices();
       score = 0;
+      gameRounds = 0;
+      gameStartedAt = Date.now();
+      maxLevelReached = level;
       renderScore();
       resetLives();
-      progressApi.setLastLocation({ href: "word-game/", label: "אתגר Listen & Find" });
+      progressApi.startGameSession?.({ courseLevel: gameCourseLevel || "all", lesson: gameLesson || "all" });
+      progressApi.setLastLocation({ href: gameLocation, label: gameCourseLevel ? `משחק לרמה ${gameCourseLevel}` : "אתגר Listen & Find" });
+      trackGame("game_start", { poolSize: WORDS.length });
       startScreen.classList.add("hidden");
       newRound();
     }, { once: true });
 
-    window.addEventListener("beforeunload", () => speechSynthesis.cancel());
+    window.addEventListener("beforeunload", () => {
+      if (gameStartedAt) trackGame("game_session_end", {
+        rounds: gameRounds,
+        activeMs: Math.min(900000, Math.max(0, Date.now() - gameStartedAt)),
+        maxLevel: maxLevelReached
+      });
+      speechSynthesis.cancel();
+    });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         roundToken += 1;
