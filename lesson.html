@@ -7,17 +7,23 @@
   <title>English Basic – שיעור</title>
   <meta name="description" content="תרגול קריאה ואיות באנגלית לפי רמות">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="app.css?v=5">
+  <link rel="stylesheet" href="app.css?v=6">
 </head>
 <body>
   <a class="skip-link" href="#lessonMain">דלגו לתרגול</a>
   <header class="site-header">
-    <a class="home-icon" href="index.html" aria-label="דף הבית">⌂</a>
+    <a class="home-icon" href="index.html" aria-label="דף הבית">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5H15v-6H9v6H3.5a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    </a>
     <a class="brand" href="index.html">English Basic</a>
-    <div class="lesson-profile" id="profileStats" aria-label="נקודות ורצף תרגול">0 XP · 0 ימים</div>
+    <div class="lesson-profile" id="profileStats" aria-label="0 נקודות, 0 ימי רצף">
+      <span id="profileXP" dir="ltr">0 XP</span><span aria-hidden="true">·</span><span id="profileStreak">0 ימים</span>
+    </div>
     <div class="selectors">
-      <label>רמה<select id="levelSelect" aria-label="בחירת רמה"></select></label>
-      <label>שיעור<select id="lessonSelect" aria-label="בחירת שיעור"></select></label>
+      <label><span>רמה</span><select id="levelSelect" aria-label="בחירת רמה"></select></label>
+      <label><span>שיעור</span><select id="lessonSelect" aria-label="בחירת שיעור"></select></label>
     </div>
   </header>
   <nav class="mode-nav" id="modeNav" aria-label="מצבי תרגול"></nav>
@@ -39,6 +45,6 @@
   <div class="xp-live" id="xpLive" role="status" aria-live="polite"></div>
   <script src="curriculum-data.js?v=1"></script>
   <script src="progress.js?v=1"></script>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

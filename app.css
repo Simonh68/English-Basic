@@ -597,3 +597,157 @@ body[data-level] .study-card.finish{background:var(--level-card)}
   .track,.card-track,.word,.letter,.study-card,.xp-live{transition:none!important}
   .finish-emoji{animation:none!important}
 }
+
+/* Mobile lesson redesign: compact chrome, stable RTL layout, and uncluttered card navigation. */
+.home-icon svg{
+  width:24px;
+  height:24px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.lesson-title>div{min-width:0}
+.lesson-title h1{overflow-wrap:anywhere}
+.lesson-title p{line-height:1.45}
+.cover-actions--lesson{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  width:min(520px,100%);
+}
+.cover-actions--lesson .primary{grid-column:1/-1}
+.card-stage[data-position="cover"] .card-arrow,
+.card-stage[data-position="finish"] .card-arrow{display:none}
+.card-position{display:none}
+
+@media(max-width:700px){
+  .site-header{
+    min-height:0;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:8px max(12px,env(safe-area-inset-right)) 9px max(12px,env(safe-area-inset-left));
+  }
+  .home-icon{width:38px;height:38px;border-radius:11px;font-size:0}
+  .home-icon svg{width:22px;height:22px}
+  .brand{font-size:1rem}
+  .selectors{order:3;width:100%;gap:8px}
+  .selectors label{flex:1;min-width:0}
+  .selectors label>span{
+    position:absolute;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+    clip-path:inset(50%);
+  }
+  .selectors select{
+    width:100%;
+    min-width:0;
+    min-height:40px;
+    padding-block:7px;
+    border:0;
+    border-radius:11px;
+  }
+  .mode-nav{
+    top:103px;
+    gap:5px;
+    padding:7px max(10px,env(safe-area-inset-right));
+    scroll-snap-type:x proximity;
+    box-shadow:0 5px 15px #14213d0c;
+  }
+  .mode-btn{
+    min-height:38px;
+    padding:8px 11px;
+    border-radius:11px;
+    scroll-snap-align:center;
+    font-size:.82rem;
+  }
+  .mode-btn.active{box-shadow:none}
+  .lesson-shell{padding:10px 10px max(18px,env(safe-area-inset-bottom))}
+  .lesson-title{
+    align-items:start;
+    flex-direction:column;
+    gap:8px;
+    margin:4px 2px 11px;
+  }
+  .lesson-title h1{font-size:1.45rem;line-height:1.18}
+  .lesson-title p{margin-top:3px;font-size:.92rem}
+  .progress-chip{padding:5px 10px;font-size:.78rem}
+  .panel{min-height:0;border-radius:19px}
+  .card-stage,.card-track,.study-card{min-height:clamp(430px,calc(100svh - 245px),560px)}
+  .study-card{padding:28px 18px 58px}
+  .study-card.cover,.study-card.finish{justify-content:center}
+  .eyebrow{padding:6px 11px;font-size:.82rem}
+  .cover h2,.finish h2{
+    margin-top:14px;
+    font-size:clamp(2rem,10vw,3rem);
+    line-height:1.25;
+  }
+  .cover p,.finish p{margin:9px 0 0;font-size:1rem;line-height:1.55}
+  .cover-actions{margin-top:18px}
+  .cover-actions--lesson{gap:9px}
+  .cover-actions--lesson .primary{min-height:50px}
+  .cover-actions--lesson .secondary{min-height:43px;padding:9px 8px;font-size:.87rem}
+  .card-arrow{
+    top:50%;
+    bottom:auto;
+    width:40px;
+    height:52px;
+    border-radius:13px;
+    background:#14213dcc;
+    font-size:1.75rem;
+  }
+  .card-prev{left:8px}
+  .card-next{right:8px}
+  .card-dots{display:none}
+  .card-position{
+    position:absolute;
+    z-index:4;
+    right:18px;
+    bottom:14px;
+    left:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    direction:rtl;
+  }
+  .card-count{
+    min-width:64px;
+    color:#506078;
+    font-size:.78rem;
+    font-weight:900;
+    text-align:right;
+  }
+  .card-progress{
+    height:5px;
+    flex:1;
+    overflow:hidden;
+    border-radius:999px;
+    background:#cbd5e3;
+  }
+  .card-progress span{
+    display:block;
+    height:100%;
+    border-radius:inherit;
+    background:var(--blue);
+    transition:width .2s ease;
+  }
+  .task-card{margin-top:17px}
+  .panel-pad{padding:20px 14px}
+}
+
+@media(max-width:380px){
+  .brand{font-size:.92rem}
+  .lesson-profile{padding-inline:8px}
+  .mode-btn{font-size:.78rem}
+  .cover-actions--lesson{grid-template-columns:1fr}
+  .cover-actions--lesson .primary{grid-column:auto}
+}
+
+@media(max-height:700px){
+  .study-card{padding-block:18px 54px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .card-progress span{transition:none!important}
+}
