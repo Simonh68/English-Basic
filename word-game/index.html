@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#6c5ce7">
-  <title>Listen &amp; Find – Basic English Reading</title>
-  <meta name="description" content="A colorful 180-word phonics and word-recognition game for beginning English readers.">
+  <meta name="theme-color" content="#111f42">
+  <title>Listen &amp; Find – English Basic</title>
+  <meta name="description" content="משחק זיהוי שמיעתי מדורג עם 180 מילים לתלמידים שמתחילים לקרוא באנגלית.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Listen &amp; Find – Basic English Reading">
-  <meta property="og:description" content="Listen, read, and progress through 180 carefully sequenced phonics words.">
-  <meta property="og:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=180">
+  <meta property="og:title" content="Listen &amp; Find – English Basic">
+  <meta property="og:description" content="A focused listening and word-recognition challenge with 180 carefully sequenced words.">
+  <meta property="og:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=181">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Listen and Find – a colorful basic English reading game">
+  <meta property="og:image:alt" content="Listen and Find – an English listening and reading challenge">
   <meta property="og:url" content="https://simonh68.github.io/English-Basic/word-game/">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Listen &amp; Find – Basic English Reading">
-  <meta name="twitter:description" content="Listen, read, and progress through 180 carefully sequenced phonics words.">
-  <meta name="twitter:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=180">
+  <meta name="twitter:title" content="Listen &amp; Find – English Basic">
+  <meta name="twitter:description" content="Hear the word, find it, and progress through 180 carefully sequenced words.">
+  <meta name="twitter:image" content="https://simonh68.github.io/English-Basic/word-game/preview.png?v=181">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
@@ -804,12 +804,109 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
     }
+
+    /* A more mature English Basic skin for grades 6–9. */
+    body {
+      background:
+        radial-gradient(circle at 13% 14%, #62d9cf25 0 7%, transparent 28%),
+        radial-gradient(circle at 88% 86%, #b9f36b20 0 8%, transparent 30%),
+        linear-gradient(145deg, #eef3fa, #e8eef9 52%, #f4f7fb);
+    }
+    body::before { background: #4f72ff; opacity: .12; }
+    body::after { background: #35b9aa; opacity: .1; }
+    .choice {
+      border-color: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 0 color-mix(in srgb, var(--card) 72%, #33415e), 0 10px 22px #24334d22;
+    }
+    .choice-word { color: #14213d; }
+    .choice-emoji { filter: grayscale(.08) drop-shadow(0 3px 3px #26344c22); }
+    .listen-button {
+      background: linear-gradient(145deg, #5c77f0, #3d58c9);
+      box-shadow: 0 8px 0 #293f9b, 0 14px 28px #263d8e3d;
+    }
+    .listen-button:active { box-shadow: 0 3px 0 #293f9b, 0 8px 18px #263d8e31; }
+    .listen-button.speaking::before,.listen-button.speaking::after { border-color: #4f72ff55; }
+    .level-pill.active { background: linear-gradient(135deg, #465fd2, #637cf0); }
+    .start-screen {
+      padding: 18px;
+      background:
+        radial-gradient(circle at 84% 13%, #526fff45 0 8%, transparent 33%),
+        radial-gradient(circle at 15% 82%, #62d9cf30 0 8%, transparent 35%),
+        linear-gradient(145deg, #0d1730, #111f42 58%, #17314f);
+    }
+    .start-card {
+      width: min(520px, 94vw);
+      gap: 17px;
+      padding: clamp(30px, 7vw, 52px);
+      border: 1px solid #ffffff2b;
+      border-radius: 27px;
+      background: #ffffff0e;
+      color: #fff;
+      box-shadow: 0 28px 75px #02081770;
+      backdrop-filter: blur(16px);
+    }
+    .game-start-kicker {
+      margin: 0;
+      color: #62d9cf;
+      font-size: .84rem;
+      font-weight: 700;
+    }
+    .game-start-title {
+      margin: 0;
+      font-size: clamp(2.7rem, 12vw, 5rem);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+    .game-start-copy {
+      max-width: 390px;
+      margin: 0;
+      color: #c7d2e9;
+      text-align: center;
+      font: 700 clamp(.98rem, 3.5vw, 1.14rem)/1.6 Arial, sans-serif;
+    }
+    .game-start-details { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .game-start-details span {
+      padding: 7px 11px;
+      border: 1px solid #ffffff24;
+      border-radius: 999px;
+      background: #ffffff0b;
+      color: #dce5f7;
+      font: 700 .75rem Arial, sans-serif;
+    }
+    .start-button {
+      width: auto;
+      height: auto;
+      min-width: 180px;
+      min-height: 58px;
+      display: inline-flex;
+      gap: 10px;
+      padding: 12px 24px;
+      border: 1px solid #8ba0ff;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #526fff, #3e59ce);
+      box-shadow: 0 9px 24px #03091865;
+      color: #fff;
+      font: 900 1rem Arial, sans-serif;
+      animation: none;
+    }
+    .start-button span { font-size: .78rem; }
+    .game-home-link {
+      color: #acbbd7;
+      font: 700 .78rem Arial, sans-serif;
+      text-underline-offset: 4px;
+    }
+    .home:focus-visible,.sound-toggle:focus-visible,.listen-button:focus-visible,.choice:focus-visible,
+    .start-button:focus-visible,.game-home-link:focus-visible {
+      outline: 3px solid #f4d35e;
+      outline-offset: 4px;
+    }
   </style>
 </head>
 <body>
   <main class="app" aria-label="Listen and find the English word">
     <header class="topbar">
-      <a class="home" href="../" aria-label="Back to English Basic">⌂</a>
+      <a class="home" href="../" aria-label="חזרה לדף הבית של English Basic">⌂</a>
       <div class="levels" id="levels" aria-label="Difficulty level">
         <span class="level-pill active">3</span>
         <span class="level-pill">6</span>
@@ -845,11 +942,14 @@
     <section class="choices" id="choices" data-count="3" aria-label="Choose the word"></section>
   </main>
 
-  <section class="start-screen" id="startScreen">
+  <section class="start-screen" id="startScreen" lang="he" dir="rtl">
     <div class="start-card">
-      <div class="abc" aria-hidden="true"><span>A</span><span>B</span><span>C</span></div>
-      <button class="start-button" id="startButton" type="button" aria-label="Start the listening game">▶</button>
-      <div class="start-decor" aria-hidden="true">👂 ⭐ 🔤</div>
+      <p class="game-start-kicker">אתגר קריאה ושמיעה · כ־3 דקות</p>
+      <h1 class="game-start-title" lang="en" dir="ltr">Listen &amp; Find</h1>
+      <p class="game-start-copy">שומעים מילה באנגלית ובוחרים אותה. מתחילים בשלוש אפשרויות ומתקדמים עד שתים־עשרה.</p>
+      <div class="game-start-details" aria-label="כללי המשחק"><span>3 חיים</span><span>נקודות על הצלחה</span><span>180 מילים</span></div>
+      <button class="start-button" id="startButton" type="button">מתחילים <span aria-hidden="true">◀</span></button>
+      <a class="game-home-link" href="../">חזרה למסלול הלמידה</a>
     </div>
   </section>
 
@@ -858,6 +958,7 @@
   <div class="retry-symbol" id="retrySymbol" aria-hidden="true">↻</div>
   <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
 
+  <script src="../progress.js?v=1"></script>
   <script>
     const LEVEL_COUNTS = [3, 6, 9, 12];
     const CARD_COLORS = ["#fff0a8", "#c9f4df", "#cfe7ff", "#f8d2e7", "#e5d7ff", "#ffd7ba", "#d7f3f5", "#f5e6b8", "#dce7ff"];
@@ -1073,6 +1174,7 @@
       { w: "tiger", emoji: "🐯", tier: 2, skill: "two-syllable" }
     ];
 
+    const progressApi = window.EBR_PROGRESS;
     const choicesBox = document.querySelector("#choices");
     const listenButton = document.querySelector("#listenButton");
     const levelsBox = document.querySelector("#levels");
@@ -1562,6 +1664,7 @@
       if (word.w !== target.w) {
         wrongAttempts += 1;
         const pointsDeducted = deductPoints();
+        progressApi.recordGame(false, score);
         lives = Math.max(0, lives - 1);
         stats.get(target.w).mistakes += 1;
         cleanStreak = 0;
@@ -1600,6 +1703,7 @@
 
       const cleanAnswer = wrongAttempts === 0;
       const pointsAwarded = awardPoints();
+      progressApi.recordGame(true, score);
       stats.get(target.w).correct += 1;
       button.classList.add("correct");
       const skillAdvanced = updateLearningProgress(cleanAnswer);
@@ -1634,6 +1738,7 @@
       score = 0;
       renderScore();
       resetLives();
+      progressApi.setLastLocation({ href: "word-game/", label: "אתגר Listen & Find" });
       startScreen.classList.add("hidden");
       newRound();
     }, { once: true });

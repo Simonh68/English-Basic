@@ -1,9 +1,54 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3d8"/><stop offset=".48" stop-color="#edf3ff"/><stop offset="1" stop-color="#e2f8eb"/></linearGradient></defs>
-  <rect width="1200" height="630" rx="42" fill="url(#bg)"/>
-  <circle cx="1040" cy="80" r="190" fill="#e64f91" opacity=".12"/><circle cx="105" cy="560" r="190" fill="#456fd1" opacity=".12"/>
-  <path d="M105 170 175 325 253 165" fill="none" stroke="#e64f91" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><circle cx="278" cy="322" r="17" fill="#e64f91"/>
-  <text x="600" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="82" font-weight="700" fill="#27437f">Basic English Reading</text>
-  <text x="600" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" font-weight="600" fill="#28775a">Words • Spelling • Pronunciation</text>
-  <text x="600" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#6b7280">Made Simon H</text>
+  <defs>
+    <linearGradient id="bg" x1="80" y1="20" x2="1120" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d1730"/>
+      <stop offset=".58" stop-color="#111f42"/>
+      <stop offset="1" stop-color="#17314f"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#647eff"/>
+      <stop offset="1" stop-color="#3e59ce"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020817" flood-opacity=".42"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1070" cy="70" r="230" fill="#526fff" opacity=".16"/>
+  <circle cx="80" cy="570" r="210" fill="#62d9cf" opacity=".12"/>
+  <path d="M0 548C212 488 330 604 532 548C735 492 886 445 1200 519V630H0Z" fill="#fff" opacity=".025"/>
+
+  <g transform="translate(78 72)">
+    <rect width="52" height="52" rx="15" fill="url(#cta)"/>
+    <text x="26" y="34" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="800" fill="#fff">EB</text>
+    <text x="68" y="23" font-family="Arial, sans-serif" font-size="20" font-weight="800" fill="#fff">ENGLISH BASIC</text>
+    <text x="68" y="45" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#aebbd5">ENGLISH FOR NOAR</text>
+  </g>
+
+  <g transform="translate(78 188)">
+    <rect width="210" height="40" rx="20" fill="#62d9cf" fill-opacity=".12" stroke="#62d9cf" stroke-opacity=".42"/>
+    <text x="105" y="27" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="800" fill="#62d9cf">GRADES 6–9</text>
+    <text x="0" y="126" font-family="Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-3" fill="#fff">READ ENGLISH.</text>
+    <text x="0" y="211" font-family="Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-3" fill="#b9f36b">STEP BY STEP.</text>
+    <text x="3" y="264" font-family="Arial, sans-serif" font-size="25" font-weight="600" fill="#c6d2ea">50 graded lessons · listening · reading · quick play</text>
+  </g>
+
+  <g transform="translate(795 130)">
+    <rect width="320" height="390" rx="30" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".2"/>
+    <text x="28" y="46" font-family="Arial, sans-serif" font-size="14" font-weight="800" fill="#62d9cf">TODAY'S MISSION</text>
+    <text x="28" y="82" font-family="Arial, sans-serif" font-size="25" font-weight="800" fill="#fff">Build your streak</text>
+    <rect x="28" y="112" width="264" height="64" rx="15" fill="#071024" fill-opacity=".62"/>
+    <circle cx="62" cy="144" r="18" fill="#62d9cf"/>
+    <path d="m54 144 6 6 11-13" fill="none" stroke="#102238" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="92" y="150" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#fff">Practice one skill</text>
+    <rect x="28" y="188" width="264" height="64" rx="15" fill="#071024" fill-opacity=".62"/>
+    <circle cx="62" cy="220" r="18" fill="#fff" fill-opacity=".08" stroke="#fff" stroke-opacity=".25"/>
+    <text x="62" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="800" fill="#fff">5</text>
+    <text x="92" y="226" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#fff">Listen &amp; Find</text>
+    <rect x="28" y="276" width="264" height="11" rx="6" fill="#fff" fill-opacity=".1"/>
+    <rect x="28" y="276" width="172" height="11" rx="6" fill="#62d9cf"/>
+    <text x="28" y="327" font-family="Arial, sans-serif" font-size="16" font-weight="800" fill="#fff">420 XP</text>
+    <rect x="28" y="344" width="150" height="46" rx="13" fill="url(#cta)"/>
+    <text x="103" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="800" fill="#fff">START NOW</text>
+  </g>
 </svg>

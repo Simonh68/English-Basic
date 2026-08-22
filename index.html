@@ -1,1 +1,153 @@
-<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14213d"><title>Basic English Reading – בחירת רמה</title><meta name="description" content="תוכנית מדורגת לקריאה באנגלית בחמש רמות"><meta property="og:type" content="website"><meta property="og:title" content="Basic English Reading"><meta property="og:description" content="תוכנית קריאה מדורגת באנגלית: כרטיסיות, פענוח, משפטים, טקסטים ובדיקות שליטה"><meta property="og:image" content="https://simonh68.github.io/English-Basic/preview.png"><meta property="og:url" content="https://simonh68.github.io/English-Basic/"><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="app.css?v=1"></head><body><main class="home-main"><header class="hero"><div style="font-size:clamp(3rem,10vw,6rem)">📖</div><h1>Basic English Reading</h1><p>לומדים לקרוא באנגלית בהדרגה ובביטחון<br>הכרטיסיות וכל מצבי התרגול פתוחים לבחירה חופשית</p></header><section class="level-grid" id="levelGrid"></section><div class="home-note">בכל שיעור אפשר להשתמש רק בכרטיסיות, או לבחור תרגול שמיעה, קריאה עצמאית, מילות העברה, משפטים, טקסט ובדיקת שליטה. המעבר בין רמות ושיעורים תמיד פתוח.</div></main><script src="curriculum-data.js?v=1"></script><script>const grid=document.querySelector('#levelGrid');ENGLISH_BASIC_COURSE.levels.forEach(l=>{const a=document.createElement('a');a.className='level-card';a.href='lesson.html?level='+l.id+'&lesson=1&mode=cards';a.innerHTML='<span class="num">0'+l.id+'</span><h2>'+l.name+'</h2><p>'+l.subtitle+'</p><span class="go">10 שיעורים · מתחילים ←</span>';grid.append(a)});</script></body></html>
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d1730">
+  <title>English Basic – קוראים אנגלית בביטחון</title>
+  <meta name="description" content="מסלול קריאה מדורג באנגלית לתלמידי כיתות ו׳–ט׳: מילים, שמיעה, משפטים, טקסטים ומשחק קצר.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="English Basic – קוראים אנגלית בביטחון">
+  <meta property="og:description" content="50 שיעורים מדורגים ומשחק קריאה לתלמידי כיתות ו׳–ט׳ שמתחילים מהבסיס.">
+  <meta property="og:image" content="https://simonh68.github.io/English-Basic/preview.png?v=5">
+  <meta property="og:url" content="https://simonh68.github.io/English-Basic/">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="app.css?v=5">
+</head>
+<body class="home-page">
+  <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
+
+  <header class="home-topbar" aria-label="ניווט ראשי">
+    <a class="home-brand" href="index.html" aria-label="English Basic – דף הבית">
+      <span class="brand-mark" aria-hidden="true">EB</span>
+      <span><strong lang="en" dir="ltr">English Basic</strong><small>קריאה מהבסיס</small></span>
+    </a>
+    <nav class="home-nav" aria-label="קישורים ראשיים">
+      <a href="#learningPath">מסלול הלמידה</a>
+      <a href="word-game/">המשחק</a>
+      <a class="all-sites-link" href="https://englishfornoar.co.il">כל אתרי English for Noar</a>
+    </nav>
+  </header>
+
+  <main id="mainContent">
+    <section class="home-hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="audience-chip">כיתות ו׳–ט׳ · מתחילים מהבסיס</div>
+        <h1 id="heroTitle">קוראים אנגלית.<br><span>צעד אחר צעד.</span></h1>
+        <p class="hero-lead">מסלול קצר, ברור ולא ילדותי לתלמידים שרוצים לסגור פערים ולקרוא בביטחון — בקצב שלהם.</p>
+        <div class="hero-actions">
+          <a class="cta cta-primary" id="continueButton" href="lesson.html?level=1&amp;lesson=1&amp;mode=cards">
+            <span aria-hidden="true">←</span>
+            <span><strong id="continueTitle">מתחילים עכשיו</strong><small id="continueHint">רמה 1 · שיעור 1</small></span>
+          </a>
+          <a class="cta cta-game" href="word-game/">
+            <span class="play-icon" aria-hidden="true">▶</span>
+            <span><strong>אתגר 3 דקות</strong><small lang="en" dir="ltr">Listen &amp; Find</small></span>
+          </a>
+        </div>
+        <ul class="trust-list" aria-label="יתרונות">
+          <li>ללא הרשמה</li>
+          <li>התקדמות נשמרת במכשיר בלבד</li>
+          <li>הגייה אמריקאית כשזמינה</li>
+        </ul>
+      </div>
+
+      <aside class="mission-panel" aria-labelledby="missionTitle">
+        <div class="mission-topline">
+          <div>
+            <span class="panel-kicker">המסלול שלי</span>
+            <h2 id="missionTitle">המשימה להיום</h2>
+          </div>
+          <div class="streak-badge" aria-label="רצף ימי תרגול">
+            <span aria-hidden="true">◆</span>
+            <strong id="streakValue">0</strong>
+            <small>ימים</small>
+          </div>
+        </div>
+
+        <div class="profile-level">
+          <div class="profile-level-copy">
+            <span id="rankName" lang="en" dir="ltr">Starter</span>
+            <strong><span id="xpValue">0</span> XP</strong>
+          </div>
+          <div class="xp-track" role="progressbar" aria-label="התקדמות לדרגה הבאה" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="xpTrack">
+            <span id="xpBar"></span>
+          </div>
+        </div>
+
+        <ul class="daily-list" id="dailyList" aria-label="משימות יומיות">
+          <li data-mission="practice"><span class="mission-check" aria-hidden="true">1</span><span><strong>משימת תרגול אחת</strong><small>כרטיסיות, שמיעה או קריאה</small></span></li>
+          <li data-mission="game"><span class="mission-check" aria-hidden="true">5</span><span><strong>5 תשובות במשחק</strong><small>מקשיבים ומוצאים את המילה</small></span></li>
+          <li data-mission="text"><span class="mission-check" aria-hidden="true">1</span><span><strong>טקסט קצר אחד</strong><small>קוראים ברצף, בלי לחץ</small></span></li>
+        </ul>
+        <p class="mission-status" id="missionStatus" role="status">עוד לא התחלתם היום — זה לוקח רק כמה דקות.</p>
+      </aside>
+    </section>
+
+    <section class="quick-stats" aria-label="נתוני התוכנית">
+      <div><strong>5</strong><span>רמות מדורגות</span></div>
+      <div><strong>50</strong><span>שיעורים קצרים</span></div>
+      <div><strong>7</strong><span>דרכי תרגול בכל שיעור</span></div>
+      <div><strong>180</strong><span>מילים במשחק</span></div>
+    </section>
+
+    <section class="game-feature" aria-labelledby="gameTitle">
+      <div class="game-visual" aria-hidden="true">
+        <div class="sound-orbit"><span>🔊</span></div>
+        <div class="word-tile tile-one" lang="en" dir="ltr">ship</div>
+        <div class="word-tile tile-two" lang="en" dir="ltr">shop</div>
+        <div class="word-tile tile-three" lang="en" dir="ltr">fish</div>
+        <div class="score-pill">+12 XP</div>
+      </div>
+      <div class="game-copy">
+        <span class="section-kicker">משחק שמרגיש כמו משחק</span>
+        <h2 id="gameTitle"><span lang="en" dir="ltr">Listen &amp; Find</span><br>שומעים. מזהים. מתקדמים.</h2>
+        <p>מתחילים משלוש אפשרויות ועולים בהדרגה ל־6, 9 ו־12. שלוש תשובות נכונות מקדמות שלב; טעות מורידה נקודות, אבל תמיד אפשר לנסות שוב.</p>
+        <div class="game-metrics" aria-label="מאפייני המשחק">
+          <span><strong>3→12</strong> אפשרויות</span>
+          <span><strong>3</strong> חיים</span>
+          <span><strong>20</strong> דפוסי קריאה</span>
+        </div>
+        <a class="text-cta" href="word-game/">נכנסים לאתגר <span aria-hidden="true">←</span></a>
+      </div>
+    </section>
+
+    <section class="learning-section" id="learningPath" aria-labelledby="pathTitle">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">המסלול המלא</span>
+          <h2 id="pathTitle">בוחרים רמה ומתקדמים</h2>
+        </div>
+        <p>אין מבחן כניסה ואין רמות נעולות. אפשר להתחיל איפה שנוח ולחזור אחורה בכל רגע.</p>
+      </div>
+      <div class="level-grid" id="levelGrid"></div>
+    </section>
+
+    <section class="how-it-works" aria-labelledby="howTitle">
+      <div class="section-heading compact">
+        <div>
+          <span class="section-kicker">מה עושים בשיעור?</span>
+          <h2 id="howTitle">שבעה צעדים, בלי עומס</h2>
+        </div>
+      </div>
+      <ol class="step-list">
+        <li><span>01</span><strong>רואים ושומעים</strong><small>מילה, איות והמילה שוב</small></li>
+        <li><span>02</span><strong>מזהים</strong><small>תרגול שמיעה עם משוב מיידי</small></li>
+        <li><span>03</span><strong>קוראים לבד</strong><small>בדיקה רק אחרי הניסיון</small></li>
+        <li><span>04</span><strong>מעבירים ידע</strong><small>אותו דפוס במילים חדשות</small></li>
+        <li><span>05</span><strong>קוראים בהקשר</strong><small>משפטים וטקסט קצר</small></li>
+        <li><span>06</span><strong>בודקים שליטה</strong><small>יעד ברור, בלי לנעול התקדמות</small></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="home-footer">
+    <div><strong lang="en" dir="ltr">English Basic</strong><span>חלק ממיזם English for Noar</span></div>
+    <p>נבנה לתרגול עצמאי ונגיש. אין איסוף שמות, אימיילים או מידע אישי על תלמידים.</p>
+  </footer>
+
+  <script src="curriculum-data.js?v=1"></script>
+  <script src="progress.js?v=1"></script>
+  <script src="home.js?v=1"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 (()=>{
-const course=window.ENGLISH_BASIC_COURSE;
+const course=window.ENGLISH_BASIC_COURSE,progressApi=window.EBR_PROGRESS;
 // Level 5 revisits difficult spellings inside longer, fluent-reading words.
 course.levels[4].lessons[7]={
  focus:'TH ו־OUGH במילים ארוכות',
@@ -37,8 +37,18 @@ function esc(s){const d=document.createElement('div');d.textContent=s;return d.i
 function setURL(){history.replaceState(null,'',`lesson.html?level=${level}&lesson=${lesson}&mode=${mode}`)}
 function progressKey(){return `ebr-v1-l${level}-u${lesson}`}
 function getProgress(){try{return JSON.parse(localStorage.getItem(progressKey()))||{}}catch{return {}}}
-function saveProgress(patch){const p={...getProgress(),...patch};localStorage.setItem(progressKey(),JSON.stringify(p));updateProgress()}
-function updateProgress(){const p=getProgress();const done=['cards','listen','read','transfer','sentences','text','check'].filter(k=>p[k]).length;$('#progressChip').textContent=`${done}/7 שלבים נוסו`}
+function saveProgress(patch){
+ const before=getProgress(),p={...before,...patch};localStorage.setItem(progressKey(),JSON.stringify(p));
+ const completed=progressApi.STAGES.find(stage=>patch[stage]===true);
+ if(completed)progressApi.recordPractice(completed,{firstTime:!before[completed]});
+ else if(Object.prototype.hasOwnProperty.call(patch,'score'))progressApi.recordPractice('check',{firstTime:false});
+ updateProgress();
+}
+function updateProgress(){
+ const p=getProgress(),done=progressApi.STAGES.filter(k=>p[k]).length,profile=progressApi.getProfile();
+ $('#progressChip').textContent=`${done}/7 שלבים נוסו`;
+ const summary=$('#profileStats');if(summary)summary.textContent=`${profile.xp} XP · ${profile.streak} ${profile.streak===1?'יום':'ימים'}`;
+}
 function voice(){const v=speechSynthesis.getVoices();return v.find(x=>x.lang==='en-US')||v.find(x=>x.lang.startsWith('en'))||null}
 function speak(text,rate=.8,id=runId){return new Promise(resolve=>{if(id!==runId)return resolve();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate;const v=voice();if(v)u.voice=v;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
 function stopSpeech(){runId++;speechSynthesis.cancel()}
@@ -50,10 +60,13 @@ function setupSelectors(){
  levelSelect.value=level;lessonSelect.value=lesson;
  levelSelect.onchange=()=>{level=Number(levelSelect.value);lesson=1;lessonSelect.value=1;cardIndex=0;renderAll()};
  lessonSelect.onchange=()=>{lesson=Number(lessonSelect.value);cardIndex=0;renderAll()};
- modeNav.innerHTML=modes.map(([id,label])=>`<button class="mode-btn" data-mode="${id}">${label}</button>`).join('');
+ modeNav.innerHTML=modes.map(([id,label])=>`<button class="mode-btn" type="button" data-mode="${id}" aria-pressed="false">${label}</button>`).join('');
  modeNav.onclick=e=>{const b=e.target.closest('[data-mode]');if(b)setMode(b.dataset.mode)};
 }
-function setMode(next){stopSpeech();mode=next;setURL();document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));$('#'+mode+'Panel').classList.add('active');renderMode()}
+function setMode(next){
+ stopSpeech();mode=next;setURL();document.querySelectorAll('.mode-btn').forEach(b=>{const active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));$('#'+mode+'Panel').classList.add('active');renderMode();
+ progressApi.setLastLocation({href:`lesson.html?level=${level}&lesson=${lesson}&mode=${mode}`,label:`רמה ${level} · שיעור ${lesson}`});
+}
 function renderAll(){stopSpeech();setURL();document.body.dataset.level=level;levelSelect.value=level;lessonSelect.value=lesson;const lev=course.levels[level-1],u=current();document.title=`רמה ${level} · שיעור ${lesson} – Basic English Reading`;$('#lessonHeading').textContent=`רמה ${level} · שיעור ${lesson}`;$('#lessonFocus').textContent=`${lev.name} — ${u.focus}`;updateProgress();setMode(mode)}
 function lessonMove(delta){let l=level,u=lesson+delta;if(u>10){if(l<5){l++;u=1}else u=10}if(u<1){if(l>1){l--;u=10}else u=1}level=l;lesson=u;cardIndex=0;renderAll()}
 
@@ -67,7 +80,7 @@ function renderCards(){
  const cards=[
   `<article class="study-card cover"><span class="eyebrow">רמה ${level} · שיעור ${lesson}</span><h2>${esc(u.focus)}</h2><p>עשר מילים לתרגול קריאה ואיות. אפשר לעבור בכל עת לשיעור או לרמה אחרים.</p><div class="cover-actions"><button class="secondary" data-lesson="-1">השיעור הקודם</button><button class="primary" data-card-start>מתחילים</button><button class="secondary" data-lesson="1">השיעור הבא</button></div></article>`,
   ...u.words.map(([w,h])=>`<article class="study-card"><div class="word" lang="en">${esc(w)}</div><div class="translation">${esc(h)}</div><div class="letters" aria-label="${esc(w)}">${[...w].map(x=>`<span class="letter">${esc(x.toUpperCase())}</span>`).join('')}</div><div class="card-status" role="status"></div></article>`),
-  `<article class="study-card finish"><span class="eyebrow">הכרטיסיות הושלמו</span><h2>מצוין</h2><p>אפשר להמשיך לתרגול, לחזור על הכרטיסיות, או לעבור ישירות לשיעור הבא.</p><div class="cover-actions"><button class="secondary" data-card-reset>חזרה על הכרטיסיות</button><button class="primary" data-mode-jump="listen">מעבר לתרגול</button><button class="secondary" data-lesson="1">השיעור הבא</button></div></article>`
+  `<article class="study-card finish"><span class="eyebrow">הכרטיסיות הושלמו</span><h2>מצוין</h2><p>אפשר להמשיך לתרגול, לחזור על הכרטיסיות, או לעבור ישירות לשיעור הבא.</p><div class="cover-actions"><button class="secondary" type="button" data-card-reset>חזרה על הכרטיסיות</button><button class="primary" type="button" data-mode-jump="listen">מעבר לתרגול</button><button class="secondary" type="button" data-lesson="1">השיעור הבא</button></div></article>`
  ];
  panel.innerHTML=`<div class="card-stage"><div class="card-track">${cards.join('')}</div><button class="card-arrow card-prev" aria-label="הכרטיס הקודם">&#x2039;</button><button class="card-arrow card-next" aria-label="הכרטיס הבא">&#x203A;</button><div class="card-dots">${cards.map((_,i)=>`<button class="card-dot" data-card="${i}" aria-label="כרטיס ${i+1}"></button>`).join('')}</div></div>`;
  const stage=panel.querySelector('.card-stage');
@@ -87,7 +100,7 @@ function goCard(i,read=true){
  const u=current(),total=u.words.length+2;cardIndex=Math.max(0,Math.min(total-1,i));stopSpeech();
  const panel=$('#cardsPanel'),track=panel.querySelector('.card-track');if(!track)return;
  track.style.transform=`translateX(-${cardIndex*100}%)`;
- panel.querySelectorAll('.card-dot').forEach((d,j)=>d.classList.toggle('active',j===cardIndex));
+ panel.querySelectorAll('.card-dot').forEach((d,j)=>{const active=j===cardIndex;d.classList.toggle('active',active);if(active)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')});
  panel.querySelector('.card-prev').disabled=cardIndex===0;panel.querySelector('.card-next').disabled=cardIndex===total-1;
  panel.querySelectorAll('.word').forEach(x=>x.classList.remove('done'));panel.querySelectorAll('.letter').forEach(x=>x.classList.remove('active'));
  if(cardIndex===total-1)saveProgress({cards:true});
@@ -137,5 +150,10 @@ function renderCheck(){
  show();
 }
 
+window.addEventListener('ebr:progress',event=>{
+ updateProgress();
+ const gained=event.detail?.xpGained||0,live=$('#xpLive');
+ if(gained>0&&live){live.textContent=`+${gained} XP`;live.classList.remove('show');void live.offsetWidth;live.classList.add('show');setTimeout(()=>live.classList.remove('show'),1800)}
+});
 window.addEventListener('beforeunload',stopSpeech);document.addEventListener('keydown',e=>{if(mode==='cards'&&e.key==='ArrowLeft')goCard(cardIndex-1);if(mode==='cards'&&e.key==='ArrowRight')goCard(cardIndex+1)});speechSynthesis.getVoices();setupSelectors();renderAll();
 })();
