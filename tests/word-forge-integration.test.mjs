@@ -62,6 +62,18 @@ test('exposure contrasts uppercase and lowercase while the missing-letter task s
   assert.doesNotMatch(html, /missing-slot">_<\/span>' : letter\.toUpperCase\(\)/);
 });
 
+test('the missing-letter challenge is silent underneath and completes the lowercase word after any answer', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(inlineScript, /async function startBackgroundMusic\(\) \{[\s\S]*!challengeStage\.hidden/);
+  assert.match(inlineScript, /async function showWord\(wordIndex\) \{[\s\S]*challengeStage\.hidden = true;[\s\S]*await startBackgroundMusic\(\);/);
+  assert.match(inlineScript, /async function showChallenge\(wordIndex, isReview\) \{[\s\S]*pauseBackgroundMusic\(\);[\s\S]*challengeStage\.hidden = false;/);
+  assert.match(inlineScript, /class="missing-word" lang="en" aria-live="polite"/);
+  assert.match(inlineScript, /const missingWord = challengeStage\.querySelector\('\.missing-word'\);[\s\S]*missingWord\.textContent = item\.word\.toLowerCase\(\);[\s\S]*let audioFeedback;[\s\S]*if \(answer === correct\)/);
+});
+
 test('success feedback climbs for three actions and then plays a long descending cascade', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];

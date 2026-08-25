@@ -1371,7 +1371,7 @@
       }
 
       async function startBackgroundMusic() {
-        if (!soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden) return false;
+        if (!soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
         const audio = ensureBackgroundAudio();
         if (!audio) return false;
         try {
@@ -1500,6 +1500,8 @@
         wordStage.hidden = false;
         challengeStage.hidden = true;
         finishStage.hidden = true;
+        await startBackgroundMusic();
+        if (id !== runId) return;
         encounterLabel.hidden = false;
         encounterLabel.textContent = `${wordIndex + 1} / ${runWords.length} · LISTEN`;
         updateDashboard();
@@ -1578,6 +1580,7 @@
       async function showChallenge(wordIndex, isReview) {
         const id = ++runId;
         if ('speechSynthesis' in window) speechSynthesis.cancel();
+        pauseBackgroundMusic();
         wordStage.hidden = true;
         challengeStage.hidden = false;
         finishStage.hidden = true;
@@ -1601,7 +1604,7 @@
           <div class="hebrew-hint"><span aria-hidden="true">💡</span><span>${item.translation}</span></div>
           <div class="tone-cue" aria-hidden="true"><i></i><i></i><i></i></div>
           <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter?</h2>
-          <div class="missing-word" lang="en">${displayWord}</div>
+          <div class="missing-word" lang="en" aria-live="polite">${displayWord}</div>
           <div class="choices" role="group" aria-label="בחרו את האות החסרה">
             ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toLowerCase()}" disabled>${option.toLowerCase()}</button>`).join('')}
           </div>
@@ -1624,11 +1627,16 @@
         const correct = currentChallenge.correct;
         const item = runWords[currentChallenge.wordIndex];
         const feedback = challengeStage.querySelector('#feedback');
+        const missingWord = challengeStage.querySelector('.missing-word');
         const buttons = [...challengeStage.querySelectorAll('.choice')];
         buttons.forEach(choice => {
           choice.disabled = true;
           if (choice.dataset.answer === correct) choice.classList.add('correct');
         });
+        if (missingWord) {
+          missingWord.textContent = item.word.toLowerCase();
+          missingWord.setAttribute('aria-label', item.word.toLowerCase());
+        }
 
         let audioFeedback;
         if (answer === correct) {
