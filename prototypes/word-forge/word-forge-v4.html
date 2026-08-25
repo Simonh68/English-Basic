@@ -1380,7 +1380,7 @@
           <h2 class="word" lang="en">${item.word}</h2>
           <div class="translation">${item.translation}</div>
           <div class="letters" aria-label="איות ${item.word}">
-            ${[...item.word].map(letter => `<span class="letter">${letter.toUpperCase()}</span>`).join('')}
+            ${[...item.word].map(letter => `<span class="letter">${letter.toLowerCase()}</span>`).join('')}
           </div>
           <div class="instruction" lang="en">READY</div>
           <div class="word-actions">
@@ -1462,7 +1462,7 @@
         const options = [correct, ...distractors.slice((wordIndex * 2) % 4, ((wordIndex * 2) % 4) + 3)].slice(0, 4);
         while (options.length < 4) options.push(distractors[options.length]);
         options.sort((a, b) => (a.charCodeAt(0) + wordIndex) % 7 - (b.charCodeAt(0) + wordIndex) % 7);
-        const displayWord = [...item.word].map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter).join('');
+        const displayWord = [...item.word].map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toUpperCase()).join('');
         currentChallenge = { wordIndex, isReview, correct, answered: false };
         updateDashboard();
 
@@ -1474,7 +1474,7 @@
           <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">LETTER?</h2>
           <div class="missing-word" lang="en">${displayWord}</div>
           <div class="choices" role="group" aria-label="בחרו את האות החסרה">
-            ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toUpperCase()}" disabled>${option}</button>`).join('')}
+            ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toUpperCase()}" disabled>${option.toUpperCase()}</button>`).join('')}
           </div>
           <div class="feedback" id="feedback" role="status" aria-live="polite"></div>`;
 
@@ -1512,7 +1512,7 @@
           if (segment) segment.classList.add('lit');
           updateBuildPreview();
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">YES!</strong><p><span lang="en">${item.word}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">YES!</strong><p><span lang="en">${item.word.toUpperCase()}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
           liveStatus.textContent = `נכון. האות החסרה היא ${correct.toUpperCase()}`;
           feedbackAnimation('success');
           audioFeedback = positiveAudio(feedbackId, item);
@@ -1525,7 +1525,7 @@
             pendingReviews.push({ wordIndex: currentChallenge.wordIndex, dueAt: runWords.length });
           }
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">↺</span><div><strong lang="en">TRY AGAIN</strong><p><span lang="en">${item.word}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">↺</span><div><strong lang="en">TRY AGAIN</strong><p><span lang="en">${item.word.toUpperCase()}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
           liveStatus.textContent = `התשובה תוקנה. האות החסרה היא ${correct.toUpperCase()}`;
           feedbackAnimation('retry');
           audioFeedback = retryAudio(feedbackId, correct, item);

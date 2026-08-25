@@ -48,6 +48,15 @@ test('apostrophes in contractions are never selected as missing letters', async 
   }
 });
 
+test('exposure uses lowercase and the missing-letter task uses uppercase', async () => {
+  const html = await source('word-forge/index.html');
+
+  assert.match(html, /characters\.map\(letter => `<span class="letter">\$\{letter\.toLowerCase\(\)\}<\/span>`\)/);
+  assert.match(html, /const displayWord = characters\.map\(\(letter, letterIndex\) => letterIndex === hiddenIndex \? '<span class="missing-slot">_<\/span>' : letter\.toUpperCase\(\)\)\.join\(''\)/);
+  assert.match(html, /disabled>\$\{option\.toUpperCase\(\)\}<\/button>/);
+  assert.match(html, /\$\{item\.word\.toUpperCase\(\)\}<\/span> · \$\{item\.translation\}/);
+});
+
 test('lesson and home navigation expose the lesson-specific production game', async () => {
   const [app, lesson, home, game] = await Promise.all([
     source('app.js'),
