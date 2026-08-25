@@ -443,7 +443,15 @@
       pointer-events: none;
     }
 
-    .sound-toggle {
+    .mission-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      direction: ltr;
+    }
+
+    .sound-toggle,
+    .timer-toggle {
       width: 42px;
       min-height: 42px;
       padding: 0;
@@ -454,6 +462,18 @@
       cursor: pointer;
       font-size: 1rem;
       font-weight: 900;
+    }
+
+    .timer-toggle {
+      width: 62px;
+      direction: ltr;
+      color: var(--gold);
+    }
+
+    .timer-toggle[aria-pressed="false"] {
+      border-color: #59e1d35c;
+      background: #59e1d312;
+      color: var(--cyan);
     }
 
     .game-grid {
@@ -744,7 +764,7 @@
       position: relative;
       width: 100%;
       height: 9px;
-      margin: 18px auto 0;
+      margin: 7px auto 0;
       overflow: hidden;
       border: 1px solid #ffd9785c;
       border-radius: 999px;
@@ -763,6 +783,36 @@
     }
 
     .challenge-timer.warning span { filter: saturate(1.3); }
+
+    .challenge-timer.off span {
+      background: linear-gradient(90deg, #59e1d3, #c3f36d);
+      box-shadow: 0 0 15px #59e1d38c;
+    }
+
+    .challenge-pressure {
+      width: 100%;
+      margin: 15px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      direction: ltr;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 1000;
+      letter-spacing: .04em;
+    }
+
+    .challenge-pressure span:last-child { color: var(--gold); }
+
+    .pressure-bonus {
+      margin-inline-start: 7px;
+      padding: 2px 6px;
+      border: 1px solid #59e1d34a;
+      border-radius: 999px;
+      color: var(--cyan);
+      font-size: .72rem !important;
+      white-space: nowrap;
+    }
 
     .choices {
       max-width: 560px;
@@ -1335,7 +1385,8 @@
       .mission-bar { grid-template-columns: minmax(0, 1fr) repeat(2, auto); gap: 7px; padding: 10px; }
       .metric.chain { display: none; }
       .metric { min-width: 55px; }
-      .sound-toggle { grid-column: 1 / -1; width: 100%; }
+      .mission-controls { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .sound-toggle,.timer-toggle { width: 100%; }
       .game-grid { margin-top: 10px; gap: 10px; }
       .forge-panel,.word-panel { border-radius: 20px; }
       .word-panel { min-height: min(520px, calc(100svh - 270px)); padding: 45px 12px 14px; }
@@ -1353,7 +1404,8 @@
       .tone-cue i:nth-child(3) { width: 15px; height: 15px; }
       .challenge-title { margin-top: 3px; font-size: 1.3rem; }
       .missing-word { margin-top: 9px; font-size: clamp(2.8rem, 14vw, 4.7rem); }
-      .challenge-timer { height: 8px; margin-top: 10px; }
+      .challenge-pressure { margin-top: 8px; }
+      .challenge-timer { height: 8px; margin-top: 6px; }
       .choices { margin-top: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
       .choice { min-height: 49px; border-radius: 13px; font-size: 1.35rem; }
       .feedback { margin-top: 9px; padding: 8px 10px; }
@@ -1411,7 +1463,7 @@
     }
 
     @media (forced-colors: active) {
-      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.name-card,.certificate-card { border: 1px solid CanvasText; }
+      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.timer-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.pressure-bonus,.name-card,.certificate-card { border: 1px solid CanvasText; }
       .progress-fill,.segment.lit,.reactor-core { background: Highlight; color: HighlightText; }
       .choice.correct { outline: 3px solid Highlight; }
       .choice.wrong { outline: 3px dashed CanvasText; }
@@ -1480,7 +1532,10 @@
           </div>
           <div class="metric coin-metric" id="coinMetric" aria-label="0 מטבעות זהב"><strong><span class="coin-icon" aria-hidden="true">●</span><span id="totalCoinCount">0</span></strong><span aria-hidden="true">GOLD</span></div>
           <div class="metric chain"><strong id="chainCount">0</strong><span aria-label="רצף במשימה">🔥</span></div>
-          <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="כיבוי צלילי המשחק">🔊</button>
+          <div class="mission-controls" role="group" aria-label="בקרות משחק">
+            <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="כיבוי צלילי המשחק">🔊</button>
+            <button class="timer-toggle" id="timePressureToggle" type="button" aria-pressed="true" aria-label="ביטול לחץ הזמן. כרגע עשר שניות">⏱ 10</button>
+          </div>
         </div>
 
         <div class="game-grid">
@@ -1609,7 +1664,8 @@
       const progressApi = window.EBR_PROGRESS;
       const initialProfile = progressApi?.getProfile?.() || {};
       const initialWordForgeCoins = Math.max(0, Number(initialProfile.wordForgeCoins ?? initialProfile.wordForgePoints) || 0);
-      const challengeDurationMs = 5000;
+      const challengeDurationsMs = [10000, 7000, 5000];
+      const pressureBonusByDuration = { 10000: 0, 7000: 2, 5000: 5 };
       let runWords = [...words];
 
       document.documentElement.style.setProperty('--cyan', stageTheme.cyan);
@@ -1636,6 +1692,7 @@
       const soundCheck = document.querySelector('#soundCheck');
       const routeButtons = [...document.querySelectorAll('.route-card')];
       const soundToggle = document.querySelector('#soundToggle');
+      const timePressureToggle = document.querySelector('#timePressureToggle');
       const progressFill = document.querySelector('#progressFill');
       const progressLabel = document.querySelector('#progressLabel');
       const progressPercent = document.querySelector('#progressPercent');
@@ -1711,6 +1768,8 @@
       let stageMapTrigger = stageMenuButton;
       let challengeTimerFrame = 0;
       let challengeTimerDeadline = 0;
+      let timePressureOn = true;
+      let pressureLevel = 0;
       let autoAdvanceTimer = 0;
       let lastCertificatePalette = -1;
       let stageMapPausedChallenge = false;
@@ -1817,8 +1876,32 @@
         else stageMap.removeAttribute('open');
       }
 
-      function recordStageResult(correct) {
-        const gained = correct ? coinsPerSuccess : 0;
+      function pressureBonusFor(durationMs) {
+        return timePressureOn ? pressureBonusByDuration[durationMs] || 0 : 0;
+      }
+
+      function updateTimePressureControl() {
+        const seconds = challengeDurationsMs[pressureLevel] / 1000;
+        timePressureToggle.setAttribute('aria-pressed', String(timePressureOn));
+        timePressureToggle.textContent = `⏱ ${timePressureOn ? seconds : '∞'}`;
+        timePressureToggle.setAttribute('aria-label', timePressureOn
+          ? `ביטול לחץ הזמן. כרגע ${seconds} שניות`
+          : 'הפעלת לחץ הזמן. כרגע אין הגבלת זמן');
+      }
+
+      function nextPressureLevel(currentLevel, correct, pressureOn) {
+        return pressureOn && correct
+          ? Math.min(currentLevel + 1, challengeDurationsMs.length - 1)
+          : 0;
+      }
+
+      function updatePressureLevel(correct) {
+        pressureLevel = nextPressureLevel(pressureLevel, correct, timePressureOn);
+        updateTimePressureControl();
+      }
+
+      function recordStageResult(correct, pressureBonus = 0) {
+        const gained = correct ? coinsPerSuccess + Math.max(0, Number(pressureBonus) || 0) : 0;
         const previousTotal = totalCoins;
         if (correct) runCoins += gained;
         const profile = progressApi?.recordGame(correct, runCoins, {
@@ -1898,6 +1981,23 @@
         liveStatus.textContent = soundOn ? 'הקול הופעל' : 'הקול כובה';
       });
 
+      timePressureToggle.addEventListener('click', () => {
+        const activeQuestion = Boolean(currentChallenge && !currentChallenge.answered && !challengeStage.hidden);
+        timePressureOn = !timePressureOn;
+        pressureLevel = 0;
+        clearChallengeTimer();
+        updateTimePressureControl();
+        if (activeQuestion) {
+          currentChallenge.durationMs = timePressureOn ? challengeDurationsMs[0] : null;
+          currentChallenge.pressureBonus = 0;
+          renderChallengeTimerState();
+          if (timePressureOn && !challengeStage.classList.contains('question-wait')) startChallengeTimer(runId);
+        }
+        liveStatus.textContent = timePressureOn
+          ? 'לחץ הזמן הופעל. מתחילים בעשר שניות'
+          : 'לחץ הזמן בוטל. אפשר לענות ללא הגבלת זמן';
+      });
+
       startButton.addEventListener('click', async () => {
         startButton.disabled = true;
         startButton.textContent = '◌';
@@ -1927,6 +2027,8 @@
         const profile = progressApi?.getProfile?.() || {};
         totalCoins = Math.max(0, Number(profile.wordForgeCoins ?? profile.wordForgePoints) || totalCoins);
         chain = 0;
+        pressureLevel = 0;
+        updateTimePressureControl();
         firstPassCorrect = 0;
         positiveToneStep = 0;
         challengeResolved = new Set();
@@ -2334,16 +2436,44 @@
         challengeTimerDeadline = 0;
       }
 
-      function startChallengeTimer(id) {
-        clearChallengeTimer();
+      function renderChallengeTimerState() {
         const timer = challengeStage.querySelector('#challengeTimer');
         const fill = challengeStage.querySelector('#challengeTimerFill');
-        if (!timer || !fill) return;
-        challengeTimerDeadline = performance.now() + challengeDurationMs;
+        const status = challengeStage.querySelector('#challengePressure');
+        if (!timer || !fill || !status) return;
+        const durationMs = timePressureOn ? currentChallenge?.durationMs : null;
+        const seconds = durationMs ? durationMs / 1000 : 10;
+        const bonus = pressureBonusFor(durationMs);
+        timer.classList.toggle('off', !durationMs);
+        timer.classList.remove('warning');
+        timer.setAttribute('aria-valuemax', String(seconds));
+        timer.setAttribute('aria-valuenow', String(seconds));
+        fill.style.transform = 'scaleX(1)';
+        if (durationMs) {
+          timer.removeAttribute('aria-disabled');
+          timer.removeAttribute('aria-valuetext');
+          timer.setAttribute('aria-label', `${seconds} שניות לבחירת תשובה`);
+          status.innerHTML = `<span>⏱ ${seconds}s</span><span>🪙 +${coinsPerSuccess + bonus}</span>`;
+        } else {
+          timer.setAttribute('aria-disabled', 'true');
+          timer.setAttribute('aria-valuetext', 'ללא הגבלת זמן');
+          timer.setAttribute('aria-label', 'לחץ הזמן כבוי');
+          status.innerHTML = `<span>⏱ ∞</span><span>🪙 +${coinsPerSuccess}</span>`;
+        }
+      }
+
+      function startChallengeTimer(id) {
+        clearChallengeTimer();
+        renderChallengeTimerState();
+        const timer = challengeStage.querySelector('#challengeTimer');
+        const fill = challengeStage.querySelector('#challengeTimerFill');
+        const durationMs = currentChallenge?.durationMs;
+        if (!timer || !fill || !timePressureOn || !durationMs) return;
+        challengeTimerDeadline = performance.now() + durationMs;
         const tick = now => {
           if (id !== runId || !currentChallenge || currentChallenge.answered) return clearChallengeTimer();
           const remaining = Math.max(0, challengeTimerDeadline - now);
-          const ratio = remaining / challengeDurationMs;
+          const ratio = remaining / durationMs;
           fill.style.transform = `scaleX(${ratio})`;
           timer.classList.toggle('warning', ratio <= .35);
           timer.setAttribute('aria-valuenow', String(Math.ceil(remaining / 1000)));
@@ -2377,7 +2507,8 @@
         while (options.length < 4) options.push(distractors[options.length]);
         options.sort((a, b) => (a.charCodeAt(0) + wordIndex) % 7 - (b.charCodeAt(0) + wordIndex) % 7);
         const displayWord = characters.map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toLowerCase()).join('');
-        currentChallenge = { wordIndex, isReview, correct, answered: false };
+        const durationMs = timePressureOn ? challengeDurationsMs[pressureLevel] : null;
+        currentChallenge = { wordIndex, isReview, correct, answered: false, durationMs, pressureBonus: pressureBonusFor(durationMs) };
         updateDashboard();
 
         challengeStage.classList.add('question-wait');
@@ -2387,12 +2518,14 @@
           <div class="tone-cue" aria-hidden="true"><i></i><i></i><i></i></div>
           <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter?</h2>
           <div class="missing-word" lang="en" aria-live="polite">${displayWord}</div>
-          <div class="challenge-timer" id="challengeTimer" role="progressbar" aria-label="חמש שניות לבחירת תשובה" aria-valuemin="0" aria-valuemax="5" aria-valuenow="5"><span id="challengeTimerFill"></span></div>
+          <div class="challenge-pressure" id="challengePressure" aria-hidden="true"></div>
+          <div class="challenge-timer" id="challengeTimer" role="progressbar" aria-label="עשר שניות לבחירת תשובה" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10"><span id="challengeTimerFill"></span></div>
           <div class="choices" role="group" aria-label="בחרו את האות החסרה">
             ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toLowerCase()}" disabled>${option.toLowerCase()}</button>`).join('')}
           </div>
           <div class="feedback" id="feedback" role="status" aria-live="polite"></div>`;
 
+        renderChallengeTimerState();
         challengeStage.querySelectorAll('.choice').forEach(button => button.addEventListener('click', () => answerChallenge(button)));
         await questionCue(item, id);
         if (id !== runId) return;
@@ -2426,7 +2559,9 @@
         let audioFeedback;
         let coinsAwarded = 0;
         if (answer === correct) {
-          coinsAwarded = recordStageResult(true);
+          const pressureBonus = currentChallenge.pressureBonus;
+          coinsAwarded = recordStageResult(true, pressureBonus);
+          updatePressureLevel(true);
           chain += 1;
           if (!currentChallenge.isReview) firstPassCorrect += 1;
           challengeResolved.add(currentChallenge.wordIndex);
@@ -2434,12 +2569,13 @@
           if (segment) segment.classList.add('lit');
           updateBuildPreview();
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="coins-pop" aria-label="נוספו ${coinsAwarded} מטבעות">🪙 +${coinsAwarded}</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="coins-pop" aria-label="נוספו ${coinsAwarded} מטבעות">🪙 +${coinsAwarded}</strong>${pressureBonus ? `<strong class="pressure-bonus" aria-label="בונוס לחץ זמן: ${pressureBonus} מטבעות">⏱ +${pressureBonus}</strong>` : ''}<p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
           liveStatus.textContent = `נכון. נוספו ${coinsAwarded} מטבעות זהב. האות החסרה היא ${correct.toLowerCase()}`;
           feedbackAnimation('success');
           audioFeedback = positiveAudio(feedbackId, item);
         } else {
           recordStageResult(false);
+          updatePressureLevel(false);
           if (button) button.classList.add('wrong');
           chain = 0;
           positiveToneStep = 0;

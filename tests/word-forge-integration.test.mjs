@@ -246,16 +246,31 @@ test('Word Forge gold coins accumulate locally while legacy points migrate safel
   assert.equal(progress.getProfile().wordForgeCoins, 321, 'legacy points become coins without loss');
 });
 
-test('every missing-letter challenge has a reverse five-second failure timer', async () => {
+test('the missing-letter timer adapts from ten to seven to five seconds and can be disabled', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
 
-  assert.match(inlineScript, /const challengeDurationMs = 5000/);
-  assert.match(html, /id="challengeTimer" role="progressbar"[^>]*aria-valuemax="5"/);
+  const durations = new Function(`return ${inlineScript.match(/const challengeDurationsMs = (\[[^;]+\]);/)?.[1]};`)();
+  const bonuses = new Function(`return ${inlineScript.match(/const pressureBonusByDuration = (\{[^;]+\});/)?.[1]};`)();
+  const nextLevelSource = inlineScript.match(/function nextPressureLevel\(currentLevel, correct, pressureOn\) \{[\s\S]*?\n\s*\}/)?.[0];
+  assert.deepEqual(durations, [10000, 7000, 5000]);
+  assert.deepEqual(bonuses, { 10000: 0, 7000: 2, 5000: 5 });
+  assert.ok(nextLevelSource);
+  const nextLevel = new Function('challengeDurationsMs', `${nextLevelSource}; return nextPressureLevel;`)(durations);
+  assert.deepEqual([nextLevel(0, true, true), nextLevel(1, true, true), nextLevel(2, true, true)], [1, 2, 2]);
+  assert.equal(nextLevel(2, false, true), 0, 'an error resets the next challenge to ten seconds');
+  assert.equal(nextLevel(2, true, false), 0, 'untimed success does not increase pressure');
+  assert.match(html, /id="timePressureToggle"[^>]*aria-pressed="true"[^>]*>⏱ 10<\/button>/);
+  assert.match(html, /id="challengeTimer" role="progressbar"[^>]*aria-valuemax="10"[^>]*aria-valuenow="10"/);
+  assert.match(inlineScript, /const durationMs = timePressureOn \? challengeDurationsMs\[pressureLevel\] : null/);
+  assert.match(inlineScript, /if \(!timer \|\| !fill \|\| !timePressureOn \|\| !durationMs\) return/);
   assert.match(inlineScript, /fill\.style\.transform = `scaleX\(\$\{ratio\}\)`/);
   assert.match(inlineScript, /answerChallenge\(null, \{ timedOut: true \}\)/);
   assert.match(inlineScript, /async function answerChallenge\(button, \{ timedOut = false \} = \{\}\)/);
+  assert.match(inlineScript, /recordStageResult\(true, pressureBonus\)/);
+  assert.match(inlineScript, /בונוס לחץ זמן: \$\{pressureBonus\} מטבעות/);
+  assert.match(inlineScript, /לחץ הזמן בוטל\. אפשר לענות ללא הגבלת זמן/);
   assert.match(inlineScript, /timedOut \? 'הזמן הסתיים'/);
 });
 

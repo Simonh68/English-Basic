@@ -18,8 +18,10 @@ Word Forge is a compact arcade spelling loop connected to the canonical English 
 2. The game reads the exact ten-word group for that lesson from `curriculum-data.js`.
 3. Every Play uses Fisher–Yates randomization on a copy of the group and guarantees a visibly different first word from the previous run.
 4. Each word is heard, spelled in English and followed by one missing-letter check.
-5. A missed word returns after two other words, with corrective feedback and no punishment.
-6. The reward is a learner-selected visual build with maze-chase arcade gestures, not coins, ranking or comparison.
+5. A missing-letter challenge starts at 10 seconds, shortens to 7 and then 5 seconds after consecutive successes, and returns to 10 after an error or timeout.
+6. A timed success adds a small bonus: 2 extra coins at 7 seconds and 5 extra coins at 5 seconds.
+7. A visible timer control removes the deadline and automatic timeout without removing the learning task; untimed success keeps the regular stage reward.
+8. A missed word returns after two other words, with corrective feedback and no score penalty.
 
 ## Product constraints
 
