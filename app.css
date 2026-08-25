@@ -623,6 +623,8 @@ body[data-level] .study-card.finish{background:var(--level-card)}
 .card-stage[data-position="cover"] .card-arrow,
 .card-stage[data-position="finish"] .card-arrow{display:none}
 .card-position{display:none}
+.card-track{direction:ltr}
+.study-card{direction:rtl}
 
 @media(max-width:700px){
   .site-header{

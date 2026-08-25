@@ -58,6 +58,15 @@ test('stage 7 keeps mobile, motion, forced-colors and privacy boundaries', async
   assert.doesNotMatch(loop, /localStorage|sessionStorage|indexedDB|document\.cookie/);
 });
 
+test('lesson cards use an LTR track with RTL card content and a cache-busted stylesheet', async () => {
+  const styles = await source('app.css');
+  const lesson = await source('lesson.html');
+
+  assert.match(styles, /\.card-track\{direction:ltr\}/);
+  assert.match(styles, /\.study-card\{direction:rtl\}/);
+  assert.match(lesson, /app\.css\?v=8/);
+});
+
 test('the home page explains the corrected learning loop in Hebrew', async () => {
   const home = await source('index.html');
 
