@@ -754,3 +754,98 @@ body[data-level] .study-card.finish{background:var(--level-card)}
 @media(prefers-reduced-motion:reduce){
   .card-progress span{transition:none!important}
 }
+
+/* Stage 7: one feedback and spaced-return language across active lesson modes. */
+.loop-dashboard{
+  width:min(680px,100%);
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin:20px auto 0;
+}
+.loop-dashboard>div{
+  min-height:78px;
+  display:grid;
+  align-content:center;
+  gap:4px;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#ffffffb8;
+}
+.loop-dashboard span{color:var(--muted);font-size:.76rem;font-weight:800}
+.loop-dashboard strong{color:var(--navy);font-size:1.08rem}
+.loop-question-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.loop-encounter{
+  padding:7px 11px;
+  border:1px solid #b8c9ef;
+  border-radius:999px;
+  background:#edf2ff;
+  color:#3658b6;
+  font-size:.76rem;
+  font-weight:900;
+}
+.loop-rule{color:var(--muted);font-size:.73rem;font-weight:800}
+.loop-feedback{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  margin-top:18px;
+  padding:16px;
+  border:1px solid;
+  border-radius:16px;
+  text-align:right;
+  font-weight:400;
+}
+.loop-feedback:empty{display:none}
+.loop-feedback.success{border-color:#92d8b5;background:#ecf8f2}
+.loop-feedback.coach{border-color:#efbbc1;background:#fff2f3}
+.loop-feedback>div{min-width:0;display:grid;gap:4px}
+.loop-feedback strong{font-size:.96rem;line-height:1.45}
+.loop-feedback p{margin:0;color:#35425a;line-height:1.45}
+.loop-feedback small{color:var(--muted);line-height:1.45}
+.loop-feedback .primary{white-space:nowrap}
+.loop-summary{text-align:center}
+.loop-summary-mark{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 16px;
+  border-radius:50%;
+  background:#dff5e9;
+  color:var(--green);
+  font-size:1.7rem;
+  font-weight:900;
+}
+.loop-summary h2{margin:0;font-size:clamp(1.7rem,5vw,2.45rem)}
+.loop-summary>p{max-width:570px;margin:10px auto 0;color:var(--muted);line-height:1.6}
+
+@media(max-width:700px){
+  .loop-dashboard{grid-template-columns:1fr 1fr}
+  .loop-dashboard>div:first-child{grid-column:1/-1}
+  .loop-dashboard>div{min-height:66px}
+  .loop-question-top{align-items:flex-start;flex-direction:column;gap:8px}
+  .loop-feedback{grid-template-columns:1fr}
+  .loop-feedback .primary{width:100%}
+}
+@media(max-width:360px){
+  .loop-dashboard{gap:6px}
+  .loop-dashboard>div{padding:10px}
+  .loop-rule{font-size:.68rem}
+  .loop-feedback{padding:13px}
+}
+@media(forced-colors:active){
+  .loop-dashboard>div,.loop-encounter,.loop-feedback,.choice,.task-card{border:1px solid CanvasText}
+  .loop-feedback.success,.loop-feedback.coach,.loop-encounter,.loop-summary-mark{background:Canvas;color:CanvasText}
+  .choice.correct{outline:3px solid Highlight}
+  .choice.wrong{outline:3px dashed CanvasText}
+}

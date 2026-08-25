@@ -1,5 +1,5 @@
 (()=>{
-const course=window.ENGLISH_BASIC_COURSE,progressApi=window.EBR_PROGRESS;
+const course=window.ENGLISH_BASIC_COURSE,progressApi=window.EBR_PROGRESS,learningLoop=window.EBR_LEARNING_LOOP;
 const modes=[
  ['cards','כרטיסיות'],['listen','שמיעה'],['read','קריאה'],['transfer','מילים חדשות'],
  ['sentences','משפטים'],['text','טקסט'],['check','בדיקת שליטה']
@@ -48,6 +48,35 @@ function voice(){const v=speechSynthesis.getVoices();return v.find(x=>x.lang==='
 function speak(text,rate=.8,id=runId){return new Promise(resolve=>{if(id!==runId)return resolve();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate;const v=voice();if(v)u.voice=v;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
 function stopSpeech(){runId++;speechSynthesis.cancel()}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function initialLoopQueue(items,prefix){return items.map((_,itemId)=>({key:`${prefix}-new-${itemId}`,itemId,encounter:'new',cycle:0}))}
+function loopLabel(encounter){if(encounter==='new')return 'ניסיון ראשון';if(encounter==='retry')return 'תיקון פעיל';if(encounter==='review')return 'חזרה מרווחת';return 'חיזוק ביניים'}
+function loopWaiting(queue){return new Set(queue.filter(entry=>entry.encounter==='retry'||entry.encounter==='review').map(entry=>entry.itemId)).size}
+function loopFiller(itemCount,current,answered,prefix,index){
+ let itemId=(current.itemId+answered+index+1)%itemCount;
+ if(itemCount>1&&itemId===current.itemId)itemId=(itemId+1)%itemCount;
+ return{key:`${prefix}-bridge-${answered}-${index}-${itemId}`,itemId,encounter:'bridge',cycle:0};
+}
+function advanceLoop(queue,isCorrect,answered,itemCount,prefix){
+ const currentEntry=queue[0],rest=queue.slice(1),filler=index=>loopFiller(itemCount,currentEntry,answered,prefix,index);
+ let nextQueue=rest,outcome='bridge',masteredItemId=null;
+ if(!isCorrect){
+  const retry={...currentEntry,key:`${prefix}-retry-${currentEntry.itemId}-${answered}`,encounter:currentEntry.encounter==='bridge'?'bridge':'retry',cycle:currentEntry.cycle+1};
+  nextQueue=learningLoop.scheduleAfterError(rest,retry,filler);outcome='error';
+ }else if(currentEntry.encounter==='new'||currentEntry.encounter==='retry'){
+  const review={...currentEntry,key:`${prefix}-review-${currentEntry.itemId}-${answered}`,encounter:'review',cycle:currentEntry.cycle+1};
+  nextQueue=learningLoop.scheduleAfterSuccess(rest,review,currentEntry.itemId+currentEntry.cycle+answered,filler);outcome='review';
+ }else if(currentEntry.encounter==='review'){
+  masteredItemId=currentEntry.itemId;outcome='mastered';
+ }
+ return{queue:nextQueue,outcome,masteredItemId};
+}
+function focusSoon(element){if(element)window.setTimeout(()=>element.focus(),40)}
+function loopNextMessage(outcome){
+ if(outcome==='error')return `הפריט יחזור אחרי ${learningLoop.ERROR_GAP} שאלות אחרות.`;
+ if(outcome==='review')return `נבדוק אותו שוב אחרי ${learningLoop.SUCCESS_GAP_MIN}–${learningLoop.SUCCESS_GAP_MAX} שאלות.`;
+ if(outcome==='mastered')return 'הצלחתם גם בחזרה — הפריט הושלם.';
+ return 'חיזוק קצר הושלם.';
+}
 
 function setupSelectors(){
  levelSelect.innerHTML=course.levels.map(l=>`<option value="${l.id}">רמה ${l.id}</option>`).join('');
@@ -115,24 +144,80 @@ async function readWordCard(wordIndex){
 }
 
 function renderListen(){
- const panel=$('#listenPanel'),u=current();let index=0,correct=0,order=shuffle(u.words).slice(0,10);
- panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>זיהוי שמיעתי</h2><p>שומעים ובוחרים את המילה הנכונה</p></div><div class="task-card"><button class="listen-button" aria-label="השמעת המילה">▶</button><div class="choices"></div><div class="feedback"></div><div class="counter"></div></div></div>`;
- const play=()=>{stopSpeech();const id=runId;speak(order[index][0],.8,id)};panel.querySelector('.listen-button').onclick=play;
- function show(){if(index>=order.length){panel.querySelector('.task-card').innerHTML=`<div class="task-head"><h2>${correct}/${order.length}</h2><p>התרגול הסתיים</p><button class="primary" data-restart>תרגול נוסף</button></div>`;activityProgress=null;saveProgress({listen:true});panel.querySelector('[data-restart]').onclick=renderListen;return}
-  setActivityProgress('שמיעה',index+1,order.length);
-  const answer=order[index][0],pool=shuffle([order[index],...shuffle(u.words.filter(x=>x[0]!==answer)).slice(0,3)]);
-  panel.querySelector('.choices').innerHTML=pool.map(([w])=>`<button class="choice">${esc(w)}</button>`).join('');panel.querySelector('.feedback').textContent='';panel.querySelector('.counter').textContent=`${index+1} מתוך ${order.length}`;
-  panel.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{panel.querySelectorAll('.choice').forEach(x=>x.disabled=true);if(b.textContent===answer){b.classList.add('correct');correct++;panel.querySelector('.feedback').textContent='נכון'}else{b.classList.add('wrong');[...panel.querySelectorAll('.choice')].find(x=>x.textContent===answer)?.classList.add('correct');panel.querySelector('.feedback').textContent='ננסה שוב בהמשך'}setTimeout(()=>{index++;show();if(index<order.length)play()},850)});setTimeout(play,300)}
+ const panel=$('#listenPanel'),items=shuffle(current().words).slice(0,10),prefix=`listen-${level}-${lesson}`;
+ let queue=initialLoopQueue(items,prefix),answered=0,correctFirst=0,finished=false;
+ const mastered=new Set(),hadError=new Set();
+ panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>זיהוי שמיעתי</h2><p>שומעים, בוחרים ומוכיחים שוב אחרי מרווח</p></div><div class="loop-dashboard" aria-label="מצב תרגול השמיעה"><div><span>הושלמו</span><strong data-loop-mastered>0 / ${items.length}</strong></div><div><span>ממתינות לחזרה</span><strong data-loop-waiting>0</strong></div><div><span>שאלות שנענו</span><strong data-loop-answered>0</strong></div></div><div class="task-card loop-task"><div class="loop-question-top"><span class="loop-encounter"></span><small class="loop-rule">טעות חוזרת אחרי 2 · הצלחה אחרי 4–6</small></div><button class="listen-button" aria-label="השמעת המילה באנגלית">▶</button><div class="choices" role="group" aria-label="אפשרויות תשובה"></div><div class="feedback loop-feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div><div class="counter"></div></div></div>`;
+ function dashboard(){panel.querySelector('[data-loop-mastered]').textContent=`${mastered.size} / ${items.length}`;panel.querySelector('[data-loop-waiting]').textContent=loopWaiting(queue);panel.querySelector('[data-loop-answered]').textContent=answered}
+ function play(){const entry=queue[0];if(!entry||mastered.size===items.length)return;stopSpeech();const id=runId;speak(items[entry.itemId][0],.8,id)}
+ function complete(){
+  if(finished)return;finished=true;activityProgress=null;saveProgress({listen:true});
+  const corrected=[...mastered].filter(itemId=>hadError.has(itemId)).length;
+  panel.querySelector('.loop-task').innerHTML=`<div class="loop-summary" role="status" aria-live="polite"><span class="loop-summary-mark" aria-hidden="true">✓</span><h2>כל המילים הושלמו</h2><p>לא רק זיהיתם את המילים — עניתם עליהן נכון גם בחזרה מרווחת.</p><div class="mastery-grid"><div class="metric"><strong>${correctFirst}/${items.length}</strong>נכון בניסיון הראשון</div><div class="metric"><strong>${corrected}</strong>תוקנו בעזרת הלולאה</div><div class="metric"><strong>${answered}</strong>שאלות בסך הכול</div></div><button class="primary" data-restart>תרגול נוסף</button></div>`;
+  panel.querySelector('[data-restart]').onclick=renderListen;
+ }
+ function show(){
+  if(mastered.size===items.length){complete();return}
+  const entry=queue[0],[answer,meaning]=items[entry.itemId];
+  setActivityProgress('שמיעה',mastered.size,items.length);dashboard();
+  panel.querySelector('.loop-encounter').textContent=loopLabel(entry.encounter);
+  const distractors=shuffle(items.filter(item=>item[0]!==answer)).slice(0,3),pool=shuffle([[answer,meaning],...distractors]);
+  const choices=panel.querySelector('.choices'),feedback=panel.querySelector('.loop-feedback');
+  choices.innerHTML=pool.map(([word])=>`<button class="choice" type="button" lang="en" dir="ltr">${esc(word)}</button>`).join('');
+  feedback.className='feedback loop-feedback';feedback.innerHTML='';
+  panel.querySelector('.counter').textContent=`${mastered.size} מתוך ${items.length} הושלמו · ${loopLabel(entry.encounter)}`;
+  panel.querySelector('.listen-button').onclick=play;
+  panel.querySelectorAll('.choice').forEach(button=>button.onclick=()=>{
+   const isCorrect=button.textContent===answer;answered++;
+   if(entry.encounter==='new'&&isCorrect)correctFirst++;
+   if(!isCorrect&&entry.encounter!=='bridge')hadError.add(entry.itemId);
+   panel.querySelectorAll('.choice').forEach(choice=>choice.disabled=true);
+   button.classList.add(isCorrect?'correct':'wrong');
+   if(!isCorrect)[...panel.querySelectorAll('.choice')].find(choice=>choice.textContent===answer)?.classList.add('correct');
+   const result=advanceLoop(queue,isCorrect,answered,items.length,prefix);queue=result.queue;
+   if(result.masteredItemId!==null)mastered.add(result.masteredItemId);
+   dashboard();
+   feedback.className=`feedback loop-feedback ${isCorrect?'success':'coach'}`;
+   feedback.innerHTML=`<div><strong>${isCorrect?'נכון — עכשיו נקבע מתי לבדוק שוב':'עוד לא — הנה התיקון לפני הניסיון הבא'}</strong><p><span lang="en" dir="ltr">${esc(answer)}</span> — ${esc(meaning)}</p><small>${loopNextMessage(result.outcome)}</small></div><button class="primary" type="button" data-loop-next>${result.outcome==='mastered'?'סיום המילה והמשך':'המשך לתור'}</button>`;
+   focusSoon(feedback);feedback.querySelector('[data-loop-next]').onclick=show;
+  });
+  window.setTimeout(play,300);
+ }
  show();
 }
 
 function renderSelfRead(isTransfer){
- const panel=$(isTransfer?'#transferPanel':'#readPanel'),items=shuffle(isTransfer?current().transfer:current().words);let index=0,good=0;
- panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>${isTransfer?'מילים חדשות':'קריאה עצמאית'}</h2><p>${isTransfer?'אותו דפוס במילים שלא היו בכרטיסיות':'קוראים לפני שלוחצים על בדיקה'}</p></div><div class="task-card"><div class="big-read"></div><div class="reveal"></div><div class="self-actions"><button class="secondary" data-reveal>בדיקה והשמעה</button></div><div class="counter"></div></div></div>`;
- function show(){if(index>=items.length){panel.querySelector('.task-card').innerHTML=`<div class="task-head"><h2>${good}/${items.length}</h2><p>דיווח הקריאה הושלם</p><button class="primary" data-restart>סבב נוסף</button></div>`;activityProgress=null;saveProgress({[isTransfer?'transfer':'read']:true});panel.querySelector('[data-restart]').onclick=()=>renderSelfRead(isTransfer);return}
-  setActivityProgress(isTransfer?'מילים חדשות':'קריאה',index+1,items.length);
-  const [w]=items[index];panel.querySelector('.big-read').textContent=w;panel.querySelector('.reveal').textContent='';panel.querySelector('.self-actions').innerHTML='<button class="secondary" data-reveal>בדיקה והשמעה</button>';panel.querySelector('.counter').textContent=`${index+1} מתוך ${items.length}`;
-  panel.querySelector('[data-reveal]').onclick=()=>{const [word,he]=items[index];panel.querySelector('.reveal').textContent=he;speak(word,.8);panel.querySelector('.self-actions').innerHTML='<button class="good" data-good>קראתי נכון</button><button class="again" data-again>צריך עוד תרגול</button>';panel.querySelector('[data-good]').onclick=()=>{good++;index++;show()};panel.querySelector('[data-again]').onclick=()=>{index++;show()}};
+ const panel=$(isTransfer?'#transferPanel':'#readPanel'),items=shuffle(isTransfer?current().transfer:current().words),stage=isTransfer?'transfer':'read',label=isTransfer?'מילים חדשות':'קריאה',prefix=`${stage}-${level}-${lesson}`;
+ let queue=initialLoopQueue(items,prefix),answered=0,correctFirst=0,finished=false;
+ const mastered=new Set(),hadError=new Set();
+ panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>${isTransfer?'מילים חדשות':'קריאה עצמאית'}</h2><p>${isTransfer?'אותו דפוס במילים שלא היו בכרטיסיות — עם חזרה בזמן הנכון':'קוראים לבד, בודקים ואז חוזרים שוב אחרי מרווח'}</p></div><div class="loop-dashboard" aria-label="מצב תרגול הקריאה"><div><span>הושלמו</span><strong data-loop-mastered>0 / ${items.length}</strong></div><div><span>ממתינות לחזרה</span><strong data-loop-waiting>0</strong></div><div><span>ניסיונות</span><strong data-loop-answered>0</strong></div></div><div class="task-card loop-task"><div class="loop-question-top"><span class="loop-encounter"></span><small class="loop-rule">טעות חוזרת אחרי 2 · הצלחה אחרי 4–6</small></div><div class="big-read" lang="en" dir="ltr" tabindex="-1"></div><div class="reveal"></div><div class="self-actions"></div><div class="feedback loop-feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div><div class="counter"></div></div></div>`;
+ function dashboard(){panel.querySelector('[data-loop-mastered]').textContent=`${mastered.size} / ${items.length}`;panel.querySelector('[data-loop-waiting]').textContent=loopWaiting(queue);panel.querySelector('[data-loop-answered]').textContent=answered}
+ function complete(){
+  if(finished)return;finished=true;activityProgress=null;saveProgress({[stage]:true});
+  const corrected=[...mastered].filter(itemId=>hadError.has(itemId)).length;
+  panel.querySelector('.loop-task').innerHTML=`<div class="loop-summary" role="status" aria-live="polite"><span class="loop-summary-mark" aria-hidden="true">✓</span><h2>הקריאה הושלמה</h2><p>כל מילה נקראה בהצלחה גם לאחר מרווח, ולא נעלמה מן התור אחרי סימון אחד.</p><div class="mastery-grid"><div class="metric"><strong>${correctFirst}/${items.length}</strong>נקראו מיד</div><div class="metric"><strong>${corrected}</strong>חזרו לתיקון</div><div class="metric"><strong>${answered}</strong>ניסיונות בסך הכול</div></div><button class="primary" data-restart>סבב נוסף</button></div>`;
+  panel.querySelector('[data-restart]').onclick=()=>renderSelfRead(isTransfer);
+ }
+ function show(){
+  if(mastered.size===items.length){complete();return}
+  const entry=queue[0],[word,meaning]=items[entry.itemId],bigRead=panel.querySelector('.big-read'),reveal=panel.querySelector('.reveal'),actions=panel.querySelector('.self-actions'),feedback=panel.querySelector('.loop-feedback');
+  setActivityProgress(label,mastered.size,items.length);dashboard();
+  panel.querySelector('.loop-encounter').textContent=loopLabel(entry.encounter);bigRead.textContent=word;reveal.textContent='';
+  actions.innerHTML='<button class="secondary" type="button" data-reveal>בדיקה והשמעה</button>';
+  feedback.className='feedback loop-feedback';feedback.innerHTML='';panel.querySelector('.counter').textContent=`${mastered.size} מתוך ${items.length} הושלמו · ${loopLabel(entry.encounter)}`;
+  focusSoon(bigRead);
+  actions.querySelector('[data-reveal]').onclick=()=>{
+   reveal.textContent=meaning;speak(word,.8);actions.innerHTML='<button class="good" type="button" data-good>קראתי נכון</button><button class="again" type="button" data-again>צריך עוד תרגול</button>';
+   function report(isCorrect){
+    answered++;if(entry.encounter==='new'&&isCorrect)correctFirst++;if(!isCorrect&&entry.encounter!=='bridge')hadError.add(entry.itemId);
+    actions.querySelectorAll('button').forEach(button=>button.disabled=true);
+    const result=advanceLoop(queue,isCorrect,answered,items.length,prefix);queue=result.queue;if(result.masteredItemId!==null)mastered.add(result.masteredItemId);dashboard();
+    feedback.className=`feedback loop-feedback ${isCorrect?'success':'coach'}`;
+    feedback.innerHTML=`<div><strong>${isCorrect?'יופי — הקריאה סומנה כנכונה':'זה בדיוק הזמן לבקש עוד תרגול'}</strong><p><span lang="en" dir="ltr">${esc(word)}</span> — ${esc(meaning)}</p><small>${loopNextMessage(result.outcome)}</small></div><button class="primary" type="button" data-loop-next>${result.outcome==='mastered'?'סיום המילה והמשך':'המשך לתור'}</button>`;
+    focusSoon(feedback);feedback.querySelector('[data-loop-next]').onclick=show;
+   }
+   actions.querySelector('[data-good]').onclick=()=>report(true);actions.querySelector('[data-again]').onclick=()=>report(false);
+  };
  }
  show();
 }
@@ -145,11 +230,32 @@ function renderText(){
 }
 
 function renderCheck(){
- const panel=$('#checkPanel'),u=current(),items=shuffle([...shuffle(u.words).slice(0,5),...u.transfer]);let index=0,accurate=0;
- panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>בדיקת שליטה</h2><p>חמש מילים מוכרות וחמש מילות העברה</p></div><div class="task-card"><div class="big-read"></div><div class="reveal"></div><div class="self-actions"></div><div class="counter"></div></div></div>`;
- function show(){if(index>=items.length){const pct=Math.round(accurate/items.length*100),pass=pct>=80;panel.querySelector('.task-card').innerHTML=`<div class="mastery-grid"><div class="metric"><strong>${accurate}/${items.length}</strong>דיוק</div><div class="metric"><strong>${pct}%</strong>קריאה</div><div class="metric"><strong>${pass?'עבר':'לתרגל'}</strong>יעד 80%</div></div><div class="mastery-result ${pass?'pass':''}">${pass?'הושג יעד הקריאה במילים. מומלץ לבדוק שוב בעוד כמה ימים.':'מומלץ לחזור לכרטיסיות ולמילות ההעברה.'}</div><div class="cover-actions"><button class="secondary" data-retry>בדיקה חוזרת</button><button class="primary" data-next-lesson>לשיעור הבא</button></div><p class="free-note">הבדיקה אינה נועלת רמות או שיעורים.</p>`;activityProgress=null;saveProgress({check:pass,score:pct,date:new Date().toISOString()});panel.querySelector('[data-retry]').onclick=renderCheck;panel.querySelector('[data-next-lesson]').onclick=()=>lessonMove(1);return}
-  setActivityProgress('בדיקת שליטה',index+1,items.length);
-  const [w,h]=items[index];panel.querySelector('.big-read').textContent=w;panel.querySelector('.reveal').textContent='';panel.querySelector('.self-actions').innerHTML='<button class="secondary" data-check-reveal>בדיקה</button>';panel.querySelector('.counter').textContent=`${index+1} מתוך ${items.length}`;panel.querySelector('[data-check-reveal]').onclick=()=>{panel.querySelector('.reveal').textContent=h;speak(w,.8);panel.querySelector('.self-actions').innerHTML='<button class="good" data-check-good>נכון</button><button class="again" data-check-again>לא נכון</button>';panel.querySelector('[data-check-good]').onclick=()=>{accurate++;index++;show()};panel.querySelector('[data-check-again]').onclick=()=>{index++;show()}};
+ const panel=$('#checkPanel'),u=current(),items=shuffle([...shuffle(u.words).slice(0,5),...u.transfer]),prefix=`check-${level}-${lesson}`;
+ let queue=initialLoopQueue(items,prefix),answered=0,correctFirst=0,finished=false;
+ const mastered=new Set(),hadError=new Set();
+ panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>בדיקת שליטה</h2><p>הציון נקבע בניסיון הראשון; טעויות מקבלות תיקון וחזרה אמיתית</p></div><div class="loop-dashboard" aria-label="מצב בדיקת השליטה"><div><span>הושלמו</span><strong data-loop-mastered>0 / ${items.length}</strong></div><div><span>ממתינות לחזרה</span><strong data-loop-waiting>0</strong></div><div><span>ניסיונות</span><strong data-loop-answered>0</strong></div></div><div class="task-card loop-task"><div class="loop-question-top"><span class="loop-encounter"></span><small class="loop-rule">טעות חוזרת אחרי 2 · הצלחה אחרי 4–6</small></div><div class="big-read" lang="en" dir="ltr" tabindex="-1"></div><div class="reveal"></div><div class="self-actions"></div><div class="feedback loop-feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div><div class="counter"></div></div></div>`;
+ function dashboard(){panel.querySelector('[data-loop-mastered]').textContent=`${mastered.size} / ${items.length}`;panel.querySelector('[data-loop-waiting]').textContent=loopWaiting(queue);panel.querySelector('[data-loop-answered]').textContent=answered}
+ function complete(){
+  if(finished)return;finished=true;const pct=Math.round(correctFirst/items.length*100),pass=pct>=80,corrected=[...mastered].filter(itemId=>hadError.has(itemId)).length;
+  activityProgress=null;saveProgress({check:pass,score:pct,date:new Date().toISOString()});
+  panel.querySelector('.loop-task').innerHTML=`<div class="loop-summary" role="status" aria-live="polite"><span class="loop-summary-mark" aria-hidden="true">✓</span><h2>בדיקת השליטה הושלמה</h2><p>כל הפריטים הגיעו להצלחה בחזרה. הציון נשאר מבוסס על הניסיון הראשון כדי לשקף שליטה עצמאית.</p><div class="mastery-grid"><div class="metric"><strong>${correctFirst}/${items.length}</strong>דיוק ראשון</div><div class="metric"><strong>${pct}%</strong>ציון התחלתי</div><div class="metric"><strong>${corrected}</strong>תוקנו בלולאה</div></div><div class="mastery-result ${pass?'pass':''}">${pass?'הושג יעד 80%. מומלץ לבדוק שוב בעוד כמה ימים.':'עדיין לא הושג יעד 80%, אך כל הטעויות קיבלו תיקון וחזרה.'}</div><div class="cover-actions"><button class="secondary" data-retry>בדיקה חוזרת</button><button class="primary" data-next-lesson>לשיעור הבא</button></div><p class="free-note">הבדיקה אינה נועלת רמות או שיעורים.</p></div>`;
+  panel.querySelector('[data-retry]').onclick=renderCheck;panel.querySelector('[data-next-lesson]').onclick=()=>lessonMove(1);
+ }
+ function show(){
+  if(mastered.size===items.length){complete();return}
+  const entry=queue[0],[word,meaning]=items[entry.itemId],bigRead=panel.querySelector('.big-read'),reveal=panel.querySelector('.reveal'),actions=panel.querySelector('.self-actions'),feedback=panel.querySelector('.loop-feedback');
+  setActivityProgress('בדיקת שליטה',mastered.size,items.length);dashboard();panel.querySelector('.loop-encounter').textContent=loopLabel(entry.encounter);
+  bigRead.textContent=word;reveal.textContent='';actions.innerHTML='<button class="secondary" type="button" data-check-reveal>בדיקה והשמעה</button>';feedback.className='feedback loop-feedback';feedback.innerHTML='';panel.querySelector('.counter').textContent=`${mastered.size} מתוך ${items.length} הושלמו · ${loopLabel(entry.encounter)}`;focusSoon(bigRead);
+  actions.querySelector('[data-check-reveal]').onclick=()=>{
+   reveal.textContent=meaning;speak(word,.8);actions.innerHTML='<button class="good" type="button" data-check-good>קראתי נכון</button><button class="again" type="button" data-check-again>צריך עוד תרגול</button>';
+   function report(isCorrect){
+    answered++;if(entry.encounter==='new'&&isCorrect)correctFirst++;if(!isCorrect&&entry.encounter!=='bridge')hadError.add(entry.itemId);actions.querySelectorAll('button').forEach(button=>button.disabled=true);
+    const result=advanceLoop(queue,isCorrect,answered,items.length,prefix);queue=result.queue;if(result.masteredItemId!==null)mastered.add(result.masteredItemId);dashboard();
+    feedback.className=`feedback loop-feedback ${isCorrect?'success':'coach'}`;feedback.innerHTML=`<div><strong>${isCorrect?'נרשם כנכון — עכשיו נוודא שהקריאה נשמרה':'נרשם לתיקון — הטעות לא נעלמת מן התרגול'}</strong><p><span lang="en" dir="ltr">${esc(word)}</span> — ${esc(meaning)}</p><small>${loopNextMessage(result.outcome)}</small></div><button class="primary" type="button" data-loop-next>${result.outcome==='mastered'?'סיום הפריט והמשך':'המשך לתור'}</button>`;
+    focusSoon(feedback);feedback.querySelector('[data-loop-next]').onclick=show;
+   }
+   actions.querySelector('[data-check-good]').onclick=()=>report(true);actions.querySelector('[data-check-again]').onclick=()=>report(false);
+  };
  }
  show();
 }
