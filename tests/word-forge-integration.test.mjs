@@ -7,7 +7,7 @@ async function source(path) {
   return readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 }
 
-test('Word Forge reads the exact ten-word group for every course lesson', async () => {
+test('Word Forge reads every target group and its five transfer challenges', async () => {
   const context = { window: {} };
   vm.createContext(context);
   vm.runInContext(await source('curriculum-data.js'), context);
@@ -16,15 +16,22 @@ test('Word Forge reads the exact ten-word group for every course lesson', async 
   assert.equal(levels.length, 5);
   assert.equal(levels.flatMap(level => level.lessons).length, 50);
   for (const level of levels) {
-    for (const lesson of level.lessons) assert.equal(lesson.words.length, 10);
+    for (const lesson of level.lessons) {
+      assert.equal(lesson.words.length, 10);
+      assert.equal(lesson.transfer.length, 5);
+    }
   }
+  assert.equal(new Set(levels.flatMap(level => level.lessons.flatMap(stage => stage.words.map(([word]) => word.toLowerCase())))).size, 459);
+  assert.equal(levels.flatMap(level => level.lessons.flatMap(stage => stage.transfer)).length, 250);
 
   const html = await source('word-forge/index.html');
   assert.match(html, /src="\.\.\/curriculum-data\.js\?v=2"/);
   assert.match(html, /params\.get\('level'\)/);
   assert.match(html, /params\.get\('lesson'\)/);
   assert.match(html, /lessonData\.words\.map\(\(\[word, translation\]\)/);
-  assert.doesNotMatch(html, /const words = \[/);
+  assert.match(html, /lessonData\.transfer\.map\(\(\[word, translation\]\)/);
+  assert.match(html, /const words = \[\.\.\.targetWords, \.\.\.transferWords\]/);
+  assert.doesNotMatch(html, /const targetWords = \[|const transferWords = \[/);
 });
 
 test('the mobile opening is content-sized and starts directly below the topbar', async () => {
@@ -138,7 +145,7 @@ test('course navigation exposes the stage-specific production game', async () =>
   assert.match(game, /const lessonHref = `\.\.\/lesson\.html\?level=\$\{courseLevel\}&lesson=\$\{courseLesson\}&mode=cards`/);
 });
 
-test('stage navigation is explicit, premium, and free of school-facing language', async () => {
+test('the full 5 by 10 journey is explicit, premium, and free of school-facing language', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
@@ -147,6 +154,9 @@ test('stage navigation is explicit, premium, and free of school-facing language'
   assert.match(html, /id="stageMapIntroButton"[^>]*>שלבים<\/button>/);
   assert.match(html, /id="stageMap"[^>]*aria-labelledby="stageMapTitle"/);
   assert.match(inlineScript, /function renderStageMap\(\)/);
+  assert.match(inlineScript, /Array\.from\(\{ length: stageLevelCount \}/);
+  assert.match(inlineScript, /class="level-route/);
+  assert.match(html, /grid-template-columns: repeat\(10, minmax\(0, 1fr\)\)/);
   assert.match(inlineScript, /const nextStageHref = isFinalStage \? null/);
   assert.match(inlineScript, />השלב הבא <span aria-hidden="true">←<\/span><\/a>/);
   assert.match(inlineScript, /id="restartButton">לשחק שוב<\/button>/);
@@ -156,18 +166,18 @@ test('stage navigation is explicit, premium, and free of school-facing language'
   assert.doesNotMatch(html, /ARCADE SPELLING LAB/);
 });
 
-test('each stage has a richer point value, a distinct premium shell, and collectible rewards', async () => {
+test('each stage has a richer coin value, a distinct premium shell, and collectible rewards', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
 
-  const pointValuesSource = inlineScript.match(/const stagePointValues = (\[[^;]+\]);/)?.[1];
-  assert.ok(pointValuesSource, 'stage point values are declared');
-  const pointValues = new Function(`return ${pointValuesSource};`)();
-  assert.equal(pointValues.length, 10);
-  assert.deepEqual(pointValues.slice(0, 3), [5, 7, 12]);
-  assert.equal(pointValues.at(-1), 25);
-  assert.ok(pointValues.every((value, index) => index === 0 || value > pointValues[index - 1]));
+  const coinValuesSource = inlineScript.match(/const stageCoinValues = (\[[^;]+\]);/)?.[1];
+  assert.ok(coinValuesSource, 'stage coin values are declared');
+  const coinValues = new Function(`return ${coinValuesSource};`)();
+  assert.equal(coinValues.length, 10);
+  assert.deepEqual(coinValues.slice(0, 3), [5, 7, 12]);
+  assert.equal(coinValues.at(-1), 25);
+  assert.ok(coinValues.every((value, index) => index === 0 || value > coinValues[index - 1]));
 
   const themesSource = inlineScript.match(/const stageThemes = (\[[\s\S]*?\n\s*\]);/)?.[1];
   assert.ok(themesSource, 'stage themes are declared');
@@ -182,11 +192,14 @@ test('each stage has a richer point value, a distinct premium shell, and collect
   const rewards = new Function(`return ${rewardsSource};`)();
   assert.deepEqual(rewards.map(reward => reward.label), ['סוכרייה', 'גביע ארד', 'גביע כסף', 'גביע זהב', 'בית', 'טירה', 'מטוס']);
   assert.deepEqual(rewards.map(reward => reward.symbol), ['🍬', '🏆', '🏆', '🏆', '🏠', '🏰', '✈️']);
-  assert.match(inlineScript, /הפרס הבא: \$\{rewardLadder\[lit\]\.label\}/);
+  assert.deepEqual(rewards.map(reward => reward.threshold), [25, 100, 250, 600, 1500, 3500, 7500]);
+  assert.match(inlineScript, /rewardLadder\.filter\(reward => totalCoins >= reward\.threshold\)/);
+  assert.match(html, /id="coinMetric"/);
+  assert.doesNotMatch(html, /\bPTS\b|\bPOINTS\b/);
   assert.doesNotMatch(html, /⚙️|🔋/);
 });
 
-test('Word Forge points accumulate locally while other games keep their existing reward', async () => {
+test('Word Forge gold coins accumulate locally while legacy points migrate safely', async () => {
   const stored = new Map();
   const context = {
     localStorage: {
@@ -206,20 +219,79 @@ test('Word Forge points accumulate locally while other games keep their existing
 
   const progress = context.window.EBR_PROGRESS;
   let profile = progress.recordGame(true, 5, { game: 'word_forge', xp: 5, stage: 1 });
-  assert.equal(profile.wordForgePoints, 5);
+  assert.equal(profile.wordForgeCoins, 5);
   assert.equal(profile.xp, 5);
 
   profile = progress.recordGame(true, 12, { game: 'word_forge', xp: 7, stage: 2 });
-  assert.equal(profile.wordForgePoints, 12);
+  assert.equal(profile.wordForgeCoins, 12);
   assert.equal(profile.xp, 12);
 
   profile = progress.recordGame(false, 12, { game: 'word_forge', xp: 25, stage: 10 });
-  assert.equal(profile.wordForgePoints, 12, 'an incorrect answer gives no points');
+  assert.equal(profile.wordForgeCoins, 12, 'an incorrect answer gives no coins');
   assert.equal(profile.xp, 12);
 
   profile = progress.recordGame(true, 4, { game: 'word_match' });
-  assert.equal(profile.wordForgePoints, 12, 'other games do not change the Word Forge total');
+  assert.equal(profile.wordForgeCoins, 12, 'other games do not change the Word Forge total');
   assert.equal(profile.xp, 16, 'other games keep the existing four-point default');
+
+  profile = progress.completeWordForgeStage(1, 1);
+  assert.deepEqual(Array.from(profile.wordForgeCompletedStages), ['1-1']);
+  profile = progress.completeWordForgeStage(1, 1);
+  assert.equal(profile.wordForgeCompletedStages.length, 1, 'stage completion is idempotent');
+
+  const legacy = JSON.parse(stored.get('ebr-profile-v2'));
+  delete legacy.wordForgeCoins;
+  legacy.wordForgePoints = 321;
+  stored.set('ebr-profile-v2', JSON.stringify(legacy));
+  assert.equal(progress.getProfile().wordForgeCoins, 321, 'legacy points become coins without loss');
+});
+
+test('every missing-letter challenge has a reverse five-second failure timer', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(inlineScript, /const challengeDurationMs = 5000/);
+  assert.match(html, /id="challengeTimer" role="progressbar"[^>]*aria-valuemax="5"/);
+  assert.match(inlineScript, /fill\.style\.transform = `scaleX\(\$\{ratio\}\)`/);
+  assert.match(inlineScript, /answerChallenge\(null, \{ timedOut: true \}\)/);
+  assert.match(inlineScript, /async function answerChallenge\(button, \{ timedOut = false \} = \{\}\)/);
+  assert.match(inlineScript, /timedOut \? 'הזמן הסתיים'/);
+});
+
+test('level completion triggers Golden Buzzer feedback and automatic level-to-level movement', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(inlineScript, /completeWordForgeStage\?\.\(courseLevel, courseLesson\)/);
+  assert.match(inlineScript, /const currentLevelComplete = Array\.from/);
+  assert.match(inlineScript, /const levelAdvanceReady = Boolean\(autoLevelHref && currentLevelComplete\)/);
+  assert.match(inlineScript, /LEVEL \$\{courseLevel\} ✓[\s\S]*LEVEL \$\{courseLevel \+ 1\}[\s\S]*id="autoCountdown">3/);
+  assert.match(inlineScript, /function startAutoAdvance\(href\)/);
+  assert.match(inlineScript, /if \(currentLevelComplete \|\| allStagesComplete\) triggerCoinBurst\(true\)/);
+  assert.match(html, /\.coin-metric\.milestone::before/);
+  assert.match(html, /@keyframes golden-rays/);
+});
+
+test('the Hebrew certificate is gated by all 50 stages, accepts any name script, and changes appearance per issue', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(html, /<h2 id="certificateTitle">תעודת סיום<\/h2>/);
+  assert.match(html, /id="certificateNameInput"[^>]*dir="auto"[^>]*required/);
+  assert.match(html, /5 רמות · 50 שלבים/);
+  assert.match(html, /459 מילים/);
+  assert.match(html, /250 אתגרי העברה/);
+  assert.match(html, /שליטה מלאה במילים/);
+  assert.doesNotMatch(html, /MASTERY CERTIFICATE|AWARDED TO|TARGET WORDS|TRANSFER CHALLENGES/);
+  assert.match(inlineScript, /const allStagesComplete = completedStageCount >= totalStageCount/);
+  assert.match(inlineScript, /certificateName\.textContent = learnerName/);
+  assert.match(inlineScript, /progressApi\?\.issueWordForgeCertificate\?\.\(\)/);
+  assert.match(inlineScript, /const certificatePalettes = \[/);
+  assert.match(inlineScript, /uniqueGemHue = \(certificateNumber \* 137\.508/);
+  assert.doesNotMatch(inlineScript, /learnerName[^\n]*localStorage|localStorage[^\n]*learnerName/);
 });
 
 test('Word Forge keeps the approved privacy and audio boundaries', async () => {
@@ -230,7 +302,7 @@ test('Word Forge keeps the approved privacy and audio boundaries', async () => {
   }
   assert.match(html, /language = 'en-US'/);
   assert.match(html, /if \(\/\[a-z\]\/i\.test\(characters\[letterIndex\]\)\)/);
-  assert.match(html, /<script src="\.\.\/progress\.js\?v=2"><\/script>/);
+  assert.match(html, /<script src="\.\.\/progress\.js\?v=3"><\/script>/);
   assert.match(html, /lessonBackLink\.setAttribute\('aria-label', 'יציאה ל-English Basic'\)/);
   assert.match(html, /game: 'word_forge',[\s\S]*xp: gained/);
 });

@@ -16,7 +16,7 @@
 
   function emptyProfile() {
     return {
-      version: 2,
+      version: 3,
       xp: 0,
       streak: 0,
       lastActive: null,
@@ -28,7 +28,10 @@
       gameLevelUps: 0,
       gameLevelDowns: 0,
       bestGameScore: 0,
+      wordForgeCoins: 0,
       wordForgePoints: 0,
+      wordForgeCompletedStages: [],
+      wordForgeCertificates: 0,
       lastLocation: null,
       daily: {},
       migratedLegacy: false
@@ -40,7 +43,14 @@
     const next = { ...base, ...(profile || {}) };
     next.activeDays = Array.isArray(next.activeDays) ? next.activeDays.slice(-90) : [];
     next.daily = next.daily && typeof next.daily === 'object' ? next.daily : {};
-    next.wordForgePoints = Math.max(0, Number(next.wordForgePoints) || 0);
+    next.version = 3;
+    const legacyWordForgeReward = Math.max(0, Number(next.wordForgeCoins) || 0, Number(next.wordForgePoints) || 0);
+    next.wordForgeCoins = legacyWordForgeReward;
+    next.wordForgePoints = legacyWordForgeReward;
+    next.wordForgeCompletedStages = Array.isArray(next.wordForgeCompletedStages)
+      ? [...new Set(next.wordForgeCompletedStages.filter(stage => /^\d-\d{1,2}$/.test(stage)))].slice(-50)
+      : [];
+    next.wordForgeCertificates = Math.max(0, Number(next.wordForgeCertificates) || 0);
     return next;
   }
 
@@ -151,7 +161,10 @@
       daily.gameCorrect += 1;
       profile.gameCorrect += 1;
       profile.xp += reward;
-      if (detail.game === 'word_forge') profile.wordForgePoints += reward;
+      if (detail.game === 'word_forge') {
+        profile.wordForgeCoins += reward;
+        profile.wordForgePoints = profile.wordForgeCoins;
+      }
     }
     if (detail.levelUp) profile.gameLevelUps += 1;
     if (detail.levelDown) profile.gameLevelDowns += 1;
@@ -159,9 +172,44 @@
     return write(profile, { xpGained: reward, activity: 'game', ...detail });
   }
 
+  function completeWordForgeStage(level, stage) {
+    const profile = getProfile();
+    touch(profile);
+    const key = `${Math.max(1, Math.min(5, Number(level) || 1))}-${Math.max(1, Math.min(10, Number(stage) || 1))}`;
+    const firstCompletion = !profile.wordForgeCompletedStages.includes(key);
+    if (firstCompletion) profile.wordForgeCompletedStages.push(key);
+    return write(profile, {
+      activity: 'word_forge_stage',
+      wordForgeStage: key,
+      firstCompletion,
+      wordForgeCompleted: profile.wordForgeCompletedStages.length
+    });
+  }
+
+  function issueWordForgeCertificate() {
+    const profile = getProfile();
+    touch(profile);
+    profile.wordForgeCertificates += 1;
+    return write(profile, {
+      activity: 'word_forge_certificate',
+      certificateNumber: profile.wordForgeCertificates
+    });
+  }
+
   function getToday(profile = getProfile()) {
     return profile.daily[dateKey()] || { activities: 0, gameCorrect: 0, textReads: 0, gameSessions: 0, gameRounds: 0 };
   }
 
-  window.EBR_PROGRESS = { STAGES, dateKey, getProfile, getToday, setLastLocation, recordPractice, startGameSession, recordGame };
+  window.EBR_PROGRESS = {
+    STAGES,
+    dateKey,
+    getProfile,
+    getToday,
+    setLastLocation,
+    recordPractice,
+    startGameSession,
+    recordGame,
+    completeWordForgeStage,
+    issueWordForgeCertificate
+  };
 })();
