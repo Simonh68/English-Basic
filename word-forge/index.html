@@ -804,7 +804,7 @@
 
     .challenge-pressure span:last-child { color: var(--gold); }
 
-    .pressure-bonus {
+    .speed-bonus {
       margin-inline-start: 7px;
       padding: 2px 6px;
       border: 1px solid #59e1d34a;
@@ -813,6 +813,8 @@
       font-size: .72rem !important;
       white-space: nowrap;
     }
+
+    .speed-bonus.slow { color: var(--muted); border-color: #ffffff2d; }
 
     .choices {
       max-width: 560px;
@@ -1463,7 +1465,7 @@
     }
 
     @media (forced-colors: active) {
-      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.timer-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.pressure-bonus,.name-card,.certificate-card { border: 1px solid CanvasText; }
+      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.timer-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.speed-bonus,.name-card,.certificate-card { border: 1px solid CanvasText; }
       .progress-fill,.segment.lit,.reactor-core { background: Highlight; color: HighlightText; }
       .choice.correct { outline: 3px solid Highlight; }
       .choice.wrong { outline: 3px dashed CanvasText; }
@@ -1664,8 +1666,9 @@
       const progressApi = window.EBR_PROGRESS;
       const initialProfile = progressApi?.getProfile?.() || {};
       const initialWordForgeCoins = Math.max(0, Number(initialProfile.wordForgeCoins ?? initialProfile.wordForgePoints) || 0);
-      const challengeDurationsMs = [10000, 7000, 5000];
-      const pressureBonusByDuration = { 10000: 0, 7000: 2, 5000: 5 };
+      const challengeDurationMs = 10000;
+      const responseSpeedThresholdsMs = { fast: 3000, steady: 6000 };
+      const responseBonusByTier = { fast: 5, steady: 2, slow: 0, untimed: 0 };
       let runWords = [...words];
 
       document.documentElement.style.setProperty('--cyan', stageTheme.cyan);
@@ -1740,7 +1743,7 @@
       stageMenuButton.setAttribute('aria-label', `פתיחת בחירת השלבים. שלב נוכחי ${courseLesson}`);
       groupLabel.textContent = `LEVEL ${courseLevel} · STAGE ${courseLesson} · ${targetWords.length} ◆ · ${transferWords.length} ↔`;
       stageValue.textContent = `${stageTheme.name} · 🪙 +${coinsPerSuccess} · ${initialWordForgeCoins}`;
-      stageValue.setAttribute('aria-label', `כל הצלחה בשלב זה שווה ${coinsPerSuccess} מטבעות זהב. סך הכול ${initialWordForgeCoins} מטבעות`);
+      stageValue.setAttribute('aria-label', `כל הצלחה בשלב זה שווה לפחות ${coinsPerSuccess} מטבעות זהב. תגובה מהירה יכולה להוסיף עד 5 מטבעות. סך הכול ${initialWordForgeCoins} מטבעות`);
       document.title = `Word Forge · Level ${courseLevel} · Stage ${courseLesson}`;
       progressApi?.setLastLocation({ href: `word-forge/?level=${courseLevel}&lesson=${courseLesson}`, label: `Word Forge · שלב ${courseLesson}` });
 
@@ -1769,7 +1772,6 @@
       let challengeTimerFrame = 0;
       let challengeTimerDeadline = 0;
       let timePressureOn = true;
-      let pressureLevel = 0;
       let autoAdvanceTimer = 0;
       let lastCertificatePalette = -1;
       let stageMapPausedChallenge = false;
@@ -1829,6 +1831,12 @@
           { frequency: 262, duration: .24, gap: .02, type: 'triangle', gain: .26 }
         ]
       ];
+      const responseToneProfiles = {
+        fast: { pitchScale: 1.22, durationScale: .72, gainScale: 1.05 },
+        steady: { pitchScale: 1, durationScale: 1, gainScale: 1 },
+        slow: { pitchScale: .82, durationScale: 1.24, gainScale: .82 },
+        untimed: { pitchScale: 1, durationScale: 1, gainScale: 1 }
+      };
 
       const formatCoins = value => Number(value).toLocaleString('en-US');
       const levelColors = ['#ffd978', '#59e1d3', '#a993ff', '#72a5ff', '#ff9f6e'];
@@ -1876,12 +1884,17 @@
         else stageMap.removeAttribute('open');
       }
 
-      function pressureBonusFor(durationMs) {
-        return timePressureOn ? pressureBonusByDuration[durationMs] || 0 : 0;
+      function responseTierFor(elapsedMs, pressureOn) {
+        if (!pressureOn) return 'untimed';
+        const elapsed = Number(elapsedMs);
+        if (!Number.isFinite(elapsed)) return 'slow';
+        if (elapsed <= responseSpeedThresholdsMs.fast) return 'fast';
+        if (elapsed <= responseSpeedThresholdsMs.steady) return 'steady';
+        return 'slow';
       }
 
       function updateTimePressureControl() {
-        const seconds = challengeDurationsMs[pressureLevel] / 1000;
+        const seconds = challengeDurationMs / 1000;
         timePressureToggle.setAttribute('aria-pressed', String(timePressureOn));
         timePressureToggle.textContent = `⏱ ${timePressureOn ? seconds : '∞'}`;
         timePressureToggle.setAttribute('aria-label', timePressureOn
@@ -1889,19 +1902,15 @@
           : 'הפעלת לחץ הזמן. כרגע אין הגבלת זמן');
       }
 
-      function nextPressureLevel(currentLevel, correct, pressureOn) {
-        return pressureOn && correct
-          ? Math.min(currentLevel + 1, challengeDurationsMs.length - 1)
-          : 0;
+      function speedFeedback(responseTier, speedBonus) {
+        if (responseTier === 'fast') return { badge: `⚡ +${speedBonus}`, label: 'תגובה מהירה מאוד' };
+        if (responseTier === 'steady') return { badge: `★ +${speedBonus}`, label: 'תגובה מהירה' };
+        if (responseTier === 'slow') return { badge: '✓', label: 'תגובה נכונה' };
+        return { badge: '', label: 'תגובה נכונה ללא הגבלת זמן' };
       }
 
-      function updatePressureLevel(correct) {
-        pressureLevel = nextPressureLevel(pressureLevel, correct, timePressureOn);
-        updateTimePressureControl();
-      }
-
-      function recordStageResult(correct, pressureBonus = 0) {
-        const gained = correct ? coinsPerSuccess + Math.max(0, Number(pressureBonus) || 0) : 0;
+      function recordStageResult(correct, rewardBonus = 0) {
+        const gained = correct ? coinsPerSuccess + Math.max(0, Number(rewardBonus) || 0) : 0;
         const previousTotal = totalCoins;
         if (correct) runCoins += gained;
         const profile = progressApi?.recordGame(correct, runCoins, {
@@ -1984,12 +1993,11 @@
       timePressureToggle.addEventListener('click', () => {
         const activeQuestion = Boolean(currentChallenge && !currentChallenge.answered && !challengeStage.hidden);
         timePressureOn = !timePressureOn;
-        pressureLevel = 0;
         clearChallengeTimer();
         updateTimePressureControl();
         if (activeQuestion) {
-          currentChallenge.durationMs = timePressureOn ? challengeDurationsMs[0] : null;
-          currentChallenge.pressureBonus = 0;
+          currentChallenge.durationMs = timePressureOn ? challengeDurationMs : null;
+          currentChallenge.startedAt = 0;
           renderChallengeTimerState();
           if (timePressureOn && !challengeStage.classList.contains('question-wait')) startChallengeTimer(runId);
         }
@@ -2027,7 +2035,6 @@
         const profile = progressApi?.getProfile?.() || {};
         totalCoins = Math.max(0, Number(profile.wordForgeCoins ?? profile.wordForgePoints) || totalCoins);
         chain = 0;
-        pressureLevel = 0;
         updateTimePressureControl();
         firstPassCorrect = 0;
         positiveToneStep = 0;
@@ -2312,8 +2319,19 @@
         return pattern;
       }
 
-      async function positiveAudio(id, item) {
-        await playTones(nextPositiveTonePattern(), id);
+      function tonePatternForResponse(pattern, responseTier) {
+        const profile = responseToneProfiles[responseTier] || responseToneProfiles.steady;
+        return pattern.map(tone => ({
+          ...tone,
+          frequency: Math.round(tone.frequency * profile.pitchScale),
+          duration: tone.duration * profile.durationScale,
+          gap: tone.gap * profile.durationScale,
+          gain: Math.min(.32, tone.gain * profile.gainScale)
+        }));
+      }
+
+      async function positiveAudio(id, item, responseTier) {
+        await playTones(tonePatternForResponse(nextPositiveTonePattern(), responseTier), id);
         await speak(item.word, .78, id, 'en-US', 1.08);
       }
 
@@ -2442,8 +2460,7 @@
         const status = challengeStage.querySelector('#challengePressure');
         if (!timer || !fill || !status) return;
         const durationMs = timePressureOn ? currentChallenge?.durationMs : null;
-        const seconds = durationMs ? durationMs / 1000 : 10;
-        const bonus = pressureBonusFor(durationMs);
+        const seconds = challengeDurationMs / 1000;
         timer.classList.toggle('off', !durationMs);
         timer.classList.remove('warning');
         timer.setAttribute('aria-valuemax', String(seconds));
@@ -2453,7 +2470,7 @@
           timer.removeAttribute('aria-disabled');
           timer.removeAttribute('aria-valuetext');
           timer.setAttribute('aria-label', `${seconds} שניות לבחירת תשובה`);
-          status.innerHTML = `<span>⏱ ${seconds}s</span><span>🪙 +${coinsPerSuccess + bonus}</span>`;
+          status.innerHTML = `<span>⏱ ${seconds}s</span><span>⚡ +${responseBonusByTier.fast} · ★ +${responseBonusByTier.steady}</span>`;
         } else {
           timer.setAttribute('aria-disabled', 'true');
           timer.setAttribute('aria-valuetext', 'ללא הגבלת זמן');
@@ -2468,12 +2485,14 @@
         const timer = challengeStage.querySelector('#challengeTimer');
         const fill = challengeStage.querySelector('#challengeTimerFill');
         const durationMs = currentChallenge?.durationMs;
+        const startedAt = performance.now();
+        if (currentChallenge) currentChallenge.startedAt = startedAt;
         if (!timer || !fill || !timePressureOn || !durationMs) return;
-        challengeTimerDeadline = performance.now() + durationMs;
+        challengeTimerDeadline = startedAt + challengeDurationMs;
         const tick = now => {
           if (id !== runId || !currentChallenge || currentChallenge.answered) return clearChallengeTimer();
           const remaining = Math.max(0, challengeTimerDeadline - now);
-          const ratio = remaining / durationMs;
+          const ratio = remaining / challengeDurationMs;
           fill.style.transform = `scaleX(${ratio})`;
           timer.classList.toggle('warning', ratio <= .35);
           timer.setAttribute('aria-valuenow', String(Math.ceil(remaining / 1000)));
@@ -2507,8 +2526,8 @@
         while (options.length < 4) options.push(distractors[options.length]);
         options.sort((a, b) => (a.charCodeAt(0) + wordIndex) % 7 - (b.charCodeAt(0) + wordIndex) % 7);
         const displayWord = characters.map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toLowerCase()).join('');
-        const durationMs = timePressureOn ? challengeDurationsMs[pressureLevel] : null;
-        currentChallenge = { wordIndex, isReview, correct, answered: false, durationMs, pressureBonus: pressureBonusFor(durationMs) };
+        const durationMs = timePressureOn ? challengeDurationMs : null;
+        currentChallenge = { wordIndex, isReview, correct, answered: false, durationMs, startedAt: 0 };
         updateDashboard();
 
         challengeStage.classList.add('question-wait');
@@ -2559,9 +2578,11 @@
         let audioFeedback;
         let coinsAwarded = 0;
         if (answer === correct) {
-          const pressureBonus = currentChallenge.pressureBonus;
-          coinsAwarded = recordStageResult(true, pressureBonus);
-          updatePressureLevel(true);
+          const elapsedMs = currentChallenge.startedAt ? performance.now() - currentChallenge.startedAt : challengeDurationMs;
+          const responseTier = responseTierFor(elapsedMs, timePressureOn);
+          const speedBonus = responseBonusByTier[responseTier] || 0;
+          const speedResult = speedFeedback(responseTier, speedBonus);
+          coinsAwarded = recordStageResult(true, speedBonus);
           chain += 1;
           if (!currentChallenge.isReview) firstPassCorrect += 1;
           challengeResolved.add(currentChallenge.wordIndex);
@@ -2569,13 +2590,12 @@
           if (segment) segment.classList.add('lit');
           updateBuildPreview();
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="coins-pop" aria-label="נוספו ${coinsAwarded} מטבעות">🪙 +${coinsAwarded}</strong>${pressureBonus ? `<strong class="pressure-bonus" aria-label="בונוס לחץ זמן: ${pressureBonus} מטבעות">⏱ +${pressureBonus}</strong>` : ''}<p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
-          liveStatus.textContent = `נכון. נוספו ${coinsAwarded} מטבעות זהב. האות החסרה היא ${correct.toLowerCase()}`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="coins-pop" aria-label="נוספו ${coinsAwarded} מטבעות">🪙 +${coinsAwarded}</strong>${speedResult.badge ? `<strong class="speed-bonus${responseTier === 'slow' ? ' slow' : ''}" aria-label="${speedResult.label}${speedBonus ? `, בונוס ${speedBonus} מטבעות` : ''}">${speedResult.badge}</strong>` : ''}<p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `${speedResult.label}. נוספו ${coinsAwarded} מטבעות זהב. האות החסרה היא ${correct.toLowerCase()}`;
           feedbackAnimation('success');
-          audioFeedback = positiveAudio(feedbackId, item);
+          audioFeedback = positiveAudio(feedbackId, item, responseTier);
         } else {
           recordStageResult(false);
-          updatePressureLevel(false);
           if (button) button.classList.add('wrong');
           chain = 0;
           positiveToneStep = 0;
