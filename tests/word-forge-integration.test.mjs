@@ -43,13 +43,16 @@ test('the mobile opening is content-sized and starts directly below the topbar',
   assert.doesNotMatch(mobileRules, /\.intro \{[^}]*100svh/);
 });
 
-test('the production game compiles and visibly reshuffles every run', async () => {
+test('the production game compiles and reshuffles within pedagogical rounds', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
   assert.doesNotThrow(() => new Function(inlineScript));
-  assert.match(inlineScript, /runWords = shuffleGroup\(words, runWords\)/);
-  assert.match(inlineScript, /shuffled\[0\] === previousGroup\[0\]/);
+  assert.match(inlineScript, /runWords = buildPedagogicalRun\(runWords\)/);
+  assert.match(inlineScript, /shuffleGroup\(group\.items, previousGroup\)/);
+  assert.match(inlineScript, /shuffled\[0\]\?\.word === previousGroup\[0\]\?\.word/);
+  assert.match(inlineScript, /const pedagogicalRoundSize = 5/);
+  assert.match(inlineScript, /TARGET A[\s\S]*TARGET B[\s\S]*TRANSFER/);
 });
 
 test('apostrophes in contractions are never selected as missing letters', async () => {
@@ -64,21 +67,23 @@ test('apostrophes in contractions are never selected as missing letters', async 
   }
 });
 
-test('exposure contrasts uppercase and lowercase while the missing-letter task stays lowercase', async () => {
+test('exposure contrasts uppercase and lowercase while letter and chunk tasks stay lowercase', async () => {
   const html = await source('word-forge/index.html');
 
   assert.match(html, /<h2 class="word" lang="en">\$\{item\.word\.toUpperCase\(\)\}<\/h2>/);
   assert.match(html, /characters\.map\(letter => `<span class="letter">\$\{letter\.toLowerCase\(\)\}<\/span>`\)/);
-  assert.match(html, /const displayWord = characters\.map\(\(letter, letterIndex\) => letterIndex === hiddenIndex \? '<span class="missing-slot">_<\/span>' : letter\.toLowerCase\(\)\)\.join\(''\)/);
+  assert.match(html, /function challengeWordMarkup\(word, plan, resolved = false\)/);
+  assert.match(html, /const missing = '_'\.repeat\(plan\.length\)/);
   assert.match(html, /disabled>\$\{option\.toLowerCase\(\)\}<\/button>/);
   assert.match(html, /\.choice \{[\s\S]*text-transform: lowercase;/);
   assert.match(html, /encounterLabel\.textContent = isReview \? '↺ retry' : '★ quiz'/);
-  assert.match(html, /<h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter\?<\/h2>/);
+  assert.match(html, /plan\.kind === 'chunk' \? 'איזה צירוף חסר' : 'איזו אות חסרה'/);
+  assert.match(html, /plan\.kind === 'chunk' \? 'chunk\?' : 'letter\?'/);
   assert.match(html, /<strong lang="en">yes!<\/strong>[\s\S]*\$\{item\.word\.toLowerCase\(\)\}<\/span> · \$\{item\.translation\} · <strong lang="en">\$\{correct\.toLowerCase\(\)\}<\/strong>/);
   assert.doesNotMatch(html, /missing-slot">_<\/span>' : letter\.toUpperCase\(\)/);
 });
 
-test('the missing-letter challenge is silent underneath and completes the lowercase word after any answer', async () => {
+test('the spelling challenge is silent underneath and highlights the resolved unit after any answer', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
@@ -87,7 +92,100 @@ test('the missing-letter challenge is silent underneath and completes the lowerc
   assert.match(inlineScript, /async function showWord\(wordIndex\) \{[\s\S]*challengeStage\.hidden = true;[\s\S]*await startBackgroundMusic\(\);/);
   assert.match(inlineScript, /async function showChallenge\(wordIndex, isReview\) \{[\s\S]*pauseBackgroundMusic\(\);[\s\S]*challengeStage\.hidden = false;/);
   assert.match(inlineScript, /class="missing-word" lang="en" aria-live="polite"/);
-  assert.match(inlineScript, /const missingWord = challengeStage\.querySelector\('\.missing-word'\);[\s\S]*missingWord\.textContent = item\.word\.toLowerCase\(\);[\s\S]*let audioFeedback;[\s\S]*if \(answer === correct\)/);
+  assert.match(inlineScript, /const missingWord = challengeStage\.querySelector\('\.missing-word'\);[\s\S]*missingWord\.innerHTML = challengeWordMarkup\(item\.word, currentChallenge, true\);[\s\S]*let audioFeedback;[\s\S]*if \(answer === correct\)/);
+  assert.match(html, /\.resolved-chunk \{/);
+});
+
+test('advanced stages use curated multi-letter chunks and keep OUGH pronunciation families together', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  const chunkPlansSource = inlineScript.match(/const stageChunkPlans = (\{[\s\S]*?\n\s*\});/)?.[1];
+  const roundOverridesSource = inlineScript.match(/const stageRoundOverrides = (\{[\s\S]*?\n\s*\});/)?.[1];
+  const choicePoolsSource = inlineScript.match(/const chunkChoicePools = (\{[\s\S]*?\n\s*\});/)?.[1];
+  assert.ok(chunkPlansSource);
+  assert.ok(roundOverridesSource);
+  assert.ok(choicePoolsSource);
+  const chunkPlans = new Function(`return ${chunkPlansSource};`)();
+  const roundOverrides = new Function(`return ${roundOverridesSource};`)();
+  const choicePools = new Function(`return ${choicePoolsSource};`)();
+
+  assert.deepEqual(chunkPlans['2-1'], ['sh', 'ch']);
+  assert.deepEqual(chunkPlans['3-4'], ['igh']);
+  assert.deepEqual(chunkPlans['4-1'], ['ough']);
+  assert.deepEqual(chunkPlans['4-2'], ['tion']);
+  assert.deepEqual(chunkPlans['5-3'], ['ing']);
+  assert.ok(Object.values(chunkPlans).flat().every(chunk => chunk.length >= 2));
+
+  const oughRounds = roundOverrides['4-1'];
+  assert.deepEqual(oughRounds.map(round => round.words.length), [3, 5, 2, 2, 3]);
+  assert.deepEqual(oughRounds[0].words, ['rough', 'tough', 'enough']);
+  assert.deepEqual(oughRounds[1].words, ['thought', 'bought', 'brought', 'fought', 'sought']);
+  assert.deepEqual(oughRounds[2].words, ['though', 'although']);
+  assert.deepEqual(oughRounds[3].words, ['through', 'throughout']);
+  assert.equal(new Set(oughRounds.flatMap(round => round.words)).size, 15);
+
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(await source('curriculum-data.js'), context);
+  const course = context.window.ENGLISH_BASIC_COURSE;
+  for (const [key, chunks] of Object.entries(chunkPlans)) {
+    const [level, stage] = key.split('-').map(Number);
+    const lesson = course.levels[level - 1]?.lessons[stage - 1];
+    assert.ok(lesson, `${key} resolves to a canonical stage`);
+    const stageWords = [...lesson.words, ...lesson.transfer].map(([word]) => word.toLowerCase());
+    assert.ok(stageWords.some(word => chunks.some(chunk => word.includes(chunk))), `${key} has at least one matching word`);
+    for (const chunk of chunks) {
+      assert.ok(new Set((choicePools[chunk.length] || []).filter(option => option !== chunk)).size >= 3, `${chunk} has three equal-length distractors`);
+    }
+  }
+  const oughStage = context.window.ENGLISH_BASIC_COURSE.levels[3].lessons[0];
+  const oughWords = [...oughStage.words, ...oughStage.transfer].map(([word]) => word.toLowerCase());
+  assert.deepEqual(new Set(oughRounds.flatMap(round => round.words)), new Set(oughWords));
+  assert.ok(oughWords.every(word => word.includes('ough')));
+
+  assert.match(inlineScript, /function challengePlanFor\(item\)/);
+  assert.match(inlineScript, /kind: 'chunk'[\s\S]*patternBonus: Math\.min\(3, correctChunk\.length - 1\)/);
+  assert.match(inlineScript, /class="missing-slot\$\{chunkClass\}"/);
+  assert.match(inlineScript, /class="resolved-chunk/);
+});
+
+test('advanced chunks add a small difficulty reward without changing the ten-second speed tiers', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(inlineScript, /patternBonus: Math\.min\(3, correctChunk\.length - 1\)/);
+  assert.match(inlineScript, /const patternBonus = Math\.max\(0, Number\(currentChallenge\.patternBonus\) \|\| 0\)/);
+  assert.match(inlineScript, /recordStageResult\(true, speedBonus \+ patternBonus\)/);
+  assert.match(inlineScript, /CHUNK \+\$\{patternBonus\}/);
+  assert.match(inlineScript, /const challengeBaseCoins = coinsPerSuccess \+ Math\.max\(0, Number\(currentChallenge\?\.patternBonus\) \|\| 0\)/);
+});
+
+test('feedback waits for learning audio, then shows a cancellable green three-second advance bar', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  const duration = Number(inlineScript.match(/const feedbackAdvanceDurationMs = (\d+);/)?.[1]);
+  assert.equal(duration, 3000);
+  assert.match(html, /\.feedback-advance-fill \{[\s\S]*#2fcf7c[\s\S]*#79eca5/);
+  assert.match(inlineScript, /id="feedbackAdvanceTrack" role="progressbar"[\s\S]*aria-valuemax="3" aria-valuenow="3"/);
+  assert.match(inlineScript, /continueButton\.addEventListener\('click', advanceAfterChallenge\)/);
+  assert.match(inlineScript, /await audioFeedback;[\s\S]*continueButton\.disabled = false;[\s\S]*startFeedbackAdvance\(feedbackId\)/);
+  assert.match(inlineScript, /if \(document\.hidden \|\| stageMap\.open\)[\s\S]*pauseFeedbackAdvance\(\)/);
+  assert.match(inlineScript, /prefers-reduced-motion: reduce/);
+});
+
+test('the accumulated score is prominent and paired with silver coin visuals', async () => {
+  const html = await source('word-forge/index.html');
+
+  assert.match(html, /id="coinMetric" aria-label="0 מטבעות כסף"/);
+  assert.equal((html.match(/class="coin-disc"/g) || []).length, 3);
+  assert.match(html, /\.coin-metric strong \{[\s\S]*font-size: clamp\(1\.3rem, 3\.8vw, 1\.72rem\)/);
+  assert.match(html, /radial-gradient\(circle at 34% 28%, #ffffff[\s\S]*#9caebe[\s\S]*#536777/);
+  assert.doesNotMatch(html, /מטבעות זהב|>GOLD</);
 });
 
 test('success feedback climbs for three actions and then plays a long descending cascade', async () => {
@@ -199,7 +297,7 @@ test('each stage has a richer coin value, a distinct premium shell, and collecti
   assert.doesNotMatch(html, /⚙️|🔋/);
 });
 
-test('Word Forge gold coins accumulate locally while legacy points migrate safely', async () => {
+test('Word Forge silver coins accumulate locally while legacy points migrate safely', async () => {
   const stored = new Map();
   const context = {
     localStorage: {
@@ -275,7 +373,7 @@ test('the timer stays at ten seconds while faster answers earn more and sound di
   assert.match(inlineScript, /fill\.style\.transform = `scaleX\(\$\{ratio\}\)`/);
   assert.match(inlineScript, /answerChallenge\(null, \{ timedOut: true \}\)/);
   assert.match(inlineScript, /async function answerChallenge\(button, \{ timedOut = false \} = \{\}\)/);
-  assert.match(inlineScript, /recordStageResult\(true, speedBonus\)/);
+  assert.match(inlineScript, /recordStageResult\(true, speedBonus \+ patternBonus\)/);
   assert.match(inlineScript, /positiveAudio\(feedbackId, item, responseTier\)/);
   assert.match(inlineScript, /tonePatternForResponse\(nextPositiveTonePattern\(\), responseTier\)/);
   assert.match(inlineScript, /בונוס \$\{speedBonus\} מטבעות/);
