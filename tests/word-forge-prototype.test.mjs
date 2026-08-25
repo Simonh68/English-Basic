@@ -69,7 +69,7 @@ const checks = [
   ['answered challenge completes the lowercase word', /class="missing-word" lang="en" aria-live="polite"[\s\S]*const missingWord = challengeStage\.querySelector\('\.missing-word'\);[\s\S]*missingWord\.textContent = item\.word\.toLowerCase\(\);[\s\S]*let audioFeedback;/],
   ['speech and foreground cues duck the music', /function speak\([\s\S]*duckBackground\(\)[\s\S]*restoreBackground\(backgroundWasDucked\)[\s\S]*async function playTones\([\s\S]*duckBackground\(\)[\s\S]*finally \{[\s\S]*restoreBackground\(backgroundWasDucked\)/],
   ['square-wave arcade timbre', /type === 'square'[\s\S]*Math\.sign\(Math\.sin\(phase\)\)/],
-  ['single-screen compact opening', /min-height: calc\(100svh - 64px\)[\s\S]*min-height: calc\(100svh - 52px\)/],
+  ['single-screen compact opening', /@media \(max-width: 620px\)[\s\S]*\.intro \{[\s\S]*min-height: 0;[\s\S]*justify-content: flex-start;/],
   ['three compact mobile world buttons', /@media \(max-width: 620px\)[\s\S]*route-picker \{ grid-template-columns: repeat\(3/],
   ['maze-chase visual lane', /class="arcade-lane"[\s\S]*arcade-runner">ᗧ[\s\S]*arcade-chaser/],
   ['arcade progress runner', /\.progress-fill::after[\s\S]*content: "ᗧ"/],

@@ -27,6 +27,15 @@ test('Word Forge reads the exact ten-word group for every course lesson', async 
   assert.doesNotMatch(html, /const words = \[/);
 });
 
+test('the mobile opening is content-sized and starts directly below the topbar', async () => {
+  const html = await source('word-forge/index.html');
+  const mobileRules = html.match(/@media \(max-width: 620px\) \{([\s\S]*?)\n    \}/)?.[1];
+
+  assert.ok(mobileRules, 'mobile rules exist');
+  assert.match(mobileRules, /\.intro \{[\s\S]*min-height: 0;[\s\S]*justify-content: flex-start;/);
+  assert.doesNotMatch(mobileRules, /\.intro \{[^}]*100svh/);
+});
+
 test('the production game compiles and visibly reshuffles every run', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
