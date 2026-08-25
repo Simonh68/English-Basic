@@ -44,6 +44,24 @@ assert.equal(backgroundPattern.length, 32, 'background loop contains 32 original
 assert.ok(Math.max(...backgroundPattern.map(tone => tone.gain)) <= .06, 'background loop source gain stays quiet');
 assert.ok(backgroundPattern.reduce((sum, tone) => sum + tone.duration + tone.gap, 0) > 3, 'background loop runs longer than three seconds');
 
+const pointValuesSource = inlineScript.match(/const stagePointValues = (\[[^;]+\]);/)?.[1];
+assert.ok(pointValuesSource, 'stage point values exist');
+const pointValues = new Function(`return ${pointValuesSource};`)();
+assert.deepEqual(pointValues.slice(0, 3), [5, 7, 12], 'the first three stages award 5, 7, and 12 points');
+assert.equal(pointValues.at(-1), 25, 'the final stage awards 25 points');
+assert.ok(pointValues.every((value, index) => index === 0 || value > pointValues[index - 1]), 'point values grow at every stage');
+
+const themesSource = inlineScript.match(/const stageThemes = (\[[\s\S]*?\n\s*\]);/)?.[1];
+assert.ok(themesSource, 'stage themes exist');
+const themes = new Function(`return ${themesSource};`)();
+assert.equal(themes.length, 10, 'all ten stages receive a premium shell');
+assert.equal(new Set(themes.map(theme => theme.name)).size, 10, 'every premium shell is distinct');
+
+const rewardsSource = inlineScript.match(/const rewardLadder = (\[[\s\S]*?\n\s*\]);/)?.[1];
+assert.ok(rewardsSource, 'collectible reward ladder exists');
+const rewards = new Function(`return ${rewardsSource};`)();
+assert.deepEqual(rewards.map(reward => reward.label), ['סוכרייה', 'גביע ארד', 'גביע כסף', 'גביע זהב', 'בית', 'טירה', 'מטוס'], 'rewards grow from candy to an airplane');
+
 const checks = [
   ['Hebrew-first document', /<html lang="he" dir="rtl">/],
   ['ten source words', /const words = \[[\s\S]*important[\s\S]*class[\s\S]*\];/],
@@ -85,7 +103,13 @@ const checks = [
   ['lowercase missing-letter feedback', /<strong lang="en">yes!<\/strong>[\s\S]*\$\{item\.word\.toLowerCase\(\)\}[\s\S]*\$\{correct\.toLowerCase\(\)\}/],
   ['corrective spaced return', /dueAt: Math\.min\(runWords\.length, completedWords \+ 2\)/],
   ['no public leaderboard', /ללא דירוג/],
-  ['graphic build rewards', /class="build-piece/],
+  ['explicit opening stage picker', /id="stageMapIntroButton"[^>]*>שלבים<\/button>/],
+  ['stage map exposes all course routes', /id="stageMap"[\s\S]*function renderStageMap\(\)[\s\S]*LEVEL \$\{level\}/],
+  ['next stage is the primary completion action', /id="nextStageLink"[^>]*>השלב הבא/],
+  ['replay and stage actions stay explicit', /id="restartButton">לשחק שוב<\/button>[\s\S]*id="finishStageMapButton">שלבים<\/button>/],
+  ['premium shell variables change by stage', /setProperty\('--stage-panel-a', stageTheme\.panelA\)[\s\S]*dataset\.stageTheme/],
+  ['cumulative Word Forge point bridge', /function recordStageResult\(correct\)[\s\S]*game: 'word_forge'[\s\S]*xp: gained[\s\S]*profile\.wordForgePoints/],
+  ['collectible reward reveal', /class="build-piece[\s\S]*הפרס הבא: \$\{rewardLadder\[lit\]\.label\}/],
   ['animated per-word feedback', /feedbackAnimation\('success'\)[\s\S]*feedbackAnimation\('retry'\)/],
   ['live feedback', /role="status" aria-live="polite"/],
   ['reduced motion support', /prefers-reduced-motion/],
@@ -105,7 +129,11 @@ for (const forbiddenSpeech of ['he-IL', 'speakHebrewOrEnglish', 'primeSpeech']) 
   assert.equal(html.includes(forbiddenSpeech), false, `prototype must not contain Hebrew voice feedback helper ${forbiddenSpeech}`);
 }
 
+assert.doesNotMatch(html, /LESSON/, 'the interface never calls a stage a lesson');
+assert.doesNotMatch(html, /שיעור/, 'the interface has no school-facing lesson wording');
+assert.doesNotMatch(html, /⚙️|🔋/, 'the reward collection has no scientific machinery');
+
 assert.equal((html.match(/class="route-card"/g) || []).length, 3, 'exactly three build choices');
 assert.equal((html.match(/\{ word:/g) || []).length, 10, 'exactly ten spelling words');
 
-console.log(`Word Forge prototype checks passed: ${checks.length + 5}`);
+console.log(`Word Forge prototype checks passed: ${checks.length + 16}`);

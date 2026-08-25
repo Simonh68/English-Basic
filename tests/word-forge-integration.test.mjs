@@ -122,7 +122,7 @@ test('an original quiet arcade loop builds tension and ducks under learning audi
   assert.match(inlineScript, /function showFinish\(\) \{[\s\S]*gameFinished = true;[\s\S]*pauseBackgroundMusic\(true\);/);
 });
 
-test('lesson and home navigation expose the lesson-specific production game', async () => {
+test('course navigation exposes the stage-specific production game', async () => {
   const [app, lesson, home, game] = await Promise.all([
     source('app.js'),
     source('lesson.html'),
@@ -138,6 +138,90 @@ test('lesson and home navigation expose the lesson-specific production game', as
   assert.match(game, /const lessonHref = `\.\.\/lesson\.html\?level=\$\{courseLevel\}&lesson=\$\{courseLesson\}&mode=cards`/);
 });
 
+test('stage navigation is explicit, premium, and free of school-facing language', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(html, /id="stageMenuButton"[^>]*aria-haspopup="dialog"/);
+  assert.match(html, /id="stageMapIntroButton"[^>]*>שלבים<\/button>/);
+  assert.match(html, /id="stageMap"[^>]*aria-labelledby="stageMapTitle"/);
+  assert.match(inlineScript, /function renderStageMap\(\)/);
+  assert.match(inlineScript, /const nextStageHref = isFinalStage \? null/);
+  assert.match(inlineScript, />השלב הבא <span aria-hidden="true">←<\/span><\/a>/);
+  assert.match(inlineScript, /id="restartButton">לשחק שוב<\/button>/);
+  assert.match(html, /PREMIUM WORD ARCADE/);
+  assert.doesNotMatch(html, /LESSON/);
+  assert.doesNotMatch(html, /שיעור/);
+  assert.doesNotMatch(html, /ARCADE SPELLING LAB/);
+});
+
+test('each stage has a richer point value, a distinct premium shell, and collectible rewards', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  const pointValuesSource = inlineScript.match(/const stagePointValues = (\[[^;]+\]);/)?.[1];
+  assert.ok(pointValuesSource, 'stage point values are declared');
+  const pointValues = new Function(`return ${pointValuesSource};`)();
+  assert.equal(pointValues.length, 10);
+  assert.deepEqual(pointValues.slice(0, 3), [5, 7, 12]);
+  assert.equal(pointValues.at(-1), 25);
+  assert.ok(pointValues.every((value, index) => index === 0 || value > pointValues[index - 1]));
+
+  const themesSource = inlineScript.match(/const stageThemes = (\[[\s\S]*?\n\s*\]);/)?.[1];
+  assert.ok(themesSource, 'stage themes are declared');
+  const themes = new Function(`return ${themesSource};`)();
+  assert.equal(themes.length, 10);
+  assert.equal(new Set(themes.map(theme => theme.name)).size, 10);
+  assert.match(inlineScript, /document\.documentElement\.style\.setProperty\('--stage-panel-a', stageTheme\.panelA\)/);
+  assert.match(inlineScript, /document\.body\.dataset\.stageTheme = stageTheme\.name\.toLowerCase\(\)/);
+
+  const rewardsSource = inlineScript.match(/const rewardLadder = (\[[\s\S]*?\n\s*\]);/)?.[1];
+  assert.ok(rewardsSource, 'reward ladder is declared');
+  const rewards = new Function(`return ${rewardsSource};`)();
+  assert.deepEqual(rewards.map(reward => reward.label), ['סוכרייה', 'גביע ארד', 'גביע כסף', 'גביע זהב', 'בית', 'טירה', 'מטוס']);
+  assert.deepEqual(rewards.map(reward => reward.symbol), ['🍬', '🏆', '🏆', '🏆', '🏠', '🏰', '✈️']);
+  assert.match(inlineScript, /הפרס הבא: \$\{rewardLadder\[lit\]\.label\}/);
+  assert.doesNotMatch(html, /⚙️|🔋/);
+});
+
+test('Word Forge points accumulate locally while other games keep their existing reward', async () => {
+  const stored = new Map();
+  const context = {
+    localStorage: {
+      getItem: key => stored.get(key) ?? null,
+      setItem: (key, value) => stored.set(key, String(value))
+    },
+    window: { dispatchEvent() {} },
+    CustomEvent: class CustomEvent {
+      constructor(type, init = {}) {
+        this.type = type;
+        this.detail = init.detail;
+      }
+    }
+  };
+  vm.createContext(context);
+  vm.runInContext(await source('progress.js'), context);
+
+  const progress = context.window.EBR_PROGRESS;
+  let profile = progress.recordGame(true, 5, { game: 'word_forge', xp: 5, stage: 1 });
+  assert.equal(profile.wordForgePoints, 5);
+  assert.equal(profile.xp, 5);
+
+  profile = progress.recordGame(true, 12, { game: 'word_forge', xp: 7, stage: 2 });
+  assert.equal(profile.wordForgePoints, 12);
+  assert.equal(profile.xp, 12);
+
+  profile = progress.recordGame(false, 12, { game: 'word_forge', xp: 25, stage: 10 });
+  assert.equal(profile.wordForgePoints, 12, 'an incorrect answer gives no points');
+  assert.equal(profile.xp, 12);
+
+  profile = progress.recordGame(true, 4, { game: 'word_match' });
+  assert.equal(profile.wordForgePoints, 12, 'other games do not change the Word Forge total');
+  assert.equal(profile.xp, 16, 'other games keep the existing four-point default');
+});
+
 test('Word Forge keeps the approved privacy and audio boundaries', async () => {
   const html = await source('word-forge/index.html');
 
@@ -146,5 +230,7 @@ test('Word Forge keeps the approved privacy and audio boundaries', async () => {
   }
   assert.match(html, /language = 'en-US'/);
   assert.match(html, /if \(\/\[a-z\]\/i\.test\(characters\[letterIndex\]\)\)/);
-  assert.match(html, /aria-label="חזרה לרמה \$\{courseLevel\}, שיעור \$\{courseLesson\}"/);
+  assert.match(html, /<script src="\.\.\/progress\.js\?v=2"><\/script>/);
+  assert.match(html, /lessonBackLink\.setAttribute\('aria-label', 'יציאה ל-English Basic'\)/);
+  assert.match(html, /game: 'word_forge',[\s\S]*xp: gained/);
 });

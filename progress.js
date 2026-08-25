@@ -28,6 +28,7 @@
       gameLevelUps: 0,
       gameLevelDowns: 0,
       bestGameScore: 0,
+      wordForgePoints: 0,
       lastLocation: null,
       daily: {},
       migratedLegacy: false
@@ -39,6 +40,7 @@
     const next = { ...base, ...(profile || {}) };
     next.activeDays = Array.isArray(next.activeDays) ? next.activeDays.slice(-90) : [];
     next.daily = next.daily && typeof next.daily === 'object' ? next.daily : {};
+    next.wordForgePoints = Math.max(0, Number(next.wordForgePoints) || 0);
     return next;
   }
 
@@ -144,15 +146,17 @@
     const daily = ensureDaily(profile);
     profile.gameRounds += 1;
     daily.gameRounds += 1;
+    const reward = correct ? Math.max(0, Number(detail.xp ?? 4) || 0) : 0;
     if (correct) {
       daily.gameCorrect += 1;
       profile.gameCorrect += 1;
-      profile.xp += 4;
+      profile.xp += reward;
+      if (detail.game === 'word_forge') profile.wordForgePoints += reward;
     }
     if (detail.levelUp) profile.gameLevelUps += 1;
     if (detail.levelDown) profile.gameLevelDowns += 1;
     profile.bestGameScore = Math.max(profile.bestGameScore, Number(points) || 0);
-    return write(profile, { xpGained: correct ? 4 : 0, activity: 'game', ...detail });
+    return write(profile, { xpGained: reward, activity: 'game', ...detail });
   }
 
   function getToday(profile = getProfile()) {

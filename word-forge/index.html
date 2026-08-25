@@ -22,6 +22,10 @@
       --coral: #ff8c8c;
       --blue: #82a7ff;
       --shadow: 0 24px 80px #02071280;
+      --stage-glow-a: #173962;
+      --stage-glow-b: #153f3d;
+      --stage-panel-a: #10223a;
+      --stage-panel-b: #091628;
       font-family: Arial, "Noto Sans Hebrew", sans-serif;
     }
 
@@ -34,8 +38,8 @@
       margin: 0;
       overflow-x: hidden;
       background:
-        radial-gradient(circle at 13% 13%, #173962 0, transparent 30%),
-        radial-gradient(circle at 88% 76%, #153f3d 0, transparent 28%),
+        radial-gradient(circle at 13% 13%, var(--stage-glow-a) 0, transparent 30%),
+        radial-gradient(circle at 88% 76%, var(--stage-glow-b) 0, transparent 28%),
         linear-gradient(145deg, #071120, #08182a 52%, #06101d);
       color: var(--text);
     }
@@ -43,6 +47,11 @@
     button { font: inherit; }
 
     button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    a:focus-visible {
       outline: 3px solid var(--gold);
       outline-offset: 4px;
     }
@@ -103,13 +112,20 @@
 
     .lab-chip {
       padding: 7px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       border: 1px solid #ffffff1f;
       border-radius: 999px;
       background: #ffffff0b;
       color: var(--gold);
+      cursor: pointer;
+      font: inherit;
       font-size: .72rem;
       font-weight: 900;
     }
+
+    .lab-chip:hover { border-color: var(--cyan); background: var(--cyan-soft); }
 
     main { padding-top: 0; }
 
@@ -148,6 +164,19 @@
       font-size: clamp(.88rem, 2.1vw, 1.12rem);
       font-weight: 900;
       line-height: 1.3;
+      letter-spacing: .08em;
+    }
+
+    .stage-value {
+      width: fit-content;
+      margin: 8px auto 0;
+      padding: 6px 11px;
+      border: 1px solid color-mix(in srgb, var(--cyan) 42%, transparent);
+      border-radius: 999px;
+      background: var(--cyan-soft);
+      color: var(--text);
+      font-size: .68rem;
+      font-weight: 1000;
       letter-spacing: .08em;
     }
 
@@ -245,6 +274,8 @@
       gap: 10px;
       direction: ltr;
     }
+
+    .stage-entry-button { min-height: 46px; padding-inline: 15px; direction: rtl; }
 
     .start-button {
       width: 72px;
@@ -382,7 +413,7 @@
       min-height: min(640px, calc(100svh - 150px));
       border: 1px solid #ffffff18;
       border-radius: 26px;
-      background: linear-gradient(150deg, #10223aeb, #091628ed);
+      background: linear-gradient(150deg, color-mix(in srgb, var(--stage-panel-a) 92%, transparent), color-mix(in srgb, var(--stage-panel-b) 93%, transparent));
       box-shadow: var(--shadow);
       direction: rtl;
     }
@@ -474,20 +505,19 @@
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       place-items: center;
       border: 1px solid #ffffff15;
       border-radius: 16px;
       background: #06101c85;
       color: var(--gold);
-      font-size: 2.7rem;
-      letter-spacing: .1em;
+      font-size: 1.45rem;
       filter: saturate(.85);
     }
 
     .build-piece {
-      width: 46px;
-      height: 46px;
+      width: 38px;
+      height: 38px;
       display: grid;
       place-items: center;
       border: 1px solid #ffffff15;
@@ -500,11 +530,12 @@
     }
 
     .build-piece.on {
-      border-color: #ffd9787a;
-      background: #ffd97815;
+      border-color: color-mix(in srgb, var(--reward-color, var(--gold)) 72%, white 8%);
+      background: color-mix(in srgb, var(--reward-color, var(--gold)) 16%, transparent);
       opacity: 1;
       filter: none;
       transform: scale(1);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--reward-color, var(--gold)) 35%, transparent);
       animation: piece-in .5s cubic-bezier(.2,.9,.2,1.25);
     }
 
@@ -705,6 +736,7 @@
 
     .feedback-icon { font-size: 2rem; }
     .feedback.compact p { font-size: .9rem; }
+    .points-pop { margin-inline-start: 7px; color: var(--gold); white-space: nowrap; }
 
     .fx-layer {
       position: absolute;
@@ -799,6 +831,107 @@
     .summary-grid span { color: var(--muted); font-size: .7rem; font-weight: 900; }
 
     .finish-actions { margin-top: 24px; display: flex; justify-content: center; gap: 10px; }
+    .finish-actions .primary { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .next-stage { min-width: 190px; }
+
+    .stage-map {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      margin: 0;
+      padding: 18px;
+      border: 0;
+      background: #020712d9;
+      color: var(--text);
+      backdrop-filter: blur(18px);
+    }
+
+    .stage-map[open] { display: grid; place-items: center; }
+
+    .stage-map::backdrop { background: #020712d9; backdrop-filter: blur(10px); }
+
+    .stage-map-card {
+      position: relative;
+      width: min(620px, 100%);
+      max-height: calc(100svh - 36px);
+      margin: auto;
+      padding: clamp(20px, 5vw, 34px);
+      overflow-y: auto;
+      border: 1px solid color-mix(in srgb, var(--cyan) 45%, transparent);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 12% 6%, var(--cyan-soft), transparent 34%),
+        linear-gradient(145deg, #10223af5, #07111ff7);
+      box-shadow: 0 30px 110px #02040a;
+      text-align: center;
+    }
+
+    .stage-map-close {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 42px;
+      min-height: 42px;
+      border: 1px solid #ffffff24;
+      border-radius: 13px;
+      background: #ffffff0b;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.35rem;
+    }
+
+    .stage-map-kicker { margin: 0; color: var(--cyan); font-size: .68rem; font-weight: 1000; letter-spacing: .15em; }
+    .stage-map-card h2 { margin: 8px 0 0; font-size: clamp(1.8rem, 6vw, 2.8rem); }
+
+    .level-tabs {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 7px;
+      direction: ltr;
+    }
+
+    .level-tab {
+      min-height: 39px;
+      border: 1px solid #ffffff1d;
+      border-radius: 12px;
+      background: #ffffff08;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .68rem;
+      font-weight: 1000;
+    }
+
+    .level-tab[aria-selected="true"] { border-color: var(--cyan); background: var(--cyan-soft); color: var(--text); }
+
+    .stage-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      direction: ltr;
+    }
+
+    .stage-link {
+      min-height: 82px;
+      padding: 9px 5px;
+      display: grid;
+      place-content: center;
+      gap: 3px;
+      border: 1px solid #ffffff1b;
+      border-radius: 15px;
+      background: #ffffff08;
+      color: var(--text);
+      text-decoration: none;
+      transition: .18s ease;
+    }
+
+    .stage-link:hover { border-color: var(--cyan); transform: translateY(-2px); }
+    .stage-link[aria-current="page"] { border-color: var(--gold); background: #ffd97817; box-shadow: inset 0 0 0 1px #ffd97825; }
+    .stage-link span { color: var(--muted); font-size: .55rem; font-weight: 900; letter-spacing: .08em; }
+    .stage-link strong { color: var(--gold); font-size: 1.35rem; }
+    .stage-link small { color: var(--cyan); font-size: .58rem; font-weight: 900; }
 
     .sr-only {
       position: absolute;
@@ -842,7 +975,7 @@
       .reactor-core { width: 52%; font-size: .72rem; }
       .energy-segments { display: none; }
       .build-preview { min-height: 72px; margin: 0; padding: 6px; gap: 5px; font-size: 1.65rem; }
-      .build-piece { width: 38px; height: 38px; border-radius: 11px; }
+      .build-piece { width: 27px; height: 27px; border-radius: 8px; font-size: 1.05rem; }
     }
 
     @media (max-width: 620px) {
@@ -860,6 +993,7 @@
       .eyebrow { font-size: .63rem; }
       .intro h1 { margin-top: 4px; font-size: clamp(2rem, 11vw, 3rem); }
       .intro-lead { margin-top: 5px; font-size: .72rem; }
+      .stage-value { margin-top: 5px; padding: 4px 8px; font-size: .57rem; }
       .arcade-lane { min-height: 48px; margin-top: 8px; padding: 5px 10px; border-radius: 14px; }
       .arcade-runner { font-size: 2rem; }
       .arcade-dots { font-size: .88rem; }
@@ -902,6 +1036,12 @@
       .summary-grid { grid-template-columns: 1fr; }
       .summary-grid div { min-height: 63px; grid-template-columns: auto auto; place-content: center; gap: 9px; align-items: center; }
       .finish-actions { display: grid; }
+      .stage-map { padding: 9px; }
+      .stage-map-card { max-height: calc(100svh - 18px); padding: 22px 13px 16px; border-radius: 22px; }
+      .level-tabs { margin-top: 18px; gap: 5px; }
+      .level-tab { min-height: 36px; padding: 5px 2px; font-size: .58rem; }
+      .stage-grid { gap: 6px; }
+      .stage-link { min-height: 68px; border-radius: 12px; }
     }
 
     @media (max-width: 360px) {
@@ -925,7 +1065,7 @@
     }
 
     @media (forced-colors: active) {
-      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle { border: 1px solid CanvasText; }
+      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.stage-map-card,.level-tab,.stage-link,.stage-map-close,.stage-value { border: 1px solid CanvasText; }
       .progress-fill,.segment.lit,.reactor-core { background: Highlight; color: HighlightText; }
       .choice.correct { outline: 3px solid Highlight; }
       .choice.wrong { outline: 3px dashed CanvasText; }
@@ -936,21 +1076,22 @@
   <a class="skip-link" href="#main">דלגו לפעילות</a>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="חזרה לשיעור">
+      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basic">
         <div class="brand-mark" aria-hidden="true">W</div>
         <div class="brand-copy">
           <strong lang="en">ENGLISH BASIC · WORD FORGE</strong>
-          <small lang="en">ARCADE SPELLING LAB</small>
+          <small lang="en">PREMIUM WORD ARCADE</small>
         </div>
       </a>
-      <span class="lab-chip" id="lessonChip">LEVEL 1 · LESSON 1</span>
+      <button class="lab-chip" id="stageMenuButton" type="button" aria-haspopup="dialog" aria-controls="stageMap">LEVEL 1 · STAGE 1 <span aria-hidden="true">⌄</span></button>
     </header>
 
     <main id="main" tabindex="-1">
       <section class="intro" id="intro" aria-labelledby="introTitle">
-        <p class="eyebrow" id="groupLabel" lang="en">LEVEL 1 · LESSON 1 · 10 WORDS</p>
+        <p class="eyebrow" id="groupLabel" lang="en">LEVEL 1 · STAGE 1 · 10 WORDS</p>
         <h1 id="introTitle" lang="en"><span>WORD FORGE</span></h1>
         <p class="intro-lead" lang="en">LISTEN · SPELL · PLAY</p>
+        <p class="stage-value" id="stageValue" lang="en">AQUA · WIN +5 PTS</p>
         <div class="arcade-lane" aria-hidden="true">
           <span class="arcade-runner">ᗧ</span>
           <span class="arcade-dots">• • • • •</span>
@@ -976,6 +1117,7 @@
 
         <div class="intro-actions">
           <button class="primary start-button" id="startButton" type="button" aria-label="התחלת המשחק">▶</button>
+          <button class="secondary stage-entry-button" id="stageMapIntroButton" type="button" aria-haspopup="dialog" aria-controls="stageMap">שלבים</button>
           <div class="sound-test-row">
             <button class="sound-test" id="soundTestButton" type="button" aria-label="בדיקת צלילי המשחק">🔊</button>
             <span class="sound-check" id="soundCheck" role="status" aria-live="polite">READY</span>
@@ -984,28 +1126,28 @@
         <p class="intro-note" aria-label="קול אופציונלי, הפעלה במקלדת, ללא חשבון, ללא דירוג וללא שמירת תשובות">🔊 &nbsp; ⌨️ &nbsp; 🔒</p>
       </section>
 
-      <section class="game" id="game" aria-label="משימת Word Forge">
-        <div class="mission-bar" aria-label="מצב המשימה">
+      <section class="game" id="game" aria-label="Word Forge">
+        <div class="mission-bar" aria-label="מצב המשחק">
           <div class="mission-progress">
             <div class="mission-progress-top"><strong id="progressLabel">🎧 1 / 10</strong><span id="progressPercent">0%</span></div>
             <div class="progress-track" aria-hidden="true"><span class="progress-fill" id="progressFill"></span></div>
           </div>
-          <div class="metric"><strong id="sparkCount">0</strong><span aria-label="ניצוצות דיוק">★</span></div>
+          <div class="metric points" id="pointsMetric" aria-label="0 נקודות מצטברות"><strong id="totalPointCount">0</strong><span lang="en">PTS</span></div>
           <div class="metric chain"><strong id="chainCount">0</strong><span aria-label="רצף במשימה">🔥</span></div>
           <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="כיבוי צלילי המשחק">🔊</button>
         </div>
 
         <div class="game-grid">
           <aside class="forge-panel" aria-labelledby="forgeTitle">
-            <p class="panel-kicker">⚡ LIVE</p>
-            <h2 id="forgeTitle">הבנייה שלך</h2>
+            <p class="panel-kicker" lang="en">PREMIUM REWARDS</p>
+            <h2 id="forgeTitle">הפרסים שלך</h2>
             <div class="reactor-wrap" aria-hidden="true">
               <div class="reactor-ring"></div>
               <div class="energy-segments" id="segments"></div>
               <div class="reactor-core" id="reactorCore">0%</div>
             </div>
-            <div class="build-label" id="buildLabel">מנוע החלל נטען</div>
-            <div class="build-preview" id="buildPreview" aria-hidden="true">· · · · ·</div>
+            <div class="build-label" id="buildLabel">מסלול הפרסים</div>
+            <div class="build-preview" id="buildPreview" aria-hidden="true">🍬 · 🥉 · 🥈 · 🥇 · 🏠 · 🏰 · ✈️</div>
           </aside>
 
           <section class="word-panel" id="wordPanel" aria-live="off">
@@ -1021,7 +1163,18 @@
     </main>
   </div>
 
+  <dialog class="stage-map" id="stageMap" aria-labelledby="stageMapTitle">
+    <div class="stage-map-card">
+      <button class="stage-map-close" id="stageMapClose" type="button" aria-label="סגירת בחירת השלבים">×</button>
+      <p class="stage-map-kicker" lang="en">WORD FORGE COLLECTION</p>
+      <h2 id="stageMapTitle">בחירת שלב</h2>
+      <div class="level-tabs" id="levelTabs" role="tablist" aria-label="בחירת מסלול"></div>
+      <div class="stage-grid" id="stageGrid" aria-label="בחירת שלב"></div>
+    </div>
+  </dialog>
+
   <script src="../curriculum-data.js?v=2"></script>
+  <script src="../progress.js?v=2"></script>
   <script>
     (() => {
       const params = new URLSearchParams(location.search);
@@ -1031,13 +1184,55 @@
       const lessonData = course.levels[courseLevel - 1].lessons[courseLesson - 1];
       const words = lessonData.words.map(([word, translation]) => ({ word, translation }));
       const lessonHref = `../lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
+      const stagePointValues = [5, 7, 12, 14, 16, 18, 20, 22, 24, 25];
+      const pointsPerSuccess = stagePointValues[courseLesson - 1];
+      const stageThemes = [
+        { name: 'AQUA', cyan: '#59e1d3', soft: '#59e1d326', gold: '#ffd978', blue: '#82a7ff', glowA: '#173962', glowB: '#153f3d', panelA: '#10223a', panelB: '#091628' },
+        { name: 'VIOLET', cyan: '#a993ff', soft: '#a993ff26', gold: '#ffe08a', blue: '#67d9ff', glowA: '#3a245f', glowB: '#143a4e', panelA: '#241b43', panelB: '#10152d' },
+        { name: 'AMBER', cyan: '#ffbf69', soft: '#ffbf6926', gold: '#ffe6a7', blue: '#ff8f70', glowA: '#5a3217', glowB: '#4a2635', panelA: '#332018', panelB: '#21131a' },
+        { name: 'EMERALD', cyan: '#65e6a6', soft: '#65e6a626', gold: '#e6ff9a', blue: '#67d9c9', glowA: '#174a3a', glowB: '#183754', panelA: '#12372f', panelB: '#0b2027' },
+        { name: 'SAPPHIRE', cyan: '#72a5ff', soft: '#72a5ff26', gold: '#f8da8b', blue: '#8c7dff', glowA: '#193b72', glowB: '#30265f', panelA: '#142b4e', panelB: '#151a36' },
+        { name: 'ROSE', cyan: '#ff83b3', soft: '#ff83b326', gold: '#ffd489', blue: '#bb82ff', glowA: '#5f2344', glowB: '#39255f', panelA: '#3c1b33', panelB: '#21172f' },
+        { name: 'JADE', cyan: '#56dcc9', soft: '#56dcc926', gold: '#f2dc85', blue: '#66a9ff', glowA: '#164a47', glowB: '#173a5a', panelA: '#123835', panelB: '#0c2230' },
+        { name: 'PLATINUM', cyan: '#c8d5e8', soft: '#c8d5e826', gold: '#fff0b3', blue: '#8db5df', glowA: '#34455f', glowB: '#263a4f', panelA: '#273447', panelB: '#151f2c' },
+        { name: 'RUBY', cyan: '#ff6f7d', soft: '#ff6f7d26', gold: '#ffd084', blue: '#c985ff', glowA: '#672130', glowB: '#43245d', panelA: '#411b27', panelB: '#25162e' },
+        { name: 'ROYAL', cyan: '#e9c46a', soft: '#e9c46a26', gold: '#fff1ac', blue: '#8e9cff', glowA: '#58451d', glowB: '#302b61', panelA: '#382f1c', panelB: '#191b35' }
+      ];
+      const stageTheme = stageThemes[courseLesson - 1];
+      const rewardLadder = [
+        { symbol: '🍬', label: 'סוכרייה', color: '#ff8db4' },
+        { symbol: '🏆', label: 'גביע ארד', color: '#d88954' },
+        { symbol: '🏆', label: 'גביע כסף', color: '#c8d5e8' },
+        { symbol: '🏆', label: 'גביע זהב', color: '#ffd978' },
+        { symbol: '🏠', label: 'בית', color: '#69d6b0' },
+        { symbol: '🏰', label: 'טירה', color: '#a993ff' },
+        { symbol: '✈️', label: 'מטוס', color: '#72b8ff' }
+      ];
+      const stageLevelCount = course.levels.length;
+      const stageCountForLevel = level => course.levels[level - 1].lessons.length;
+      const isFinalStage = courseLevel === stageLevelCount && courseLesson === stageCountForLevel(courseLevel);
+      const nextLevel = courseLesson < stageCountForLevel(courseLevel) ? courseLevel : courseLevel + 1;
+      const nextLesson = courseLesson < stageCountForLevel(courseLevel) ? courseLesson + 1 : 1;
+      const nextStageHref = isFinalStage ? null : `./?level=${nextLevel}&lesson=${nextLesson}`;
+      const progressApi = window.EBR_PROGRESS;
+      const initialWordForgePoints = Math.max(0, Number(progressApi?.getProfile()?.wordForgePoints) || 0);
       let runWords = [...words];
+
+      document.documentElement.style.setProperty('--cyan', stageTheme.cyan);
+      document.documentElement.style.setProperty('--cyan-soft', stageTheme.soft);
+      document.documentElement.style.setProperty('--gold', stageTheme.gold);
+      document.documentElement.style.setProperty('--blue', stageTheme.blue);
+      document.documentElement.style.setProperty('--stage-glow-a', stageTheme.glowA);
+      document.documentElement.style.setProperty('--stage-glow-b', stageTheme.glowB);
+      document.documentElement.style.setProperty('--stage-panel-a', stageTheme.panelA);
+      document.documentElement.style.setProperty('--stage-panel-b', stageTheme.panelB);
+      document.body.dataset.stageTheme = stageTheme.name.toLowerCase();
 
       const challengeIndexes = new Set(words.map((_, wordIndex) => wordIndex));
       const routeModels = {
-        space: { label: '🚀 חלל', symbol: '🚀', preview: ['⚙️','🔋','✨','🚀','🌌'], finish: 'מוכנים לשיגור!' },
-        city: { label: '🏙️ עיר', symbol: '🏙️', preview: ['🧱','🏠','🏢','🌆','✨'], finish: 'העיר מוארת!' },
-        studio: { label: '🎛️ מוזיקה', symbol: '🎛️', preview: ['🎚️','🎛️','🎵','🎶','🎤'], finish: 'האולפן מוכן!' }
+        space: { label: '🚀 חלל', symbol: '🚀', finish: 'מוכנים לשיגור!' },
+        city: { label: '🏙️ עיר', symbol: '🏙️', finish: 'העיר מוארת!' },
+        studio: { label: '🎛️ מוזיקה', symbol: '🎛️', finish: 'האולפן מוכן!' }
       };
 
       const intro = document.querySelector('#intro');
@@ -1050,7 +1245,8 @@
       const progressFill = document.querySelector('#progressFill');
       const progressLabel = document.querySelector('#progressLabel');
       const progressPercent = document.querySelector('#progressPercent');
-      const sparkCount = document.querySelector('#sparkCount');
+      const totalPointCount = document.querySelector('#totalPointCount');
+      const pointsMetric = document.querySelector('#pointsMetric');
       const chainCount = document.querySelector('#chainCount');
       const segments = document.querySelector('#segments');
       const reactorCore = document.querySelector('#reactorCore');
@@ -1064,23 +1260,34 @@
       const wordPanel = document.querySelector('#wordPanel');
       const fxLayer = document.querySelector('#fxLayer');
       const lessonBackLink = document.querySelector('#lessonBackLink');
-      const lessonChip = document.querySelector('#lessonChip');
+      const stageMenuButton = document.querySelector('#stageMenuButton');
+      const stageMapIntroButton = document.querySelector('#stageMapIntroButton');
+      const stageValue = document.querySelector('#stageValue');
       const groupLabel = document.querySelector('#groupLabel');
+      const stageMap = document.querySelector('#stageMap');
+      const stageMapClose = document.querySelector('#stageMapClose');
+      const stageMapTitle = document.querySelector('#stageMapTitle');
+      const levelTabs = document.querySelector('#levelTabs');
+      const stageGrid = document.querySelector('#stageGrid');
 
       lessonBackLink.href = lessonHref;
-      lessonBackLink.setAttribute('aria-label', `חזרה לרמה ${courseLevel}, שיעור ${courseLesson}`);
-      lessonChip.textContent = `LEVEL ${courseLevel} · LESSON ${courseLesson}`;
-      groupLabel.textContent = `LEVEL ${courseLevel} · LESSON ${courseLesson} · ${words.length} WORDS`;
-      document.title = `Word Forge · Level ${courseLevel} · Lesson ${courseLesson}`;
+      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basic');
+      stageMenuButton.innerHTML = `LEVEL ${courseLevel} · STAGE ${courseLesson} <span aria-hidden="true">⌄</span>`;
+      stageMenuButton.setAttribute('aria-label', `פתיחת בחירת השלבים. שלב נוכחי ${courseLesson}`);
+      groupLabel.textContent = `LEVEL ${courseLevel} · STAGE ${courseLesson} · ${words.length} WORDS`;
+      stageValue.textContent = `${stageTheme.name} · WIN +${pointsPerSuccess} · TOTAL ${initialWordForgePoints} PTS`;
+      stageValue.setAttribute('aria-label', `כל הצלחה בשלב זה שווה ${pointsPerSuccess} נקודות. סך הכול ${initialWordForgePoints} נקודות`);
+      document.title = `Word Forge · Level ${courseLevel} · Stage ${courseLesson}`;
+      progressApi?.setLastLocation({ href: `word-forge/?level=${courseLevel}&lesson=${courseLesson}`, label: `Word Forge · שלב ${courseLesson}` });
 
       let route = 'space';
       let soundOn = true;
       let index = 0;
       let completedWords = 0;
-      let sparks = 0;
+      let runPoints = 0;
+      let totalPoints = initialWordForgePoints;
       let chain = 0;
       let firstPassCorrect = 0;
-      let corrected = 0;
       let positiveToneStep = 0;
       let runId = 0;
       let challengeResolved = new Set();
@@ -1094,6 +1301,8 @@
       let backgroundDuckDepth = 0;
       let audioUnlocked = false;
       let gameFinished = false;
+      let mapLevel = courseLevel;
+      let stageMapTrigger = stageMenuButton;
 
       const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
       const backgroundVolume = .36;
@@ -1151,6 +1360,65 @@
         ]
       ];
 
+      const formatPoints = value => Number(value).toLocaleString('en-US');
+
+      function renderStageMap() {
+        stageMapTitle.textContent = `LEVEL ${mapLevel} · בחירת שלב`;
+        levelTabs.innerHTML = Array.from({ length: stageLevelCount }, (_, levelIndex) => {
+          const level = levelIndex + 1;
+          return `<button class="level-tab" type="button" role="tab" data-map-level="${level}" aria-selected="${level === mapLevel}" aria-label="מסלול ${level}">LEVEL ${level}</button>`;
+        }).join('');
+        stageGrid.innerHTML = Array.from({ length: stageCountForLevel(mapLevel) }, (_, stageIndex) => {
+          const stage = stageIndex + 1;
+          const current = mapLevel === courseLevel && stage === courseLesson;
+          const currentAttribute = current ? ' aria-current="page"' : '';
+          return `<a class="stage-link" href="./?level=${mapLevel}&lesson=${stage}"${currentAttribute}><span>STAGE</span><strong>${stage}</strong><small>+${stagePointValues[stageIndex]} PTS</small></a>`;
+        }).join('');
+        levelTabs.querySelectorAll('.level-tab').forEach(button => button.addEventListener('click', () => {
+          mapLevel = Number(button.dataset.mapLevel);
+          renderStageMap();
+          levelTabs.querySelector(`[data-map-level="${mapLevel}"]`)?.focus();
+        }));
+      }
+
+      function openStageMap(trigger) {
+        stageMapTrigger = trigger || stageMenuButton;
+        mapLevel = courseLevel;
+        renderStageMap();
+        if (!stageMap.open) {
+          if (typeof stageMap.showModal === 'function') stageMap.showModal();
+          else stageMap.setAttribute('open', '');
+        }
+        stageMapClose.focus();
+      }
+
+      function closeStageMap() {
+        if (!stageMap.open) return;
+        if (typeof stageMap.close === 'function') stageMap.close();
+        else stageMap.removeAttribute('open');
+      }
+
+      function recordStageResult(correct) {
+        const gained = correct ? pointsPerSuccess : 0;
+        if (correct) runPoints += gained;
+        const profile = progressApi?.recordGame(correct, runPoints, {
+          game: 'word_forge',
+          xp: gained,
+          level: courseLevel,
+          stage: courseLesson
+        });
+        if (profile) totalPoints = Math.max(0, Number(profile.wordForgePoints) || 0);
+        else if (correct) totalPoints += gained;
+        return gained;
+      }
+
+      stageMenuButton.addEventListener('click', () => openStageMap(stageMenuButton));
+      stageMapIntroButton.addEventListener('click', () => openStageMap(stageMapIntroButton));
+      stageMapClose.addEventListener('click', closeStageMap);
+      stageMap.addEventListener('click', event => { if (event.target === stageMap) closeStageMap(); });
+      stageMap.addEventListener('cancel', event => { event.preventDefault(); closeStageMap(); });
+      stageMap.addEventListener('close', () => stageMapTrigger?.focus());
+
       for (let i = 0; i < words.length; i += 1) {
         const segment = document.createElement('span');
         segment.className = 'segment';
@@ -1191,8 +1459,8 @@
         ensureAudioContext();
         if (!audioUnlocked) await runSoundCheck();
         resetState();
-        const model = routeModels[route];
-        buildLabel.textContent = model.label;
+        progressApi?.startGameSession({ game: 'word_forge', level: courseLevel, stage: courseLesson });
+        buildLabel.textContent = 'מסלול הפרסים';
         updateBuildPreview();
         intro.hidden = true;
         game.classList.add('active');
@@ -1208,10 +1476,10 @@
         runWords = shuffleGroup(words, runWords);
         index = 0;
         completedWords = 0;
-        sparks = 0;
+        runPoints = 0;
+        totalPoints = Math.max(0, Number(progressApi?.getProfile()?.wordForgePoints) || totalPoints);
         chain = 0;
         firstPassCorrect = 0;
-        corrected = 0;
         positiveToneStep = 0;
         challengeResolved = new Set();
         pendingReviews = [];
@@ -1674,21 +1942,22 @@
         }
 
         let audioFeedback;
+        let pointsAwarded = 0;
         if (answer === correct) {
-          sparks += 1;
+          pointsAwarded = recordStageResult(true);
           chain += 1;
-          if (currentChallenge.isReview) corrected += 1;
-          else firstPassCorrect += 1;
+          if (!currentChallenge.isReview) firstPassCorrect += 1;
           challengeResolved.add(currentChallenge.wordIndex);
           const segment = segments.children[currentChallenge.wordIndex];
           if (segment) segment.classList.add('lit');
           updateBuildPreview();
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
-          liveStatus.textContent = `נכון. האות החסרה היא ${correct.toLowerCase()}`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="points-pop" lang="en">+${pointsAwarded} PTS</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `נכון. נוספו ${pointsAwarded} נקודות. האות החסרה היא ${correct.toLowerCase()}`;
           feedbackAnimation('success');
           audioFeedback = positiveAudio(feedbackId, item);
         } else {
+          recordStageResult(false);
           button.classList.add('wrong');
           chain = 0;
           positiveToneStep = 0;
@@ -1726,15 +1995,17 @@
         progressFill.style.width = `${percent}%`;
         progressLabel.textContent = challengeResolved.size === runWords.length ? `⭐ ${runWords.length} / ${runWords.length}` : `${currentChallenge?.isReview && !challengeStage.hidden ? '↺' : '🎧'} ${activeWordIndex + 1} / ${runWords.length}`;
         progressPercent.textContent = `${percent}%`;
-        sparkCount.textContent = sparks;
+        totalPointCount.textContent = formatPoints(totalPoints);
+        pointsMetric.setAttribute('aria-label', `${totalPoints} נקודות מצטברות`);
+        stageValue.textContent = `${stageTheme.name} · WIN +${pointsPerSuccess} · TOTAL ${formatPoints(totalPoints)} PTS`;
         chainCount.textContent = chain;
         reactorCore.textContent = `${percent}%`;
       }
 
       function updateBuildPreview() {
-        const model = routeModels[route];
-        const lit = Math.ceil(challengeResolved.size / 2);
-        buildPreview.innerHTML = model.preview.map((piece, pieceIndex) => `<span class="build-piece${pieceIndex < lit ? ' on' : ''}">${piece}</span>`).join('');
+        const lit = Math.ceil((challengeResolved.size / runWords.length) * rewardLadder.length);
+        buildPreview.innerHTML = rewardLadder.map((reward, rewardIndex) => `<span class="build-piece${rewardIndex < lit ? ' on' : ''}" style="--reward-color:${reward.color}" title="${reward.label}">${reward.symbol}</span>`).join('');
+        buildLabel.textContent = lit >= rewardLadder.length ? 'האוסף הושלם' : `הפרס הבא: ${rewardLadder[lit].label}`;
       }
 
       function showFinish() {
@@ -1748,19 +2019,23 @@
         encounterLabel.hidden = true;
         const model = routeModels[route];
         const accuracy = Math.round((firstPassCorrect / Math.max(1, challengeIndexes.size)) * 100);
+        const nextAction = nextStageHref
+          ? `<a class="primary next-stage" id="nextStageLink" href="${nextStageHref}">השלב הבא <span aria-hidden="true">←</span></a>`
+          : '<button class="primary next-stage" type="button" id="finalStageMapButton">בחירת שלב</button>';
+        const stageMapAction = nextStageHref ? '<button class="secondary" type="button" id="finishStageMapButton">שלבים</button>' : '';
         finishStage.innerHTML = `
           <div class="finish-mark" aria-hidden="true">${model.symbol}</div>
           <h2>${model.finish}</h2>
-          <p aria-label="${words.length} מילים הושלמו">🔊 × ${words.length} &nbsp; ⭐ × ${sparks}</p>
-          <div class="summary-grid" aria-label="סיכום המשימה">
-            <div><strong>${words.length}/${words.length}</strong><span>מילים הושלמו</span></div>
-            <div><strong>${sparks}</strong><span>ניצוצות דיוק</span></div>
-            <div><strong>${accuracy}%</strong><span>דיוק בניסיון ראשון</span></div>
+          <p aria-label="שלב ${courseLesson} הושלם">STAGE ${courseLesson} COMPLETE</p>
+          <div class="summary-grid" aria-label="סיכום השלב">
+            <div><strong>+${runPoints}</strong><span>נקודות בשלב</span></div>
+            <div><strong>${formatPoints(totalPoints)}</strong><span>סה״כ נקודות</span></div>
+            <div><strong>${accuracy}%</strong><span>דיוק ראשון</span></div>
           </div>
           <div class="finish-actions">
-            <button class="primary" type="button" id="restartButton" aria-label="משימה חדשה">▶</button>
-            <button class="secondary" type="button" id="reviewButton" aria-label="הצגת המבנה שנבנה">👁</button>
-            <a class="secondary" href="${lessonHref}" aria-label="חזרה לרמה ${courseLevel}, שיעור ${courseLesson}">⌂</a>
+            ${nextAction}
+            <button class="secondary" type="button" id="restartButton">לשחק שוב</button>
+            ${stageMapAction}
           </div>`;
         finishStage.querySelector('#restartButton').addEventListener('click', () => {
           pauseBackgroundMusic(true);
@@ -1769,11 +2044,10 @@
           intro.scrollIntoView({ block: 'start' });
           startButton.focus();
         });
-        finishStage.querySelector('#reviewButton').addEventListener('click', () => {
-          document.querySelector('.forge-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        });
-        finishStage.querySelector('#restartButton').focus();
-        liveStatus.textContent = `${model.finish}. הושלמו ${words.length} מילים ונאספו ${sparks} ניצוצות דיוק.`;
+        const finishStageMapButton = finishStage.querySelector('#finishStageMapButton, #finalStageMapButton');
+        finishStageMapButton?.addEventListener('click', () => openStageMap(finishStageMapButton));
+        finishStage.querySelector('#nextStageLink, #finalStageMapButton')?.focus();
+        liveStatus.textContent = `${model.finish}. שלב ${courseLesson} הושלם. נוספו ${runPoints} נקודות וסך הכול ${totalPoints} נקודות.`;
         feedbackAnimation('success');
         playTones([
           { frequency: 392, duration: .07, gap: .025, type: 'square', gain: .17 },
