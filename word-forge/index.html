@@ -671,7 +671,7 @@
       cursor: pointer;
       font-size: 1.6rem;
       font-weight: 1000;
-      text-transform: uppercase;
+      text-transform: lowercase;
     }
 
     .choice:hover { border-color: var(--cyan); background: var(--cyan-soft); }
@@ -1077,6 +1077,7 @@
       let chain = 0;
       let firstPassCorrect = 0;
       let corrected = 0;
+      let positiveToneStep = 0;
       let runId = 0;
       let challengeResolved = new Set();
       let pendingReviews = [];
@@ -1087,6 +1088,24 @@
       let audioUnlocked = false;
 
       const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+      const positiveTonePatterns = [
+        [{ frequency: 440, duration: .13, gap: .02, type: 'square', gain: .24 }],
+        [{ frequency: 554, duration: .13, gap: .02, type: 'square', gain: .26 }],
+        [{ frequency: 659, duration: .15, gap: .02, type: 'square', gain: .29 }],
+        [
+          { frequency: 988, duration: .07, gap: .015, type: 'square', gain: .29 },
+          { frequency: 880, duration: .07, gap: .015, type: 'square', gain: .28 },
+          { frequency: 784, duration: .075, gap: .015, type: 'square', gain: .27 },
+          { frequency: 698, duration: .075, gap: .015, type: 'square', gain: .26 },
+          { frequency: 622, duration: .08, gap: .015, type: 'square', gain: .25 },
+          { frequency: 554, duration: .085, gap: .015, type: 'square', gain: .24 },
+          { frequency: 494, duration: .09, gap: .015, type: 'square', gain: .23 },
+          { frequency: 440, duration: .1, gap: .015, type: 'square', gain: .22 },
+          { frequency: 392, duration: .11, gap: .015, type: 'square', gain: .21 },
+          { frequency: 330, duration: .14, gap: .015, type: 'triangle', gain: .23 },
+          { frequency: 262, duration: .24, gap: .02, type: 'triangle', gain: .26 }
+        ]
+      ];
 
       for (let i = 0; i < words.length; i += 1) {
         const segment = document.createElement('span');
@@ -1144,6 +1163,7 @@
         chain = 0;
         firstPassCorrect = 0;
         corrected = 0;
+        positiveToneStep = 0;
         challengeResolved = new Set();
         pendingReviews = [];
         currentChallenge = null;
@@ -1356,13 +1376,14 @@
         await sleep(360);
       }
 
+      function nextPositiveTonePattern() {
+        const pattern = positiveTonePatterns[positiveToneStep];
+        positiveToneStep = (positiveToneStep + 1) % positiveTonePatterns.length;
+        return pattern;
+      }
+
       async function positiveAudio(id, item) {
-        await playTones([
-          { frequency: 523, duration: .065, gap: .025, type: 'square', gain: .2 },
-          { frequency: 659, duration: .065, gap: .025, type: 'square', gain: .23 },
-          { frequency: 784, duration: .075, gap: .025, type: 'square', gain: .26 },
-          { frequency: 1047, duration: .16, gap: .02, type: 'triangle', gain: .32 }
-        ], id);
+        await playTones(nextPositiveTonePattern(), id);
         await speak(item.word, .78, id, 'en-US', 1.08);
       }
 
@@ -1403,7 +1424,7 @@
         const characters = [...item.word];
 
         wordStage.innerHTML = `
-          <h2 class="word" lang="en">${item.word}</h2>
+          <h2 class="word" lang="en">${item.word.toUpperCase()}</h2>
           <div class="translation">${item.translation}</div>
           <div class="letters" aria-label="איות ${item.word}">
             ${characters.map(letter => `<span class="letter">${letter.toLowerCase()}</span>`).join('')}
@@ -1483,7 +1504,7 @@
         challengeStage.hidden = false;
         finishStage.hidden = true;
         encounterLabel.hidden = false;
-        encounterLabel.textContent = isReview ? '↺ RETRY' : '★ QUIZ';
+        encounterLabel.textContent = isReview ? '↺ retry' : '★ quiz';
 
         const item = runWords[wordIndex];
         const characters = [...item.word];
@@ -1493,7 +1514,7 @@
         const options = [correct, ...distractors.slice((wordIndex * 2) % 4, ((wordIndex * 2) % 4) + 3)].slice(0, 4);
         while (options.length < 4) options.push(distractors[options.length]);
         options.sort((a, b) => (a.charCodeAt(0) + wordIndex) % 7 - (b.charCodeAt(0) + wordIndex) % 7);
-        const displayWord = characters.map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toUpperCase()).join('');
+        const displayWord = characters.map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toLowerCase()).join('');
         currentChallenge = { wordIndex, isReview, correct, answered: false };
         updateDashboard();
 
@@ -1502,10 +1523,10 @@
           <p class="challenge-kicker">${isReview ? '↺' : '🎧'}</p>
           <div class="hebrew-hint"><span aria-hidden="true">💡</span><span>${item.translation}</span></div>
           <div class="tone-cue" aria-hidden="true"><i></i><i></i><i></i></div>
-          <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">LETTER?</h2>
+          <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter?</h2>
           <div class="missing-word" lang="en">${displayWord}</div>
           <div class="choices" role="group" aria-label="בחרו את האות החסרה">
-            ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toUpperCase()}" disabled>${option.toUpperCase()}</button>`).join('')}
+            ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toLowerCase()}" disabled>${option.toLowerCase()}</button>`).join('')}
           </div>
           <div class="feedback" id="feedback" role="status" aria-live="polite"></div>`;
 
@@ -1543,21 +1564,22 @@
           if (segment) segment.classList.add('lit');
           updateBuildPreview();
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">YES!</strong><p><span lang="en">${item.word.toUpperCase()}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
-          liveStatus.textContent = `נכון. האות החסרה היא ${correct.toUpperCase()}`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `נכון. האות החסרה היא ${correct.toLowerCase()}`;
           feedbackAnimation('success');
           audioFeedback = positiveAudio(feedbackId, item);
         } else {
           button.classList.add('wrong');
           chain = 0;
+          positiveToneStep = 0;
           if (!currentChallenge.isReview) {
             pendingReviews.push({ wordIndex: currentChallenge.wordIndex, dueAt: Math.min(runWords.length, completedWords + 2) });
           } else {
             pendingReviews.push({ wordIndex: currentChallenge.wordIndex, dueAt: runWords.length });
           }
           feedback.classList.add('compact');
-          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">↺</span><div><strong lang="en">TRY AGAIN</strong><p><span lang="en">${item.word.toUpperCase()}</span> · ${item.translation} · <strong lang="en">${correct.toUpperCase()}</strong></p></div>`;
-          liveStatus.textContent = `התשובה תוקנה. האות החסרה היא ${correct.toUpperCase()}`;
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">↺</span><div><strong lang="en">try again</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `התשובה תוקנה. האות החסרה היא ${correct.toLowerCase()}`;
           feedbackAnimation('retry');
           audioFeedback = retryAudio(feedbackId, correct, item);
         }

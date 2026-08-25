@@ -48,13 +48,36 @@ test('apostrophes in contractions are never selected as missing letters', async 
   }
 });
 
-test('exposure uses lowercase and the missing-letter task uses uppercase', async () => {
+test('exposure contrasts uppercase and lowercase while the missing-letter task stays lowercase', async () => {
   const html = await source('word-forge/index.html');
 
+  assert.match(html, /<h2 class="word" lang="en">\$\{item\.word\.toUpperCase\(\)\}<\/h2>/);
   assert.match(html, /characters\.map\(letter => `<span class="letter">\$\{letter\.toLowerCase\(\)\}<\/span>`\)/);
-  assert.match(html, /const displayWord = characters\.map\(\(letter, letterIndex\) => letterIndex === hiddenIndex \? '<span class="missing-slot">_<\/span>' : letter\.toUpperCase\(\)\)\.join\(''\)/);
-  assert.match(html, /disabled>\$\{option\.toUpperCase\(\)\}<\/button>/);
-  assert.match(html, /\$\{item\.word\.toUpperCase\(\)\}<\/span> · \$\{item\.translation\}/);
+  assert.match(html, /const displayWord = characters\.map\(\(letter, letterIndex\) => letterIndex === hiddenIndex \? '<span class="missing-slot">_<\/span>' : letter\.toLowerCase\(\)\)\.join\(''\)/);
+  assert.match(html, /disabled>\$\{option\.toLowerCase\(\)\}<\/button>/);
+  assert.match(html, /\.choice \{[\s\S]*text-transform: lowercase;/);
+  assert.match(html, /encounterLabel\.textContent = isReview \? '↺ retry' : '★ quiz'/);
+  assert.match(html, /<h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter\?<\/h2>/);
+  assert.match(html, /<strong lang="en">yes!<\/strong>[\s\S]*\$\{item\.word\.toLowerCase\(\)\}<\/span> · \$\{item\.translation\} · <strong lang="en">\$\{correct\.toLowerCase\(\)\}<\/strong>/);
+  assert.doesNotMatch(html, /missing-slot">_<\/span>' : letter\.toUpperCase\(\)/);
+});
+
+test('success feedback climbs for three actions and then plays a long descending cascade', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+  const patternsSource = inlineScript.match(/const positiveTonePatterns = (\[[\s\S]*?\n\s*\]);/)?.[1];
+  assert.ok(patternsSource, 'positive tone patterns are declared');
+  const patterns = new Function(`return ${patternsSource};`)();
+
+  assert.equal(patterns.length, 4);
+  assert.deepEqual(patterns.slice(0, 3).map(pattern => pattern[0].frequency), [440, 554, 659]);
+  const cascadeFrequencies = patterns[3].map(tone => tone.frequency);
+  assert.ok(cascadeFrequencies.every((frequency, index) => index === 0 || frequency < cascadeFrequencies[index - 1]));
+  const cascadeSeconds = patterns[3].reduce((sum, tone) => sum + tone.duration + tone.gap, 0);
+  assert.ok(cascadeSeconds > 1, 'the fourth cue is a long descent');
+  assert.match(inlineScript, /positiveToneStep = \(positiveToneStep \+ 1\) % positiveTonePatterns\.length/);
+  assert.match(inlineScript, /button\.classList\.add\('wrong'\);[\s\S]*positiveToneStep = 0;/);
 });
 
 test('lesson and home navigation expose the lesson-specific production game', async () => {
