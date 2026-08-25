@@ -37,6 +37,13 @@ try {
 }
 assert.notEqual(visiblyShuffledGroup[0], sourceGroup[0], 'every new run visibly starts with a different word');
 
+const backgroundPatternSource = inlineScript.match(/const backgroundTonePattern = (\[[\s\S]*?\n\s*\]);/)?.[1];
+assert.ok(backgroundPatternSource, 'background tone pattern exists');
+const backgroundPattern = new Function(`return ${backgroundPatternSource};`)();
+assert.equal(backgroundPattern.length, 32, 'background loop contains 32 original arcade notes');
+assert.ok(Math.max(...backgroundPattern.map(tone => tone.gain)) <= .06, 'background loop source gain stays quiet');
+assert.ok(backgroundPattern.reduce((sum, tone) => sum + tone.duration + tone.gap, 0) > 3, 'background loop runs longer than three seconds');
+
 const checks = [
   ['Hebrew-first document', /<html lang="he" dir="rtl">/],
   ['ten source words', /const words = \[[\s\S]*important[\s\S]*class[\s\S]*\];/],
@@ -54,6 +61,11 @@ const checks = [
   ['no Hebrew voice feedback', /async function positiveAudio[\s\S]*await speak\(item\.word[\s\S]*async function retryAudio/],
   ['explicit audio test', /id="soundTestButton"[\s\S]*runSoundCheck/],
   ['HTML audio fallback', /createToneWave[\s\S]*playMediaTones/],
+  ['original tense arcade background loop', /const backgroundTonePattern = \[[\s\S]*frequency: 110[\s\S]*frequency: 294[\s\S]*frequency: 82[\s\S]*frequency: 247[\s\S]*\];/],
+  ['separate looping background audio', /let backgroundAudio = null;[\s\S]*backgroundAudio = new Audio\(\);[\s\S]*backgroundAudio\.loop = true/],
+  ['quiet background mix with deep ducking', /const backgroundVolume = \.36;[\s\S]*const backgroundDuckVolume = \.055;[\s\S]*function duckBackground\(\)[\s\S]*function restoreBackground\(wasDucked\)/],
+  ['background follows the game lifecycle', /game\.classList\.add\('active'\);[\s\S]*await startBackgroundMusic\(\);[\s\S]*function resetState\(\) \{[\s\S]*pauseBackgroundMusic\(true\);[\s\S]*function showFinish\(\) \{[\s\S]*gameFinished = true;[\s\S]*pauseBackgroundMusic\(true\);/],
+  ['speech and foreground cues duck the music', /function speak\([\s\S]*duckBackground\(\)[\s\S]*restoreBackground\(backgroundWasDucked\)[\s\S]*async function playTones\([\s\S]*duckBackground\(\)[\s\S]*finally \{[\s\S]*restoreBackground\(backgroundWasDucked\)/],
   ['square-wave arcade timbre', /type === 'square'[\s\S]*Math\.sign\(Math\.sin\(phase\)\)/],
   ['single-screen compact opening', /min-height: calc\(100svh - 64px\)[\s\S]*min-height: calc\(100svh - 52px\)/],
   ['three compact mobile world buttons', /@media \(max-width: 620px\)[\s\S]*route-picker \{ grid-template-columns: repeat\(3/],

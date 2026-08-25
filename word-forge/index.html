@@ -1085,9 +1085,49 @@
       let audioContext = null;
       let mediaAudio = null;
       let mediaAudioUrl = null;
+      let backgroundAudio = null;
+      let backgroundAudioUrl = null;
+      let backgroundDuckDepth = 0;
       let audioUnlocked = false;
+      let gameFinished = false;
 
       const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+      const backgroundVolume = .36;
+      const backgroundDuckVolume = .055;
+      const backgroundTonePattern = [
+        { frequency: 110, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 165, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 110, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 175, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 294, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 98, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 147, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 233, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 98, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 156, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 92, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 139, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 185, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 220, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 92, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 147, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 82, duration: .075, gap: .028, type: 'square', gain: .06 },
+        { frequency: 123, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 165, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 196, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 82, duration: .075, gap: .028, type: 'square', gain: .06 },
+        { frequency: 131, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 247, duration: .075, gap: .028, type: 'triangle', gain: .044 }
+      ];
       const positiveTonePatterns = [
         [{ frequency: 440, duration: .13, gap: .02, type: 'square', gain: .24 }],
         [{ frequency: 554, duration: .13, gap: .02, type: 'square', gain: .26 }],
@@ -1123,17 +1163,20 @@
 
       soundTestButton.addEventListener('click', () => runSoundCheck());
 
-      soundToggle.addEventListener('click', () => {
+      soundToggle.addEventListener('click', async () => {
         soundOn = !soundOn;
         soundToggle.setAttribute('aria-pressed', String(soundOn));
         soundToggle.textContent = soundOn ? '🔊' : '🔇';
         soundToggle.setAttribute('aria-label', soundOn ? 'כיבוי צלילי המשחק' : 'הפעלת צלילי המשחק');
         if (!soundOn) {
           if ('speechSynthesis' in window) speechSynthesis.cancel();
+          if (mediaAudio) mediaAudio.pause();
+          pauseBackgroundMusic(true);
           if (audioContext?.state === 'running') audioContext.suspend();
         } else {
           ensureAudioContext();
-          runSoundCheck(false);
+          await runSoundCheck(false);
+          await startBackgroundMusic();
         }
         liveStatus.textContent = soundOn ? 'הקול הופעל' : 'הקול כובה';
       });
@@ -1152,10 +1195,12 @@
         game.scrollIntoView({ block: 'start' });
         startButton.disabled = false;
         startButton.textContent = '▶';
+        await startBackgroundMusic();
         showWord(0);
       });
 
       function resetState() {
+        pauseBackgroundMusic(true);
         runWords = shuffleGroup(words, runWords);
         index = 0;
         completedWords = 0;
@@ -1167,6 +1212,8 @@
         challengeResolved = new Set();
         pendingReviews = [];
         currentChallenge = null;
+        gameFinished = false;
+        finishStage.hidden = true;
         [...segments.children].forEach(segment => segment.classList.remove('lit'));
         updateDashboard();
       }
@@ -1201,11 +1248,13 @@
       function speak(text, rate, id, language = 'en-US', pitch = 1) {
         return new Promise(resolve => {
           if (!soundOn || !('speechSynthesis' in window) || id !== runId) return resolve();
+          const backgroundWasDucked = duckBackground();
           const utterance = new SpeechSynthesisUtterance(text);
           let settled = false;
           const finish = () => {
             if (settled) return;
             settled = true;
+            restoreBackground(backgroundWasDucked);
             resolve();
           };
           utterance.lang = language;
@@ -1330,6 +1379,60 @@
         });
       }
 
+      function ensureBackgroundAudio() {
+        if (!('Audio' in window) || !('URL' in window)) return null;
+        if (!backgroundAudio) {
+          backgroundAudio = new Audio();
+          backgroundAudio.preload = 'auto';
+          backgroundAudio.playsInline = true;
+          backgroundAudio.loop = true;
+        }
+        if (!backgroundAudioUrl) {
+          backgroundAudioUrl = URL.createObjectURL(createToneWave(backgroundTonePattern));
+          backgroundAudio.src = backgroundAudioUrl;
+        }
+        backgroundAudio.volume = backgroundDuckDepth ? backgroundDuckVolume : backgroundVolume;
+        return backgroundAudio;
+      }
+
+      async function startBackgroundMusic() {
+        if (!soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden) return false;
+        const audio = ensureBackgroundAudio();
+        if (!audio) return false;
+        try {
+          const playback = audio.play();
+          if (playback?.then) await playback;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function pauseBackgroundMusic(reset = false) {
+        backgroundDuckDepth = 0;
+        if (!backgroundAudio) return;
+        backgroundAudio.pause();
+        backgroundAudio.volume = backgroundVolume;
+        if (reset) {
+          try { backgroundAudio.currentTime = 0; } catch {}
+        }
+      }
+
+      function duckBackground() {
+        if (!backgroundAudio || backgroundAudio.paused) return false;
+        backgroundDuckDepth += 1;
+        backgroundAudio.volume = backgroundDuckVolume;
+        return true;
+      }
+
+      function restoreBackground(wasDucked) {
+        if (!wasDucked) return;
+        backgroundDuckDepth = Math.max(0, backgroundDuckDepth - 1);
+        if (backgroundAudio && !backgroundAudio.paused) {
+          backgroundAudio.volume = backgroundDuckDepth ? backgroundDuckVolume : backgroundVolume;
+        }
+      }
+
       function ensureAudioContext() {
         if (!soundOn) return null;
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -1341,28 +1444,33 @@
 
       async function playTones(pattern, id = runId) {
         if (!soundOn || id !== runId) return;
-        const mediaPlayed = await playMediaTones(pattern, id);
-        if (mediaPlayed || !soundOn || id !== runId) return;
-        await new Promise(resolve => {
-          const context = ensureAudioContext();
-          if (!soundOn || !context || id !== runId) return resolve();
-          const start = context.currentTime + .02;
-          let cursor = start;
-          pattern.forEach(({ frequency, duration = .13, gap = .035, type = 'sine', gain = .15 }) => {
-            const oscillator = context.createOscillator();
-            const volume = context.createGain();
-            oscillator.type = type;
-            oscillator.frequency.setValueAtTime(frequency, cursor);
-            volume.gain.setValueAtTime(.0001, cursor);
-            volume.gain.exponentialRampToValueAtTime(gain, cursor + .018);
-            volume.gain.exponentialRampToValueAtTime(.0001, cursor + duration);
-            oscillator.connect(volume).connect(context.destination);
-            oscillator.start(cursor);
-            oscillator.stop(cursor + duration + .02);
-            cursor += duration + gap;
+        const backgroundWasDucked = duckBackground();
+        try {
+          const mediaPlayed = await playMediaTones(pattern, id);
+          if (mediaPlayed || !soundOn || id !== runId) return;
+          await new Promise(resolve => {
+            const context = ensureAudioContext();
+            if (!soundOn || !context || id !== runId) return resolve();
+            const start = context.currentTime + .02;
+            let cursor = start;
+            pattern.forEach(({ frequency, duration = .13, gap = .035, type = 'sine', gain = .15 }) => {
+              const oscillator = context.createOscillator();
+              const volume = context.createGain();
+              oscillator.type = type;
+              oscillator.frequency.setValueAtTime(frequency, cursor);
+              volume.gain.setValueAtTime(.0001, cursor);
+              volume.gain.exponentialRampToValueAtTime(gain, cursor + .018);
+              volume.gain.exponentialRampToValueAtTime(.0001, cursor + duration);
+              oscillator.connect(volume).connect(context.destination);
+              oscillator.start(cursor);
+              oscillator.stop(cursor + duration + .02);
+              cursor += duration + gap;
+            });
+            setTimeout(resolve, Math.max(0, (cursor - start) * 1000 + 35));
           });
-          setTimeout(resolve, Math.max(0, (cursor - start) * 1000 + 35));
-        });
+        } finally {
+          restoreBackground(backgroundWasDucked);
+        }
       }
 
       async function questionCue(item, id) {
@@ -1620,6 +1728,8 @@
       function showFinish() {
         ++runId;
         if ('speechSynthesis' in window) speechSynthesis.cancel();
+        gameFinished = true;
+        pauseBackgroundMusic(true);
         wordStage.hidden = true;
         challengeStage.hidden = true;
         finishStage.hidden = false;
@@ -1641,6 +1751,7 @@
             <a class="secondary" href="${lessonHref}" aria-label="חזרה לרמה ${courseLevel}, שיעור ${courseLesson}">⌂</a>
           </div>`;
         finishStage.querySelector('#restartButton').addEventListener('click', () => {
+          pauseBackgroundMusic(true);
           game.classList.remove('active');
           intro.hidden = false;
           intro.scrollIntoView({ block: 'start' });

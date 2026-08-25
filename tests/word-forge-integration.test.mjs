@@ -80,6 +80,27 @@ test('success feedback climbs for three actions and then plays a long descending
   assert.match(inlineScript, /button\.classList\.add\('wrong'\);[\s\S]*positiveToneStep = 0;/);
 });
 
+test('an original quiet arcade loop builds tension and ducks under learning audio', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+  const patternSource = inlineScript.match(/const backgroundTonePattern = (\[[\s\S]*?\n\s*\]);/)?.[1];
+  assert.ok(patternSource, 'background tone pattern is declared');
+  const pattern = new Function(`return ${patternSource};`)();
+
+  assert.equal(pattern.length, 32, 'the loop has enough movement to avoid a short alert-like repeat');
+  assert.ok(new Set(pattern.map(tone => tone.frequency)).size >= 16, 'the loop uses a varied original pitch set');
+  assert.ok(Math.max(...pattern.map(tone => tone.gain)) <= .06, 'the synthesized loop stays quiet at its source');
+  assert.ok(pattern.reduce((sum, tone) => sum + tone.duration + tone.gap, 0) > 3, 'the loop lasts more than three seconds');
+  assert.match(inlineScript, /let backgroundAudio = null;[\s\S]*backgroundAudio = new Audio\(\);[\s\S]*backgroundAudio\.loop = true/);
+  assert.match(inlineScript, /URL\.createObjectURL\(createToneWave\(backgroundTonePattern\)\)/);
+  assert.match(inlineScript, /const backgroundVolume = \.36;[\s\S]*const backgroundDuckVolume = \.055;/);
+  assert.match(inlineScript, /function speak\([\s\S]*const backgroundWasDucked = duckBackground\(\);[\s\S]*restoreBackground\(backgroundWasDucked\);/);
+  assert.match(inlineScript, /async function playTones\([\s\S]*const backgroundWasDucked = duckBackground\(\);[\s\S]*finally \{[\s\S]*restoreBackground\(backgroundWasDucked\);/);
+  assert.match(inlineScript, /game\.classList\.add\('active'\);[\s\S]*await startBackgroundMusic\(\);[\s\S]*showWord\(0\);/);
+  assert.match(inlineScript, /function showFinish\(\) \{[\s\S]*gameFinished = true;[\s\S]*pauseBackgroundMusic\(true\);/);
+});
+
 test('lesson and home navigation expose the lesson-specific production game', async () => {
   const [app, lesson, home, game] = await Promise.all([
     source('app.js'),
