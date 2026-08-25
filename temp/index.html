@@ -1,0 +1,2685 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071120">
+  <title>Maayan — English Basic</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071120;
+      --panel: #0d1a2e;
+      --panel-2: #12243d;
+      --line: #284263;
+      --text: #f5f8ff;
+      --muted: #a9b8cf;
+      --cyan: #59e1d3;
+      --cyan-soft: #59e1d326;
+      --lime: #c3f36d;
+      --gold: #ffd978;
+      --coral: #ff8c8c;
+      --blue: #82a7ff;
+      --shadow: 0 24px 80px #02071280;
+      --stage-glow-a: #173962;
+      --stage-glow-b: #153f3d;
+      --stage-panel-a: #10223a;
+      --stage-panel-b: #091628;
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; background: var(--bg); }
+
+    body {
+      min-height: 100svh;
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 13% 13%, var(--stage-glow-a) 0, transparent 30%),
+        radial-gradient(circle at 88% 76%, var(--stage-glow-b) 0, transparent 28%),
+        linear-gradient(145deg, #071120, #08182a 52%, #06101d);
+      color: var(--text);
+    }
+
+    button { font: inherit; }
+
+    button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    a:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 10px;
+      right: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #fff;
+      color: #071120;
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .shell {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 8px 0 18px;
+    }
+
+    .topbar {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid #ffffff14;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #66e0d378;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #59e1d32b, #82a7ff2b);
+      color: var(--cyan);
+      font-weight: 1000;
+      box-shadow: inset 0 0 20px #59e1d31f;
+    }
+
+    .brand-copy { display: grid; gap: 2px; }
+    .brand-copy strong { font-size: .94rem; letter-spacing: .08em; }
+    .brand-copy small { color: var(--muted); font-size: .72rem; }
+
+    .lab-chip {
+      padding: 7px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #ffffff1f;
+      border-radius: 999px;
+      background: #ffffff0b;
+      color: var(--gold);
+      cursor: pointer;
+      font: inherit;
+      font-size: .72rem;
+      font-weight: 900;
+    }
+
+    .lab-chip:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+
+    main { padding-top: 0; }
+
+    .intro {
+      max-width: 810px;
+      min-height: calc(100svh - 64px);
+      margin: 0 auto;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--cyan);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .intro h1 {
+      margin: 6px 0 0;
+      font-size: clamp(2.25rem, 6.4vw, 4.9rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+
+    .intro h1 span { color: var(--cyan); }
+
+    .intro-lead {
+      max-width: 670px;
+      margin: 8px auto 0;
+      color: #c4d0e4;
+      font-size: clamp(.88rem, 2.1vw, 1.12rem);
+      font-weight: 900;
+      line-height: 1.3;
+      letter-spacing: .08em;
+    }
+
+    .stage-value {
+      width: fit-content;
+      margin: 8px auto 0;
+      padding: 6px 11px;
+      border: 1px solid color-mix(in srgb, var(--cyan) 42%, transparent);
+      border-radius: 999px;
+      background: var(--cyan-soft);
+      color: var(--text);
+      font-size: .68rem;
+      font-weight: 1000;
+      letter-spacing: .08em;
+    }
+
+    .arcade-lane {
+      width: min(540px, 92%);
+      min-height: 62px;
+      margin: 12px auto 0;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(7px, 1.8vw, 14px);
+      direction: ltr;
+      overflow: hidden;
+      border: 1px solid #82a7ff45;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, transparent 49%, #82a7ff24 50%, transparent 51%),
+        #06101cb8;
+      box-shadow: inset 0 0 28px #02071275;
+    }
+
+    .arcade-runner {
+      color: var(--gold);
+      font: 1000 clamp(2.1rem, 6vw, 3.35rem)/1 Arial, sans-serif;
+      filter: drop-shadow(0 0 12px #ffd9788c);
+      animation: runner-bob .5s steps(2, end) infinite;
+    }
+
+    .arcade-dots {
+      color: #fff7c7;
+      font: 1000 clamp(1rem, 3vw, 1.6rem)/1 ui-monospace, monospace;
+      letter-spacing: .28em;
+      white-space: nowrap;
+      text-shadow: 0 0 9px #fff1a88f;
+    }
+
+    .arcade-prize { color: var(--gold); font-size: clamp(1.45rem, 4vw, 2.1rem); filter: drop-shadow(0 0 12px #ffd978a1); }
+    .arcade-chaser { font-size: clamp(1.45rem, 4vw, 2.15rem); animation: chaser-float .8s ease-in-out infinite alternate; }
+
+    .route-label {
+      margin: 12px 0 7px;
+      color: var(--muted);
+      font-size: .66rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+    }
+
+    .route-picker {
+      max-width: 620px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .route-card {
+      min-height: 92px;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      padding: 9px;
+      border: 1px solid #ffffff1c;
+      border-radius: 17px;
+      background: #ffffff0a;
+      color: var(--text);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .route-card:hover { border-color: #59e1d36e; transform: translateY(-2px); }
+    .route-card[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan-soft); box-shadow: inset 0 0 0 1px #59e1d333; }
+    .route-symbol { font-size: clamp(2.25rem, 6vw, 3.5rem); filter: drop-shadow(0 10px 18px #0207126b); }
+    .route-card strong { font-size: .72rem; letter-spacing: .12em; }
+
+    .primary {
+      min-height: 51px;
+      padding: 13px 22px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--cyan), #7cf2c5);
+      color: #082124;
+      box-shadow: 0 10px 32px #59e1d32b;
+      cursor: pointer;
+      font-weight: 1000;
+    }
+
+    .primary:hover { filter: brightness(1.07); transform: translateY(-1px); }
+
+    .intro-actions {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      direction: ltr;
+    }
+
+    .stage-entry-button { min-height: 46px; padding-inline: 15px; direction: rtl; }
+
+    .start-button {
+      width: 72px;
+      min-width: 72px;
+      height: 72px;
+      min-height: 72px;
+      padding: 0 0 0 5px;
+      border-radius: 50%;
+      font-size: 2rem;
+      box-shadow: 0 0 0 8px #59e1d31c, 0 13px 38px #0207128c;
+    }
+
+    .sound-test-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      direction: ltr;
+    }
+
+    .sound-test {
+      width: 48px;
+      height: 48px;
+      min-height: 48px;
+      padding: 0;
+      border: 1px solid #59e1d363;
+      border-radius: 14px;
+      background: #59e1d312;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.22rem;
+      font-weight: 1000;
+    }
+
+    .sound-check {
+      min-width: 54px;
+      color: var(--muted);
+      font-size: .66rem;
+      font-weight: 900;
+    }
+
+    .sound-check.ok { color: var(--lime); }
+    .sound-check.warn { color: var(--gold); }
+
+    .intro-note {
+      margin: 6px 0 0;
+      color: #91a1b9;
+      font-size: .75rem;
+    }
+
+    .game { display: none; }
+    .game.active { display: block; }
+
+    .mission-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      border: 1px solid #ffffff17;
+      border-radius: 17px;
+      background: #07111dd6;
+      box-shadow: 0 12px 45px #02071246;
+      backdrop-filter: blur(14px);
+    }
+
+    .mission-progress { min-width: 0; }
+    .mission-progress-top { display: flex; justify-content: space-between; gap: 10px; font-size: .77rem; font-weight: 900; }
+    .mission-progress-top span { color: var(--muted); }
+
+    .progress-track {
+      position: relative;
+      height: 13px;
+      margin-top: 8px;
+      overflow: visible;
+      border-radius: 999px;
+      background: radial-gradient(circle, #fff4b8 0 2px, transparent 2.5px) 0 50% / 18px 13px repeat-x;
+    }
+
+    .progress-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #59e1d33a, #c3f36d6b);
+      transition: width .45s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: "ᗧ";
+      position: absolute;
+      top: 50%;
+      right: -12px;
+      color: var(--gold);
+      font: 1000 1.45rem/1 Arial, sans-serif;
+      transform: translateY(-50%);
+      text-shadow: 0 0 12px #ffd978b8;
+      animation: progress-runner .5s steps(2, end) infinite;
+    }
+
+    .metric {
+      min-width: 72px;
+      display: grid;
+      gap: 2px;
+      text-align: center;
+    }
+
+    .metric strong { color: var(--gold); font-size: 1.08rem; }
+    .metric span { color: var(--muted); font-size: .66rem; font-weight: 800; }
+
+    .coin-metric {
+      position: relative;
+      isolation: isolate;
+      min-width: 88px;
+      padding: 5px 9px;
+      border: 1px solid #ffd97845;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #ffd97814, #ffffff05);
+      overflow: visible;
+    }
+
+    .coin-metric strong { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .coin-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-grid;
+      place-items: center;
+      border: 2px solid #fff0a8;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff6b0, #f6b91f 48%, #a85e00 100%);
+      color: transparent !important;
+      box-shadow: inset 0 0 0 2px #a86416, 0 0 12px #ffd97866;
+    }
+
+    .coin-metric.gain { animation: coin-gain .7s cubic-bezier(.2,.9,.2,1.25); }
+    .coin-metric.milestone::before,
+    .coin-metric.milestone::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -42px;
+      border-radius: 50%;
+      background: repeating-conic-gradient(from 0deg, #ffd978aa 0 5deg, transparent 5deg 18deg);
+      animation: golden-rays 1.15s ease-out both;
+      pointer-events: none;
+    }
+
+    .coin-metric.milestone::after {
+      inset: -18px;
+      background: radial-gradient(circle, #fff2a9b8, #ffd54842 42%, transparent 72%);
+    }
+
+    .coin-spark {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffe77d;
+      box-shadow: 0 0 12px #fff0a8;
+      animation: coin-spark .9s ease-out both;
+      pointer-events: none;
+    }
+
+    .sound-toggle {
+      width: 42px;
+      min-height: 42px;
+      padding: 0;
+      border: 1px solid #ffffff24;
+      border-radius: 11px;
+      background: #ffffff0c;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .game-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: minmax(260px, .72fr) minmax(0, 1.4fr);
+      gap: 18px;
+      direction: ltr;
+    }
+
+    .forge-panel,
+    .word-panel {
+      min-height: min(640px, calc(100svh - 150px));
+      border: 1px solid #ffffff18;
+      border-radius: 26px;
+      background: linear-gradient(150deg, color-mix(in srgb, var(--stage-panel-a) 92%, transparent), color-mix(in srgb, var(--stage-panel-b) 93%, transparent));
+      box-shadow: var(--shadow);
+      direction: rtl;
+    }
+
+    .forge-panel {
+      padding: 23px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-kicker { margin: 0; color: var(--cyan); font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+    .forge-panel h2 { margin: 8px 0 0; font-size: 1.5rem; }
+    .forge-panel-copy { margin: 8px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.55; }
+
+    .reactor-wrap {
+      position: relative;
+      width: min(250px, 76%);
+      aspect-ratio: 1;
+      margin: 20px auto 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .reactor-ring,
+    .reactor-ring::before,
+    .reactor-ring::after {
+      position: absolute;
+      inset: 0;
+      border: 1px solid #7de9dc32;
+      border-radius: 50%;
+      content: "";
+    }
+
+    .reactor-ring::before { inset: 13%; border-style: dashed; animation: spin 16s linear infinite; }
+    .reactor-ring::after { inset: 27%; border-color: #ffd9783d; }
+
+    .reactor-core {
+      position: relative;
+      z-index: 2;
+      width: 40%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 2px solid #91fff27a;
+      border-radius: 50%;
+      background: radial-gradient(circle, #b7fff3 0 8%, #59e1d3 10% 24%, #1d706b 48%, #0b252b 68%);
+      box-shadow: 0 0 30px #59e1d35c, 0 0 80px #59e1d328;
+      color: #04191a;
+      font-size: clamp(1.7rem, 5vw, 2.7rem);
+      font-weight: 1000;
+      transition: .35s ease;
+    }
+
+    .reactor-core.pulse { animation: core-pulse .55s ease; }
+
+    .energy-segments {
+      position: absolute;
+      inset: 4%;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .segment {
+      position: absolute;
+      top: 0;
+      left: calc(50% - 7px);
+      width: 14px;
+      height: 35px;
+      border: 1px solid #ffffff2b;
+      border-radius: 999px;
+      background: #ffffff10;
+      transform-origin: 7px calc(50% + 111px);
+      transition: .35s ease;
+    }
+
+    .segment.lit {
+      border-color: var(--lime);
+      background: linear-gradient(var(--gold), var(--lime));
+      box-shadow: 0 0 18px #c3f36d8c;
+    }
+
+    .build-label { margin: 23px auto 0; color: #dce7f8; font-weight: 900; }
+
+    .build-preview {
+      min-height: 88px;
+      margin-top: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      place-items: center;
+      border: 1px solid #ffffff15;
+      border-radius: 16px;
+      background: #06101c85;
+      color: var(--gold);
+      font-size: 1.45rem;
+      filter: saturate(.85);
+    }
+
+    .build-piece {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #ffffff15;
+      border-radius: 14px;
+      background: #ffffff08;
+      opacity: .24;
+      filter: grayscale(1);
+      transform: scale(.82);
+      transition: .35s ease;
+    }
+
+    .build-piece.on {
+      border-color: color-mix(in srgb, var(--reward-color, var(--gold)) 72%, white 8%);
+      background: color-mix(in srgb, var(--reward-color, var(--gold)) 16%, transparent);
+      opacity: 1;
+      filter: none;
+      transform: scale(1);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--reward-color, var(--gold)) 35%, transparent);
+      animation: piece-in .5s cubic-bezier(.2,.9,.2,1.25);
+    }
+
+    .mastery-note { margin: auto 0 0; color: #91a3bd; font-size: .73rem; line-height: 1.5; text-align: center; }
+
+    .word-panel {
+      position: relative;
+      min-width: 0;
+      padding: clamp(22px, 5vw, 46px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .encounter {
+      position: absolute;
+      top: 19px;
+      right: 19px;
+      padding: 7px 11px;
+      border: 1px solid #ffffff1e;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 900;
+    }
+
+    .word-stage { width: 100%; display: grid; place-items: center; }
+
+    .word {
+      max-width: 100%;
+      margin: 0;
+      direction: ltr;
+      color: #fff;
+      font-size: clamp(3.4rem, 10vw, 7rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+      overflow-wrap: anywhere;
+    }
+
+    .translation { margin-top: 16px; color: #c7d4e8; font-size: clamp(1.6rem, 4vw, 2.35rem); font-weight: 900; }
+
+    .letters {
+      width: 100%;
+      min-height: 90px;
+      margin-top: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2px, .8vw, 9px);
+      direction: ltr;
+    }
+
+    .letter {
+      min-width: 0;
+      color: #8da0ba;
+      font-size: clamp(2rem, 7vw, 4.7rem);
+      line-height: 1;
+      transition: .14s ease;
+    }
+
+    .letter.active { color: var(--lime); font-weight: 1000; transform: translateY(-6px) scale(1.08); text-shadow: 0 0 24px #c3f36d69; }
+
+    .instruction {
+      min-height: 27px;
+      margin-top: 24px;
+      color: var(--cyan);
+      font-size: .9rem;
+      font-weight: 900;
+    }
+
+    .word-actions { min-height: 58px; margin-top: 18px; display: flex; justify-content: center; gap: 10px; }
+
+    .secondary {
+      min-height: 49px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ffffff25;
+      border-radius: 14px;
+      background: #ffffff0b;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .secondary:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+
+    .challenge-stage { width: min(680px, 100%); }
+    .challenge-kicker { margin: 0; color: var(--gold); font-size: .78rem; font-weight: 900; letter-spacing: .08em; }
+    .challenge-title { margin: 11px 0 0; font-size: clamp(1.5rem, 4.5vw, 2.4rem); }
+
+    .hebrew-hint {
+      width: min(520px, 100%);
+      margin: 22px auto 0;
+      padding: 17px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid #ffd97852;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ffd97818, #59e1d312);
+      color: #fff4cb;
+      font-size: clamp(1.65rem, 6vw, 3rem);
+      font-weight: 1000;
+    }
+
+    .hebrew-hint span:first-child { font-size: 1.25em; }
+
+    .tone-cue {
+      height: 38px;
+      margin-top: 17px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 9px;
+      direction: ltr;
+    }
+
+    .tone-cue i {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 18px #59e1d388;
+      animation: tone-rise 1.15s ease-in-out infinite;
+    }
+
+    .tone-cue i:nth-child(2) { width: 15px; height: 15px; animation-delay: .16s; }
+    .tone-cue i:nth-child(3) { width: 19px; height: 19px; animation-delay: .32s; }
+    .question-wait .choices { opacity: .28; pointer-events: none; }
+
+    .missing-word {
+      margin-top: 28px;
+      direction: ltr;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: clamp(3.4rem, 11vw, 6.6rem);
+      font-weight: 1000;
+      letter-spacing: .03em;
+    }
+
+    .missing-slot { color: var(--gold); border-bottom: .12em solid var(--gold); }
+
+    .challenge-timer {
+      position: relative;
+      width: 100%;
+      height: 9px;
+      margin: 18px auto 0;
+      overflow: hidden;
+      border: 1px solid #ffd9785c;
+      border-radius: 999px;
+      background: #020712d6;
+      box-shadow: inset 0 0 12px #0009, 0 0 18px #ffd97822;
+      direction: ltr;
+    }
+
+    .challenge-timer span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      background: linear-gradient(90deg, #ff786f, #ffd25f 42%, #fff2a4);
+      box-shadow: 0 0 15px #ffd9789c;
+    }
+
+    .challenge-timer.warning span { filter: saturate(1.3); }
+
+    .choices {
+      max-width: 560px;
+      margin: 29px auto 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      direction: ltr;
+    }
+
+    .choice {
+      min-height: 70px;
+      border: 1px solid #ffffff24;
+      border-radius: 16px;
+      background: #ffffff0c;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.6rem;
+      font-weight: 1000;
+      text-transform: lowercase;
+    }
+
+    .choice:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+    .choice.correct { border-color: var(--lime); background: #c3f36d20; color: var(--lime); }
+    .choice.wrong { border-color: var(--coral); background: #ff8c8c1c; color: #ffc4c4; }
+
+    .feedback {
+      min-height: 0;
+      max-width: 610px;
+      margin: 20px auto 0;
+      padding: 14px 16px;
+      display: grid;
+      gap: 5px;
+      border: 1px solid #ffffff1c;
+      border-radius: 15px;
+      background: #07111dc7;
+      text-align: right;
+    }
+
+    .feedback:empty { display: none; }
+    .feedback strong { font-size: .94rem; }
+    .feedback p { margin: 0; color: #c2cee0; font-size: .82rem; line-height: 1.5; }
+
+    .feedback.compact {
+      max-width: 520px;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 11px;
+      text-align: right;
+    }
+
+    .feedback-icon { font-size: 2rem; }
+    .feedback.compact p { font-size: .9rem; }
+    .coins-pop { margin-inline-start: 7px; color: var(--gold); white-space: nowrap; }
+
+    .fx-layer {
+      position: absolute;
+      z-index: 20;
+      inset: 0;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .fx-layer.show { opacity: 1; }
+
+    .fx-icon {
+      position: relative;
+      z-index: 2;
+      min-width: 210px;
+      min-height: 92px;
+      padding: 16px 22px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #ffffff1e;
+      border-radius: 26px;
+      background: #071120e6;
+      box-shadow: 0 18px 70px #0207128c;
+      animation: reward-pop .85s cubic-bezier(.2,.9,.2,1.24) both;
+    }
+
+    .arcade-pop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      direction: ltr;
+      font-size: 2.45rem;
+    }
+
+    .arcade-pop-runner { color: var(--gold); filter: drop-shadow(0 0 12px #ffd978b5); }
+    .arcade-pop-dots { color: #fff4b8; font: 1000 1.25rem/1 ui-monospace, monospace; letter-spacing: .2em; }
+    .arcade-pop-prize { color: var(--lime); filter: drop-shadow(0 0 12px #c3f36da8); }
+    .arcade-pop.retry { color: var(--coral); }
+
+    .fx-layer.success { background: radial-gradient(circle, #c3f36d40, transparent 58%); }
+    .fx-layer.retry { background: radial-gradient(circle, #ff8c8c2e, transparent 58%); }
+
+    .fx-particle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px currentColor;
+      animation: particle-burst .9s ease-out both;
+    }
+
+    .fx-layer.retry .fx-particle { background: var(--coral); }
+
+    .word-panel.success-flash { animation: panel-success .8s ease; }
+    .word-panel.retry-flash { animation: panel-retry .48s ease; }
+
+    .finish-stage { width: min(660px, 100%); }
+    .finish-mark {
+      width: 94px;
+      height: 94px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+      border: 2px solid var(--gold);
+      border-radius: 28px;
+      background: #ffd97818;
+      color: var(--gold);
+      font-size: 3rem;
+      box-shadow: 0 0 50px #ffd97826;
+    }
+
+    .finish-stage h2 { margin: 23px 0 0; font-size: clamp(2rem, 6vw, 3.6rem); }
+    .finish-stage > p { margin: 12px auto 0; color: #c7d2e5; line-height: 1.65; }
+
+    .summary-grid {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .summary-grid div { min-height: 83px; display: grid; place-content: center; gap: 3px; border: 1px solid #ffffff17; border-radius: 15px; background: #ffffff09; }
+    .summary-grid strong { color: var(--gold); font-size: 1.5rem; }
+    .summary-grid span { color: var(--muted); font-size: .7rem; font-weight: 900; }
+
+    .finish-actions { margin-top: 24px; display: flex; justify-content: center; gap: 10px; }
+    .finish-actions .primary { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    .next-stage { min-width: 190px; }
+
+    .auto-level {
+      min-width: min(100%, 330px);
+      gap: 13px;
+      direction: ltr;
+      background: linear-gradient(135deg, #ffd978, #fff0a8 55%, #e7a72a);
+      color: #251500;
+      box-shadow: 0 0 0 8px #ffd97812, 0 18px 55px #f6b91f38;
+    }
+
+    .auto-level strong { font-size: .88rem; }
+    .auto-countdown {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 3px solid #7a4400;
+      border-radius: 50%;
+      font-size: 1.45rem;
+      line-height: 1;
+      background: #fff3b1;
+      box-shadow: inset 0 0 0 4px #e5a62f;
+    }
+
+    .auto-level small { font-size: .56rem; letter-spacing: .1em; }
+    .certificate-action { background: linear-gradient(135deg, #ffd978, #fff2b0); color: #281800; }
+
+    .stage-map {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      margin: 0;
+      padding: 18px;
+      border: 0;
+      background: #020712d9;
+      color: var(--text);
+      backdrop-filter: blur(18px);
+    }
+
+    .stage-map[open] { display: grid; place-items: center; }
+
+    .stage-map::backdrop { background: #020712d9; backdrop-filter: blur(10px); }
+
+    .stage-map-card {
+      position: relative;
+      width: min(620px, 100%);
+      max-height: calc(100svh - 36px);
+      margin: auto;
+      padding: clamp(20px, 5vw, 34px);
+      overflow-y: auto;
+      border: 1px solid color-mix(in srgb, var(--cyan) 45%, transparent);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 12% 6%, var(--cyan-soft), transparent 34%),
+        linear-gradient(145deg, #10223af5, #07111ff7);
+      box-shadow: 0 30px 110px #02040a;
+      text-align: center;
+    }
+
+    .stage-map-close {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 42px;
+      min-height: 42px;
+      border: 1px solid #ffffff24;
+      border-radius: 13px;
+      background: #ffffff0b;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.35rem;
+    }
+
+    .stage-map-kicker { margin: 0; color: var(--cyan); font-size: .68rem; font-weight: 1000; letter-spacing: .15em; }
+    .stage-map-card h2 { margin: 8px 0 0; font-size: clamp(1.8rem, 6vw, 2.8rem); }
+
+    .map-stats {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      direction: ltr;
+    }
+
+    .map-stats span {
+      padding: 6px 11px;
+      border: 1px solid #ffffff1e;
+      border-radius: 999px;
+      background: #ffffff08;
+      color: var(--gold);
+      font-size: .72rem;
+      font-weight: 1000;
+    }
+
+    .mastery-path-icons {
+      max-width: 420px;
+      margin: 10px auto 0;
+      padding: 7px 10px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      gap: 5px;
+      border: 1px solid #59e1d32f;
+      border-radius: 15px;
+      background: #59e1d309;
+      direction: ltr;
+    }
+
+    .mastery-path-icons span { color: var(--cyan); font-size: .9rem; font-weight: 1000; }
+
+    .stage-grid {
+      margin-top: 11px;
+      display: grid;
+      gap: 7px;
+      direction: ltr;
+    }
+
+    .level-route {
+      padding: 7px 8px;
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #ffffff16;
+      border-radius: 15px;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--level-color) 13%, transparent), #ffffff04);
+    }
+
+    .level-route.current { border-color: color-mix(in srgb, var(--level-color) 68%, transparent); box-shadow: inset 0 0 25px color-mix(in srgb, var(--level-color) 9%, transparent); }
+    .level-route.completed { border-color: #ffd97870; background: linear-gradient(90deg, #ffd97816, #ffffff04); }
+    .level-route-title { display: grid; gap: 2px; text-align: left; }
+    .level-route-title strong { color: var(--level-color); font-size: .67rem; white-space: nowrap; }
+    .level-route-title small { color: var(--muted); font-size: .56rem; }
+
+    .level-stage-row {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .stage-link {
+      position: relative;
+      aspect-ratio: 1;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid #ffffff1c;
+      border-radius: 9px;
+      background: #ffffff08;
+      color: #c8d5e8;
+      text-decoration: none;
+      transition: .18s ease;
+      font-size: .67rem;
+      font-weight: 1000;
+    }
+
+    .stage-link:hover { border-color: var(--level-color); transform: translateY(-2px); }
+    .stage-link[aria-current="page"] { border-color: var(--gold); background: #ffd97825; color: #fff0ae; box-shadow: 0 0 15px #ffd97835; }
+    .stage-link.completed { border-color: #ffd97878; background: linear-gradient(145deg, #ffe29235, #a7680d20); color: #fff2b2; }
+    .stage-link.completed::after { content: "✓"; position: absolute; top: -5px; right: -3px; color: #c3f36d; font-size: .58rem; text-shadow: 0 0 8px #c3f36d; }
+
+    .map-rewards {
+      margin-top: 11px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      border: 1px solid #ffffff17;
+      border-radius: 15px;
+      background: #ffffff06;
+      direction: ltr;
+    }
+
+    .map-reward { display: grid; place-items: center; gap: 2px; opacity: .35; filter: grayscale(1); font-size: 1.2rem; }
+    .map-reward.on { opacity: 1; filter: none; filter: drop-shadow(0 0 8px var(--reward-color)); }
+    .map-reward small { color: var(--muted); font-size: .48rem; font-weight: 900; }
+
+    .name-dialog,
+    .certificate-dialog {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      margin: 0;
+      padding: 18px;
+      border: 0;
+      background: #020712e8;
+      color: var(--text);
+      backdrop-filter: blur(18px);
+    }
+
+    .name-dialog[open],
+    .certificate-dialog[open] { display: grid; place-items: center; }
+    .name-dialog::backdrop,
+    .certificate-dialog::backdrop { background: #020712e8; backdrop-filter: blur(12px); }
+
+    .name-card {
+      position: relative;
+      width: min(440px, 100%);
+      padding: 30px 24px 24px;
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      border: 1px solid #ffd97868;
+      border-radius: 26px;
+      background: radial-gradient(circle at 50% 0, #ffd9781f, transparent 42%), linear-gradient(150deg, #10223af7, #07111ff8);
+      box-shadow: 0 30px 100px #000b;
+      text-align: center;
+    }
+
+    .name-seal {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #fff0ad;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffd97833, #70420933);
+      color: var(--gold);
+      font-size: 2rem;
+      font-weight: 1000;
+      box-shadow: 0 0 30px #ffd97838;
+    }
+
+    .name-card h2 { margin: 0; font-size: clamp(1.65rem, 7vw, 2.4rem); }
+    .name-card p { margin: -4px 0 0; color: var(--muted); }
+    .name-card input {
+      width: 100%;
+      min-height: 58px;
+      padding: 10px 16px;
+      border: 1px solid #ffffff32;
+      border-radius: 15px;
+      outline: none;
+      background: #020712b8;
+      color: #fff;
+      font: 900 1.35rem/1.2 Arial, sans-serif;
+      text-align: center;
+    }
+
+    .name-card input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px #ffd97822; }
+    .certificate-create { width: 74px; min-height: 58px; font-size: 1.45rem; }
+
+    .certificate-shell { width: min(1160px, 100%); max-height: calc(100svh - 30px); overflow: auto; }
+    .certificate-toolbar { margin-bottom: 9px; display: flex; justify-content: flex-end; gap: 8px; direction: ltr; }
+    .certificate-toolbar button { min-width: 48px; min-height: 44px; padding: 8px 13px; }
+
+    .certificate-card {
+      --cert-bg-a: #063f3d;
+      --cert-bg-b: #071c2c;
+      --cert-metal: #efb979;
+      --cert-accent: #55e2d2;
+      --cert-gem: #72ffd9;
+      --cert-angle: 132deg;
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      aspect-ratio: 1.5;
+      min-height: 610px;
+      padding: clamp(28px, 5vw, 64px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 5px double var(--cert-metal);
+      outline: 1px solid var(--cert-accent);
+      outline-offset: -16px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at var(--cert-x, 50%) var(--cert-y, 64%), color-mix(in srgb, var(--cert-metal) 20%, transparent), transparent 36%),
+        repeating-conic-gradient(from var(--cert-angle) at 50% 70%, color-mix(in srgb, var(--cert-metal) 7%, transparent) 0 4deg, transparent 4deg 17deg),
+        linear-gradient(var(--cert-angle), var(--cert-bg-a), var(--cert-bg-b));
+      box-shadow: 0 30px 100px #000c, inset 0 0 80px #0007;
+      color: #fff8df;
+      text-align: center;
+    }
+
+    .certificate-card::before,
+    .certificate-card::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 190px;
+      height: 190px;
+      border: 1px solid color-mix(in srgb, var(--cert-metal) 65%, transparent);
+      transform: rotate(var(--cert-corner, 45deg));
+      opacity: .55;
+    }
+
+    .certificate-card::before { top: -115px; left: -105px; }
+    .certificate-card::after { right: -105px; bottom: -115px; }
+    .certificate-brand { margin: 0; color: var(--cert-metal); font-size: clamp(.75rem, 1.5vw, 1.05rem); font-weight: 1000; letter-spacing: .38em; }
+    .certificate-card h2 { margin: 8px 0 0; color: var(--cert-metal); font-size: clamp(2.5rem, 6vw, 5.4rem); line-height: 1; text-shadow: 0 3px 18px #0007; }
+    .certificate-awarded { margin: 18px 0 0; color: var(--cert-accent); font-size: clamp(.85rem, 1.7vw, 1.2rem); font-weight: 900; }
+    .certificate-name { max-width: 92%; margin-top: 2px; color: #fff9e8; font-size: clamp(2.7rem, 7vw, 6.2rem); line-height: 1.05; overflow-wrap: anywhere; text-shadow: 0 4px 26px #0008; }
+
+    .certificate-achievements {
+      width: min(880px, 94%);
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      direction: rtl;
+    }
+
+    .certificate-achievements span {
+      min-height: 70px;
+      padding: 8px 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid color-mix(in srgb, var(--cert-metal) 55%, transparent);
+      border-radius: 999px;
+      background: #02071238;
+    }
+
+    .certificate-achievements b { color: var(--cert-gem); font-size: 1.25rem; }
+    .certificate-achievements strong { font-size: clamp(.72rem, 1.5vw, 1rem); }
+    .certificate-validation { margin: 15px 0 0; color: var(--cert-accent); font-size: clamp(.85rem, 1.8vw, 1.25rem); font-weight: 1000; letter-spacing: .04em; }
+
+    .certificate-seal {
+      width: 96px;
+      height: 96px;
+      margin-top: 14px;
+      display: grid;
+      place-items: center;
+      border: 3px double var(--cert-metal);
+      border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--cert-gem) 25%, transparent), #02071288);
+      color: var(--cert-metal);
+      box-shadow: 0 0 45px color-mix(in srgb, var(--cert-metal) 38%, transparent), inset 0 0 20px #0007;
+      font-size: 2.7rem;
+      font-weight: 1000;
+    }
+
+    .certificate-gems { position: absolute; top: 24px; right: 28px; display: flex; gap: 8px; direction: ltr; }
+    .certificate-gems i { width: 10px; height: 10px; transform: rotate(45deg); border: 1px solid var(--cert-metal); background: var(--cert-gem); box-shadow: 0 0 12px var(--cert-gem); }
+    .certificate-lines { position: absolute; right: 7%; bottom: 8%; left: 7%; display: flex; justify-content: space-between; }
+    .certificate-lines i { width: 25%; border-top: 1px solid color-mix(in srgb, var(--cert-metal) 55%, transparent); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes core-pulse { 50% { transform: scale(1.12); box-shadow: 0 0 45px #59e1d3a6, 0 0 95px #59e1d34d; } }
+    @keyframes piece-in { 0% { transform: scale(.25) rotate(-18deg); } 70% { transform: scale(1.14) rotate(4deg); } }
+    @keyframes tone-rise { 0%,100% { transform: translateY(0); opacity: .45; } 45% { transform: translateY(-15px); opacity: 1; } }
+    @keyframes runner-bob { 0% { transform: translateY(-1px) scaleX(1); } 100% { transform: translateY(1px) scaleX(.88); } }
+    @keyframes progress-runner { 0% { transform: translateY(-50%) scaleX(1); } 100% { transform: translateY(-50%) scaleX(.88); } }
+    @keyframes chaser-float { to { transform: translateY(-6px); filter: drop-shadow(0 0 11px #82a7ff8a); } }
+    @keyframes reward-pop { 0% { transform: scale(.15) rotate(-18deg); opacity: 0; } 52% { transform: scale(1.18) rotate(6deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 0; } }
+    @keyframes particle-burst { 0% { transform: translate(-50%,-50%) rotate(var(--angle)) translateY(0) scale(.2); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%,-50%) rotate(var(--angle)) translateY(-180px) scale(1.15); opacity: 0; } }
+    @keyframes panel-success { 35% { border-color: var(--lime); box-shadow: 0 0 0 4px #c3f36d2d, 0 24px 90px #02071280; } }
+    @keyframes panel-retry { 25% { transform: translateX(-6px); border-color: var(--coral); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
+    @keyframes coin-gain { 0% { transform: scale(1); } 35% { transform: scale(1.22) rotate(-3deg); filter: brightness(1.55); } 70% { transform: scale(.96) rotate(2deg); } 100% { transform: scale(1); } }
+    @keyframes golden-rays { 0% { transform: scale(.2) rotate(-18deg); opacity: 0; } 28% { opacity: 1; } 100% { transform: scale(1.25) rotate(14deg); opacity: 0; } }
+    @keyframes coin-spark { 0% { transform: translate(-50%,-50%) rotate(var(--spark-angle)) translateY(0) scale(.2); opacity: 0; } 18% { opacity: 1; } 100% { transform: translate(-50%,-50%) rotate(var(--spark-angle)) translateY(var(--spark-distance, -66px)) scale(1); opacity: 0; } }
+
+    @media (max-width: 820px) {
+      .game-grid { grid-template-columns: 1fr; }
+      .forge-panel {
+        min-height: 0;
+        height: 106px;
+        order: 2;
+        padding: 10px 13px;
+        display: grid;
+        grid-template-columns: 78px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+      }
+      .forge-panel .panel-kicker,.forge-panel h2,.build-label { display: none; }
+      .word-panel { min-height: min(540px, calc(100svh - 265px)); }
+      .reactor-wrap { width: 76px; margin: 0; }
+      .reactor-core { width: 52%; font-size: .72rem; }
+      .energy-segments { display: none; }
+      .build-preview { min-height: 72px; margin: 0; padding: 6px; gap: 5px; font-size: 1.65rem; }
+      .build-piece { width: 27px; height: 27px; border-radius: 8px; font-size: 1.05rem; }
+    }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 18px, 1180px); padding-top: 8px; }
+      .topbar { min-height: 44px; }
+      .brand-mark { width: 34px; height: 34px; }
+      .brand-copy strong { font-size: .78rem; }
+      .brand-copy small { display: none; }
+      main { padding-top: 0; }
+      .intro {
+        min-height: 0;
+        padding: clamp(8px, 2svh, 14px) 0 12px;
+        justify-content: flex-start;
+      }
+      .eyebrow { font-size: .63rem; }
+      .intro h1 { margin-top: 4px; font-size: clamp(2rem, 11vw, 3rem); }
+      .intro-lead { margin-top: 5px; font-size: .72rem; }
+      .stage-value { margin-top: 5px; padding: 4px 8px; font-size: .57rem; }
+      .arcade-lane { min-height: 48px; margin-top: 8px; padding: 5px 10px; border-radius: 14px; }
+      .arcade-runner { font-size: 2rem; }
+      .arcade-dots { font-size: .88rem; }
+      .arcade-prize,.arcade-chaser { font-size: 1.35rem; }
+      .route-label { margin: 8px 0 5px; font-size: .58rem; }
+      .route-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+      .route-card { min-height: 70px; padding: 5px; border-radius: 13px; }
+      .route-symbol { font-size: 2rem; }
+      .route-card strong { font-size: .58rem; }
+      .intro-actions { margin-top: 9px; }
+      .start-button { width: 62px; min-width: 62px; height: 62px; min-height: 62px; font-size: 1.72rem; }
+      .sound-test { width: 43px; height: 43px; min-height: 43px; }
+      .intro-note { margin-top: 4px; }
+      .mission-bar { grid-template-columns: minmax(0, 1fr) repeat(2, auto); gap: 7px; padding: 10px; }
+      .metric.chain { display: none; }
+      .metric { min-width: 55px; }
+      .sound-toggle { grid-column: 1 / -1; width: 100%; }
+      .game-grid { margin-top: 10px; gap: 10px; }
+      .forge-panel,.word-panel { border-radius: 20px; }
+      .word-panel { min-height: min(520px, calc(100svh - 270px)); padding: 45px 12px 14px; }
+      .encounter { top: 12px; right: 12px; }
+      .word { font-size: clamp(2.75rem, 15vw, 5rem); }
+      .translation { margin-top: 10px; font-size: clamp(1.35rem, 6.5vw, 1.85rem); }
+      .letters { min-height: 58px; margin-top: 20px; }
+      .letter { font-size: clamp(1.7rem, 9vw, 3.15rem); }
+      .instruction { min-height: 22px; margin-top: 15px; }
+      .word-actions { min-height: 50px; margin-top: 11px; }
+      .hebrew-hint { margin-top: 8px; padding: 8px 12px; border-radius: 15px; font-size: clamp(1.45rem, 7vw, 2.1rem); }
+      .tone-cue { height: 24px; margin-top: 7px; }
+      .tone-cue i { width: 9px; height: 9px; }
+      .tone-cue i:nth-child(2) { width: 12px; height: 12px; }
+      .tone-cue i:nth-child(3) { width: 15px; height: 15px; }
+      .challenge-title { margin-top: 3px; font-size: 1.3rem; }
+      .missing-word { margin-top: 9px; font-size: clamp(2.8rem, 14vw, 4.7rem); }
+      .challenge-timer { height: 8px; margin-top: 10px; }
+      .choices { margin-top: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+      .choice { min-height: 49px; border-radius: 13px; font-size: 1.35rem; }
+      .feedback { margin-top: 9px; padding: 8px 10px; }
+      .feedback.compact { grid-template-columns: auto minmax(0,1fr); }
+      .feedback.compact .primary { grid-column: 1 / -1; width: 100%; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .summary-grid div { min-height: 63px; grid-template-columns: auto auto; place-content: center; gap: 9px; align-items: center; }
+      .finish-actions { display: grid; }
+      .stage-map { padding: 9px; }
+      .stage-map-card { max-height: calc(100svh - 18px); padding: 22px 13px 16px; border-radius: 22px; }
+      .map-stats { margin-top: 9px; }
+      .mastery-path-icons { margin-top: 8px; }
+      .stage-grid { gap: 5px; }
+      .level-route { padding: 5px; grid-template-columns: 48px minmax(0, 1fr); gap: 4px; border-radius: 12px; }
+      .level-route-title strong { font-size: .57rem; }
+      .level-route-title small { font-size: .48rem; }
+      .level-stage-row { gap: 2px; }
+      .stage-link { border-radius: 7px; font-size: .58rem; }
+      .map-rewards { margin-top: 7px; padding: 6px; }
+      .map-reward { font-size: 1rem; }
+      .name-dialog,.certificate-dialog { padding: 9px; }
+      .certificate-shell { max-height: calc(100svh - 18px); }
+      .certificate-card { min-width: 760px; min-height: 500px; }
+    }
+
+    @media (max-width: 360px) {
+      .lab-chip { display: none; }
+      .arcade-lane { width: 100%; }
+      .arcade-dots { letter-spacing: .14em; }
+      .route-card { min-height: 64px; }
+      .route-symbol { font-size: 1.72rem; }
+      .mission-progress-top { font-size: .69rem; }
+      .word-actions { width: 100%; }
+      .word-actions button { flex: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+
+    @media print {
+      @page { size: landscape; margin: 0; }
+      body * { visibility: hidden !important; }
+      .certificate-dialog,
+      .certificate-dialog * { visibility: visible !important; }
+      .certificate-dialog { position: fixed; inset: 0; display: grid !important; padding: 0; background: #fff; }
+      .certificate-shell { width: 100%; max-height: none; overflow: visible; }
+      .certificate-toolbar { display: none; }
+      .certificate-card { width: 100%; min-width: 0; min-height: 0; height: 100vh; border-radius: 0; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    @media (prefers-contrast: more) {
+      :root { --muted: #e1e8f4; --line: #9fb5d4; }
+      .forge-panel,.word-panel,.mission-bar,.route-card { border-color: #9fb5d4; }
+    }
+
+    @media (forced-colors: active) {
+      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.name-card,.certificate-card { border: 1px solid CanvasText; }
+      .progress-fill,.segment.lit,.reactor-core { background: Highlight; color: HighlightText; }
+      .choice.correct { outline: 3px solid Highlight; }
+      .choice.wrong { outline: 3px dashed CanvasText; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">דלגו לפעילות</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basic">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div class="brand-copy">
+          <strong lang="en">ENGLISH BASIC · MAAYAN</strong>
+          <small lang="en">PREMIUM WORD ARCADE</small>
+        </div>
+      </a>
+      <button class="lab-chip" id="stageMenuButton" type="button" aria-haspopup="dialog" aria-controls="stageMap">LEVEL 1 · STAGE 1 <span aria-hidden="true">⌄</span></button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="intro" id="intro" aria-labelledby="introTitle">
+        <p class="eyebrow" id="groupLabel" lang="en">LEVEL 1 · STAGE 1 · 10 WORDS</p>
+        <h1 id="introTitle" lang="en"><span>MAAYAN</span></h1>
+        <p class="intro-lead" lang="en">LISTEN · SPELL · PLAY</p>
+        <p class="stage-value" id="stageValue" lang="en">AQUA · 🪙 +5</p>
+        <div class="arcade-lane" aria-hidden="true">
+          <span class="arcade-runner">ᗧ</span>
+          <span class="arcade-dots">• • • • •</span>
+          <span class="arcade-prize">★</span>
+          <span class="arcade-chaser">👾</span>
+        </div>
+
+        <p class="route-label" id="routeLabel" lang="en">WORLD</p>
+        <div class="route-picker" role="group" aria-labelledby="routeLabel">
+          <button class="route-card" type="button" data-route="space" aria-pressed="true" aria-label="בחירת עולם חלל">
+            <span class="route-symbol" aria-hidden="true">🚀</span>
+            <strong lang="en">SPACE</strong>
+          </button>
+          <button class="route-card" type="button" data-route="city" aria-pressed="false" aria-label="בחירת עולם עיר">
+            <span class="route-symbol" aria-hidden="true">🏙️</span>
+            <strong lang="en">CITY</strong>
+          </button>
+          <button class="route-card" type="button" data-route="studio" aria-pressed="false" aria-label="בחירת עולם מוזיקה">
+            <span class="route-symbol" aria-hidden="true">🎛️</span>
+            <strong lang="en">BEATS</strong>
+          </button>
+        </div>
+
+        <div class="intro-actions">
+          <button class="primary start-button" id="startButton" type="button" aria-label="התחלת המשחק">▶</button>
+          <button class="secondary stage-entry-button" id="stageMapIntroButton" type="button" aria-haspopup="dialog" aria-controls="stageMap">שלבים</button>
+          <div class="sound-test-row">
+            <button class="sound-test" id="soundTestButton" type="button" aria-label="בדיקת צלילי המשחק">🔊</button>
+            <span class="sound-check" id="soundCheck" role="status" aria-live="polite">READY</span>
+          </div>
+        </div>
+        <p class="intro-note" aria-label="קול אופציונלי, הפעלה במקלדת, ללא חשבון, ללא דירוג וללא שמירת תשובות">🔊 &nbsp; ⌨️ &nbsp; 🔒</p>
+      </section>
+
+      <section class="game" id="game" aria-label="Maayan">
+        <div class="mission-bar" aria-label="מצב המשחק">
+          <div class="mission-progress">
+            <div class="mission-progress-top"><strong id="progressLabel">🎧 1 / 10</strong><span id="progressPercent">0%</span></div>
+            <div class="progress-track" aria-hidden="true"><span class="progress-fill" id="progressFill"></span></div>
+          </div>
+          <div class="metric coin-metric" id="coinMetric" aria-label="0 מטבעות זהב"><strong><span class="coin-icon" aria-hidden="true">●</span><span id="totalCoinCount">0</span></strong><span aria-hidden="true">GOLD</span></div>
+          <div class="metric chain"><strong id="chainCount">0</strong><span aria-label="רצף במשימה">🔥</span></div>
+          <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="כיבוי צלילי המשחק">🔊</button>
+        </div>
+
+        <div class="game-grid">
+          <aside class="forge-panel" aria-labelledby="forgeTitle">
+            <p class="panel-kicker" lang="en">PREMIUM REWARDS</p>
+            <h2 id="forgeTitle">הפרסים שלך</h2>
+            <div class="reactor-wrap" aria-hidden="true">
+              <div class="reactor-ring"></div>
+              <div class="energy-segments" id="segments"></div>
+              <div class="reactor-core" id="reactorCore">0%</div>
+            </div>
+            <div class="build-label" id="buildLabel">מסלול הפרסים</div>
+            <div class="build-preview" id="buildPreview" aria-hidden="true">🍬 · 🥉 · 🥈 · 🥇 · 🏠 · 🏰 · ✈️</div>
+          </aside>
+
+          <section class="word-panel" id="wordPanel" aria-live="off">
+            <span class="encounter" id="encounterLabel">חשיפה 1</span>
+            <div class="word-stage" id="wordStage"></div>
+            <div class="challenge-stage" id="challengeStage" hidden></div>
+            <div class="finish-stage" id="finishStage" hidden></div>
+            <div class="sr-only" id="liveStatus" role="status" aria-live="polite"></div>
+            <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="stage-map" id="stageMap" aria-labelledby="stageMapTitle">
+    <div class="stage-map-card">
+      <button class="stage-map-close" id="stageMapClose" type="button" aria-label="סגירת בחירת השלבים">×</button>
+      <p class="stage-map-kicker" lang="en">MAAYAN COLLECTION</p>
+      <h2 id="stageMapTitle">בחירת שלב</h2>
+      <div class="map-stats" id="mapStats" aria-live="polite"></div>
+      <div class="mastery-path-icons" aria-label="מסלול השליטה: צפייה, שמיעה, איות, חזרה, השלמת אות, העברה ושליטה">
+        <span aria-hidden="true">◉</span><span aria-hidden="true">🎧</span><span aria-hidden="true">abc</span><span aria-hidden="true">↻</span><span aria-hidden="true">_</span><span aria-hidden="true">↔</span><span aria-hidden="true">♛</span>
+      </div>
+      <div class="stage-grid" id="stageGrid" aria-label="חמישים שלבי המשחק"></div>
+      <div class="map-rewards" id="mapRewards" aria-label="מסלול הפרסים"></div>
+    </div>
+  </dialog>
+
+  <dialog class="name-dialog" id="certificateNameDialog" aria-labelledby="certificateNameTitle">
+    <form class="name-card" id="certificateNameForm" method="dialog">
+      <button class="stage-map-close" id="certificateNameClose" type="button" aria-label="סגירה">×</button>
+      <div class="name-seal" aria-hidden="true">M</div>
+      <h2 id="certificateNameTitle">איך לכתוב את השם?</h2>
+      <p>עברית / English</p>
+      <input id="certificateNameInput" name="learner-name" type="text" maxlength="50" autocomplete="name" dir="auto" required aria-label="השם שיופיע בתעודה">
+      <button class="primary certificate-create" type="submit" aria-label="יצירת תעודת הסיום">✨</button>
+    </form>
+  </dialog>
+
+  <dialog class="certificate-dialog" id="certificateDialog" aria-labelledby="certificateTitle">
+    <div class="certificate-shell">
+      <div class="certificate-toolbar">
+        <button class="secondary" id="certificatePrintButton" type="button" aria-label="הדפסת התעודה">🖨️</button>
+        <button class="secondary" id="certificateCloseButton" type="button" aria-label="סגירת התעודה">×</button>
+      </div>
+      <article class="certificate-card" id="certificateCard">
+        <div class="certificate-gems" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="certificate-brand" lang="en">MAAYAN</p>
+        <h2 id="certificateTitle">תעודת סיום</h2>
+        <p class="certificate-awarded">מוענקת ל־</p>
+        <strong class="certificate-name" id="certificateName" dir="auto"></strong>
+        <div class="certificate-achievements">
+          <span><b>◆</b><strong id="certificateStages">5 רמות · 50 שלבים</strong></span>
+          <span><b>◇</b><strong id="certificateWords">459 מילים</strong></span>
+          <span><b>↔</b><strong id="certificateTransfer">250 אתגרי העברה</strong></span>
+        </div>
+        <p class="certificate-validation">שליטה מלאה במילים</p>
+        <div class="certificate-seal" aria-hidden="true"><span>M</span></div>
+        <div class="certificate-lines" aria-hidden="true"><i></i><i></i></div>
+      </article>
+    </div>
+  </dialog>
+
+  <script src="../curriculum-data.js?v=2"></script>
+  <script src="../progress.js?v=3"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const courseLevel = Math.min(5, Math.max(1, Number(params.get('level')) || 1));
+      const courseLesson = Math.min(10, Math.max(1, Number(params.get('lesson')) || 1));
+      const course = window.ENGLISH_BASIC_COURSE;
+      const lessonData = course.levels[courseLevel - 1].lessons[courseLesson - 1];
+      const targetWords = lessonData.words.map(([word, translation]) => ({ word, translation, kind: 'target' }));
+      const transferWords = lessonData.transfer.map(([word, translation]) => ({ word, translation, kind: 'transfer' }));
+      const words = [...targetWords, ...transferWords];
+      const lessonHref = `../lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
+      const stageCoinValues = [5, 7, 12, 14, 16, 18, 20, 22, 24, 25];
+      const coinsPerSuccess = stageCoinValues[courseLesson - 1];
+      const stageThemes = [
+        { name: 'AQUA', cyan: '#59e1d3', soft: '#59e1d326', gold: '#ffd978', blue: '#82a7ff', glowA: '#173962', glowB: '#153f3d', panelA: '#10223a', panelB: '#091628' },
+        { name: 'VIOLET', cyan: '#a993ff', soft: '#a993ff26', gold: '#ffe08a', blue: '#67d9ff', glowA: '#3a245f', glowB: '#143a4e', panelA: '#241b43', panelB: '#10152d' },
+        { name: 'AMBER', cyan: '#ffbf69', soft: '#ffbf6926', gold: '#ffe6a7', blue: '#ff8f70', glowA: '#5a3217', glowB: '#4a2635', panelA: '#332018', panelB: '#21131a' },
+        { name: 'EMERALD', cyan: '#65e6a6', soft: '#65e6a626', gold: '#e6ff9a', blue: '#67d9c9', glowA: '#174a3a', glowB: '#183754', panelA: '#12372f', panelB: '#0b2027' },
+        { name: 'SAPPHIRE', cyan: '#72a5ff', soft: '#72a5ff26', gold: '#f8da8b', blue: '#8c7dff', glowA: '#193b72', glowB: '#30265f', panelA: '#142b4e', panelB: '#151a36' },
+        { name: 'ROSE', cyan: '#ff83b3', soft: '#ff83b326', gold: '#ffd489', blue: '#bb82ff', glowA: '#5f2344', glowB: '#39255f', panelA: '#3c1b33', panelB: '#21172f' },
+        { name: 'JADE', cyan: '#56dcc9', soft: '#56dcc926', gold: '#f2dc85', blue: '#66a9ff', glowA: '#164a47', glowB: '#173a5a', panelA: '#123835', panelB: '#0c2230' },
+        { name: 'PLATINUM', cyan: '#c8d5e8', soft: '#c8d5e826', gold: '#fff0b3', blue: '#8db5df', glowA: '#34455f', glowB: '#263a4f', panelA: '#273447', panelB: '#151f2c' },
+        { name: 'RUBY', cyan: '#ff6f7d', soft: '#ff6f7d26', gold: '#ffd084', blue: '#c985ff', glowA: '#672130', glowB: '#43245d', panelA: '#411b27', panelB: '#25162e' },
+        { name: 'ROYAL', cyan: '#e9c46a', soft: '#e9c46a26', gold: '#fff1ac', blue: '#8e9cff', glowA: '#58451d', glowB: '#302b61', panelA: '#382f1c', panelB: '#191b35' }
+      ];
+      const stageTheme = stageThemes[courseLesson - 1];
+      const rewardLadder = [
+        { symbol: '🍬', label: 'סוכרייה', color: '#ff8db4', threshold: 25 },
+        { symbol: '🏆', label: 'גביע ארד', color: '#d88954', threshold: 100 },
+        { symbol: '🏆', label: 'גביע כסף', color: '#c8d5e8', threshold: 250 },
+        { symbol: '🏆', label: 'גביע זהב', color: '#ffd978', threshold: 600 },
+        { symbol: '🏠', label: 'בית', color: '#69d6b0', threshold: 1500 },
+        { symbol: '🏰', label: 'טירה', color: '#a993ff', threshold: 3500 },
+        { symbol: '✈️', label: 'מטוס', color: '#72b8ff', threshold: 7500 }
+      ];
+      const stageLevelCount = course.levels.length;
+      const stageCountForLevel = level => course.levels[level - 1].lessons.length;
+      const totalStageCount = course.levels.reduce((sum, level) => sum + level.lessons.length, 0);
+      const uniqueTargetWordCount = new Set(course.levels.flatMap(level => level.lessons.flatMap(stage => stage.words.map(([word]) => word.toLowerCase())))).size;
+      const transferChallengeCount = course.levels.reduce((sum, level) => sum + level.lessons.reduce((stageSum, stage) => stageSum + stage.transfer.length, 0), 0);
+      const isFinalStage = courseLevel === stageLevelCount && courseLesson === stageCountForLevel(courseLevel);
+      const isLevelBoundary = courseLesson === stageCountForLevel(courseLevel);
+      const nextLevel = courseLesson < stageCountForLevel(courseLevel) ? courseLevel : courseLevel + 1;
+      const nextLesson = courseLesson < stageCountForLevel(courseLevel) ? courseLesson + 1 : 1;
+      const nextStageHref = isFinalStage ? null : `./?level=${nextLevel}&lesson=${nextLesson}`;
+      const autoLevelHref = courseLevel < stageLevelCount ? `./?level=${courseLevel + 1}&lesson=1` : null;
+      const progressApi = window.EBR_PROGRESS;
+      const initialProfile = progressApi?.getProfile?.() || {};
+      const initialWordForgeCoins = Math.max(0, Number(initialProfile.wordForgeCoins ?? initialProfile.wordForgePoints) || 0);
+      const challengeDurationMs = 7000;
+      let runWords = [...words];
+
+      document.documentElement.style.setProperty('--cyan', stageTheme.cyan);
+      document.documentElement.style.setProperty('--cyan-soft', stageTheme.soft);
+      document.documentElement.style.setProperty('--gold', stageTheme.gold);
+      document.documentElement.style.setProperty('--blue', stageTheme.blue);
+      document.documentElement.style.setProperty('--stage-glow-a', stageTheme.glowA);
+      document.documentElement.style.setProperty('--stage-glow-b', stageTheme.glowB);
+      document.documentElement.style.setProperty('--stage-panel-a', stageTheme.panelA);
+      document.documentElement.style.setProperty('--stage-panel-b', stageTheme.panelB);
+      document.body.dataset.stageTheme = stageTheme.name.toLowerCase();
+
+      const challengeIndexes = new Set(words.map((_, wordIndex) => wordIndex));
+      const routeModels = {
+        space: { label: '🚀 חלל', symbol: '🚀', finish: 'מוכנים לשיגור!' },
+        city: { label: '🏙️ עיר', symbol: '🏙️', finish: 'העיר מוארת!' },
+        studio: { label: '🎛️ מוזיקה', symbol: '🎛️', finish: 'האולפן מוכן!' }
+      };
+
+      const intro = document.querySelector('#intro');
+      const game = document.querySelector('#game');
+      const startButton = document.querySelector('#startButton');
+      const soundTestButton = document.querySelector('#soundTestButton');
+      const soundCheck = document.querySelector('#soundCheck');
+      const routeButtons = [...document.querySelectorAll('.route-card')];
+      const soundToggle = document.querySelector('#soundToggle');
+      const progressFill = document.querySelector('#progressFill');
+      const progressLabel = document.querySelector('#progressLabel');
+      const progressPercent = document.querySelector('#progressPercent');
+      const totalCoinCount = document.querySelector('#totalCoinCount');
+      const coinMetric = document.querySelector('#coinMetric');
+      const chainCount = document.querySelector('#chainCount');
+      const segments = document.querySelector('#segments');
+      const reactorCore = document.querySelector('#reactorCore');
+      const buildLabel = document.querySelector('#buildLabel');
+      const buildPreview = document.querySelector('#buildPreview');
+      const wordStage = document.querySelector('#wordStage');
+      const challengeStage = document.querySelector('#challengeStage');
+      const finishStage = document.querySelector('#finishStage');
+      const encounterLabel = document.querySelector('#encounterLabel');
+      const liveStatus = document.querySelector('#liveStatus');
+      const wordPanel = document.querySelector('#wordPanel');
+      const fxLayer = document.querySelector('#fxLayer');
+      const lessonBackLink = document.querySelector('#lessonBackLink');
+      const stageMenuButton = document.querySelector('#stageMenuButton');
+      const stageMapIntroButton = document.querySelector('#stageMapIntroButton');
+      const stageValue = document.querySelector('#stageValue');
+      const groupLabel = document.querySelector('#groupLabel');
+      const stageMap = document.querySelector('#stageMap');
+      const stageMapClose = document.querySelector('#stageMapClose');
+      const stageMapTitle = document.querySelector('#stageMapTitle');
+      const stageGrid = document.querySelector('#stageGrid');
+      const mapStats = document.querySelector('#mapStats');
+      const mapRewards = document.querySelector('#mapRewards');
+      const certificateNameDialog = document.querySelector('#certificateNameDialog');
+      const certificateNameForm = document.querySelector('#certificateNameForm');
+      const certificateNameInput = document.querySelector('#certificateNameInput');
+      const certificateNameClose = document.querySelector('#certificateNameClose');
+      const certificateDialog = document.querySelector('#certificateDialog');
+      const certificateCard = document.querySelector('#certificateCard');
+      const certificateName = document.querySelector('#certificateName');
+      const certificateStages = document.querySelector('#certificateStages');
+      const certificateWords = document.querySelector('#certificateWords');
+      const certificateTransfer = document.querySelector('#certificateTransfer');
+      const certificatePrintButton = document.querySelector('#certificatePrintButton');
+      const certificateCloseButton = document.querySelector('#certificateCloseButton');
+
+      lessonBackLink.href = lessonHref;
+      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basic');
+      stageMenuButton.innerHTML = `LEVEL ${courseLevel} · STAGE ${courseLesson} <span aria-hidden="true">⌄</span>`;
+      stageMenuButton.setAttribute('aria-label', `פתיחת בחירת השלבים. שלב נוכחי ${courseLesson}`);
+      groupLabel.textContent = `LEVEL ${courseLevel} · STAGE ${courseLesson} · ${targetWords.length} ◆ · ${transferWords.length} ↔`;
+      stageValue.textContent = `${stageTheme.name} · 🪙 +${coinsPerSuccess} · ${initialWordForgeCoins}`;
+      stageValue.setAttribute('aria-label', `כל הצלחה בשלב זה שווה ${coinsPerSuccess} מטבעות זהב. סך הכול ${initialWordForgeCoins} מטבעות`);
+      document.title = `Maayan · Level ${courseLevel} · Stage ${courseLesson}`;
+      progressApi?.setLastLocation({ href: `temp/?level=${courseLevel}&lesson=${courseLesson}`, label: `Maayan · שלב ${courseLesson}` });
+
+      let route = 'space';
+      let soundOn = true;
+      let index = 0;
+      let completedWords = 0;
+      let runCoins = 0;
+      let totalCoins = initialWordForgeCoins;
+      let chain = 0;
+      let firstPassCorrect = 0;
+      let positiveToneStep = 0;
+      let runId = 0;
+      let challengeResolved = new Set();
+      let pendingReviews = [];
+      let currentChallenge = null;
+      let audioContext = null;
+      let mediaAudio = null;
+      let mediaAudioUrl = null;
+      let backgroundAudio = null;
+      let backgroundAudioUrl = null;
+      let backgroundDuckDepth = 0;
+      let audioUnlocked = false;
+      let gameFinished = false;
+      let stageMapTrigger = stageMenuButton;
+      let challengeTimerFrame = 0;
+      let challengeTimerDeadline = 0;
+      let autoAdvanceTimer = 0;
+      let lastCertificatePalette = -1;
+      let stageMapPausedChallenge = false;
+
+      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+      const backgroundVolume = .36;
+      const backgroundDuckVolume = .055;
+      const backgroundTonePattern = [
+        { frequency: 110, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 165, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 110, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 175, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 294, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 98, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 147, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 233, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 98, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 156, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 92, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 139, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 185, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 220, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 92, duration: .075, gap: .028, type: 'square', gain: .058 },
+        { frequency: 147, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 220, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 262, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 82, duration: .075, gap: .028, type: 'square', gain: .06 },
+        { frequency: 123, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 165, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 196, duration: .075, gap: .028, type: 'triangle', gain: .044 },
+        { frequency: 82, duration: .075, gap: .028, type: 'square', gain: .06 },
+        { frequency: 131, duration: .075, gap: .028, type: 'triangle', gain: .046 },
+        { frequency: 196, duration: .075, gap: .028, type: 'square', gain: .05 },
+        { frequency: 247, duration: .075, gap: .028, type: 'triangle', gain: .044 }
+      ];
+      const positiveTonePatterns = [
+        [{ frequency: 440, duration: .13, gap: .02, type: 'square', gain: .24 }],
+        [{ frequency: 554, duration: .13, gap: .02, type: 'square', gain: .26 }],
+        [{ frequency: 659, duration: .15, gap: .02, type: 'square', gain: .29 }],
+        [
+          { frequency: 988, duration: .07, gap: .015, type: 'square', gain: .29 },
+          { frequency: 880, duration: .07, gap: .015, type: 'square', gain: .28 },
+          { frequency: 784, duration: .075, gap: .015, type: 'square', gain: .27 },
+          { frequency: 698, duration: .075, gap: .015, type: 'square', gain: .26 },
+          { frequency: 622, duration: .08, gap: .015, type: 'square', gain: .25 },
+          { frequency: 554, duration: .085, gap: .015, type: 'square', gain: .24 },
+          { frequency: 494, duration: .09, gap: .015, type: 'square', gain: .23 },
+          { frequency: 440, duration: .1, gap: .015, type: 'square', gain: .22 },
+          { frequency: 392, duration: .11, gap: .015, type: 'square', gain: .21 },
+          { frequency: 330, duration: .14, gap: .015, type: 'triangle', gain: .23 },
+          { frequency: 262, duration: .24, gap: .02, type: 'triangle', gain: .26 }
+        ]
+      ];
+
+      const formatCoins = value => Number(value).toLocaleString('en-US');
+      const levelColors = ['#ffd978', '#59e1d3', '#a993ff', '#72a5ff', '#ff9f6e'];
+
+      function renderStageMap() {
+        const profile = progressApi?.getProfile?.() || {};
+        const completedStages = new Set(profile.wordForgeCompletedStages || []);
+        const completedCount = completedStages.size;
+        const savedCoins = Math.max(0, Number(profile.wordForgeCoins ?? profile.wordForgePoints) || totalCoins);
+        stageMapTitle.textContent = 'MAAYAN · 50';
+        mapStats.innerHTML = `<span aria-label="${completedCount} מתוך ${totalStageCount} שלבים">◆ ${completedCount}/${totalStageCount}</span><span aria-label="${savedCoins} מטבעות זהב">🪙 ${formatCoins(savedCoins)}</span>`;
+        stageGrid.innerHTML = Array.from({ length: stageLevelCount }, (_, levelIndex) => {
+          const level = levelIndex + 1;
+          const levelStageCount = stageCountForLevel(level);
+          const levelCompleted = Array.from({ length: levelStageCount }, (_, stageIndex) => completedStages.has(`${level}-${stageIndex + 1}`)).filter(Boolean).length;
+          const rowClass = `${level === courseLevel ? ' current' : ''}${levelCompleted === levelStageCount ? ' completed' : ''}`;
+          const stages = Array.from({ length: levelStageCount }, (_, stageIndex) => {
+            const stage = stageIndex + 1;
+            const key = `${level}-${stage}`;
+            const current = level === courseLevel && stage === courseLesson;
+            const complete = completedStages.has(key);
+            return `<a class="stage-link${complete ? ' completed' : ''}" href="./?level=${level}&lesson=${stage}"${current ? ' aria-current="page"' : ''} aria-label="LEVEL ${level}, STAGE ${stage}, ${stageCoinValues[stageIndex]} מטבעות${complete ? ', הושלם' : ''}" title="🪙 ${stageCoinValues[stageIndex]}">${stage}</a>`;
+          }).join('');
+          return `<section class="level-route${rowClass}" style="--level-color:${levelColors[levelIndex]}" aria-label="LEVEL ${level}, ${levelCompleted} מתוך ${levelStageCount}"><div class="level-route-title"><strong>LEVEL ${level}</strong><small>${levelCompleted}/${levelStageCount}</small></div><div class="level-stage-row">${stages}</div></section>`;
+        }).join('');
+        mapRewards.innerHTML = rewardLadder.map(reward => `<span class="map-reward${savedCoins >= reward.threshold ? ' on' : ''}" style="--reward-color:${reward.color}" aria-label="${reward.label}, ${reward.threshold} מטבעות"><span aria-hidden="true">${reward.symbol}</span><small>🪙${reward.threshold}</small></span>`).join('');
+      }
+
+      function openStageMap(trigger) {
+        clearAutoAdvance();
+        stageMapPausedChallenge = Boolean(!challengeStage.hidden && currentChallenge && !currentChallenge.answered);
+        if (stageMapPausedChallenge) clearChallengeTimer();
+        stageMapTrigger = trigger || stageMenuButton;
+        renderStageMap();
+        if (!stageMap.open) {
+          if (typeof stageMap.showModal === 'function') stageMap.showModal();
+          else stageMap.setAttribute('open', '');
+        }
+        stageMapClose.focus();
+      }
+
+      function closeStageMap() {
+        if (!stageMap.open) return;
+        if (typeof stageMap.close === 'function') stageMap.close();
+        else stageMap.removeAttribute('open');
+      }
+
+      function recordStageResult(correct) {
+        const gained = correct ? coinsPerSuccess : 0;
+        const previousTotal = totalCoins;
+        if (correct) runCoins += gained;
+        const profile = progressApi?.recordGame(correct, runCoins, {
+          game: 'word_forge',
+          xp: gained,
+          level: courseLevel,
+          stage: courseLesson
+        });
+        if (profile) totalCoins = Math.max(0, Number(profile.wordForgeCoins ?? profile.wordForgePoints) || 0);
+        else if (correct) totalCoins += gained;
+        if (correct) {
+          const milestone = rewardLadder.some(reward => previousTotal < reward.threshold && totalCoins >= reward.threshold);
+          triggerCoinBurst(milestone);
+        }
+        return gained;
+      }
+
+      function triggerCoinBurst(milestone = false) {
+        coinMetric.classList.remove('gain', 'milestone');
+        void coinMetric.offsetWidth;
+        coinMetric.classList.add('gain');
+        if (milestone) coinMetric.classList.add('milestone');
+        const sparkCount = milestone ? 18 : 8;
+        for (let sparkIndex = 0; sparkIndex < sparkCount; sparkIndex += 1) {
+          const spark = document.createElement('i');
+          spark.className = 'coin-spark';
+          spark.style.setProperty('--spark-angle', `${(360 / sparkCount) * sparkIndex}deg`);
+          spark.style.setProperty('--spark-distance', `${milestone ? -86 - (sparkIndex % 3) * 10 : -52}px`);
+          coinMetric.append(spark);
+          setTimeout(() => spark.remove(), 950);
+        }
+        setTimeout(() => coinMetric.classList.remove('gain', 'milestone'), 1180);
+      }
+
+      stageMenuButton.addEventListener('click', () => openStageMap(stageMenuButton));
+      stageMapIntroButton.addEventListener('click', () => openStageMap(stageMapIntroButton));
+      stageMapClose.addEventListener('click', closeStageMap);
+      stageMap.addEventListener('click', event => { if (event.target === stageMap) closeStageMap(); });
+      stageMap.addEventListener('cancel', event => { event.preventDefault(); closeStageMap(); });
+      stageMap.addEventListener('close', () => {
+        stageMapTrigger?.focus();
+        if (stageMapPausedChallenge) startChallengeTimer(runId);
+        stageMapPausedChallenge = false;
+      });
+
+      for (let i = 0; i < words.length; i += 1) {
+        const segment = document.createElement('span');
+        segment.className = 'segment';
+        segment.style.transform = `rotate(${i * (360 / words.length)}deg)`;
+        segments.append(segment);
+      }
+
+      routeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          route = button.dataset.route;
+          routeButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        });
+      });
+
+      soundTestButton.addEventListener('click', () => runSoundCheck());
+
+      soundToggle.addEventListener('click', async () => {
+        soundOn = !soundOn;
+        soundToggle.setAttribute('aria-pressed', String(soundOn));
+        soundToggle.textContent = soundOn ? '🔊' : '🔇';
+        soundToggle.setAttribute('aria-label', soundOn ? 'כיבוי צלילי המשחק' : 'הפעלת צלילי המשחק');
+        if (!soundOn) {
+          if ('speechSynthesis' in window) speechSynthesis.cancel();
+          if (mediaAudio) mediaAudio.pause();
+          pauseBackgroundMusic(true);
+          if (audioContext?.state === 'running') audioContext.suspend();
+        } else {
+          ensureAudioContext();
+          await runSoundCheck(false);
+          await startBackgroundMusic();
+        }
+        liveStatus.textContent = soundOn ? 'הקול הופעל' : 'הקול כובה';
+      });
+
+      startButton.addEventListener('click', async () => {
+        startButton.disabled = true;
+        startButton.textContent = '◌';
+        ensureAudioContext();
+        if (!audioUnlocked) await runSoundCheck();
+        resetState();
+        progressApi?.startGameSession({ game: 'word_forge', level: courseLevel, stage: courseLesson });
+        buildLabel.textContent = 'מסלול הפרסים';
+        updateBuildPreview();
+        intro.hidden = true;
+        game.classList.add('active');
+        game.scrollIntoView({ block: 'start' });
+        startButton.disabled = false;
+        startButton.textContent = '▶';
+        await startBackgroundMusic();
+        showWord(0);
+      });
+
+      function resetState() {
+        pauseBackgroundMusic(true);
+        clearChallengeTimer();
+        clearAutoAdvance();
+        runWords = shuffleGroup(words, runWords);
+        index = 0;
+        completedWords = 0;
+        runCoins = 0;
+        const profile = progressApi?.getProfile?.() || {};
+        totalCoins = Math.max(0, Number(profile.wordForgeCoins ?? profile.wordForgePoints) || totalCoins);
+        chain = 0;
+        firstPassCorrect = 0;
+        positiveToneStep = 0;
+        challengeResolved = new Set();
+        pendingReviews = [];
+        currentChallenge = null;
+        gameFinished = false;
+        finishStage.hidden = true;
+        [...segments.children].forEach(segment => segment.classList.remove('lit'));
+        updateDashboard();
+      }
+
+      function shuffleGroup(group, previousGroup = []) {
+        const shuffled = [...group];
+        for (let currentIndex = shuffled.length - 1; currentIndex > 0; currentIndex -= 1) {
+          const randomIndex = Math.floor(Math.random() * (currentIndex + 1));
+          [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
+        }
+        if (shuffled.length > 1 && previousGroup.length && shuffled[0] === previousGroup[0]) {
+          const swapIndex = 1 + Math.floor(Math.random() * (shuffled.length - 1));
+          [shuffled[0], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[0]];
+        }
+        return shuffled;
+      }
+
+      function chooseLetterIndex(word) {
+        const characters = [...word];
+        const center = (characters.length - 1) / 2;
+        return characters
+          .map((character, characterIndex) => /[a-z]/i.test(character) ? characterIndex : -1)
+          .filter(characterIndex => characterIndex >= 0)
+          .sort((a, b) => Math.abs(a - center) - Math.abs(b - center))[0];
+      }
+
+      function voiceFor(language) {
+        const voices = speechSynthesis.getVoices();
+        return voices.find(voice => voice.lang === language) || voices.find(voice => voice.lang.startsWith(language.split('-')[0])) || null;
+      }
+
+      function speak(text, rate, id, language = 'en-US', pitch = 1) {
+        return new Promise(resolve => {
+          if (!soundOn || !('speechSynthesis' in window) || id !== runId) return resolve();
+          const backgroundWasDucked = duckBackground();
+          const utterance = new SpeechSynthesisUtterance(text);
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            restoreBackground(backgroundWasDucked);
+            resolve();
+          };
+          utterance.lang = language;
+          utterance.rate = rate;
+          utterance.pitch = pitch;
+          utterance.volume = 1;
+          const voice = voiceFor(language);
+          if (voice) utterance.voice = voice;
+          utterance.onend = finish;
+          utterance.onerror = finish;
+          speechSynthesis.speak(utterance);
+          setTimeout(finish, Math.max(1800, text.length * 180));
+        });
+      }
+
+      async function runSoundCheck(showStatus = true) {
+        if (!soundOn) {
+          soundOn = true;
+          soundToggle.setAttribute('aria-pressed', 'true');
+          soundToggle.textContent = '🔊';
+          soundToggle.setAttribute('aria-label', 'כיבוי צלילי המשחק');
+        }
+        if (showStatus) {
+          soundCheck.className = 'sound-check';
+          soundCheck.textContent = '•••';
+        }
+        ensureAudioContext();
+        const id = runId;
+        const toneReady = await playMediaTones([
+          { frequency: 294, duration: .07, gap: .025, type: 'square', gain: .18 },
+          { frequency: 392, duration: .07, gap: .025, type: 'square', gain: .2 },
+          { frequency: 523, duration: .08, gap: .025, type: 'square', gain: .22 },
+          { frequency: 784, duration: .14, gap: .02, type: 'triangle', gain: .26 }
+        ], id);
+        audioUnlocked = toneReady || audioContext?.state === 'running';
+        if (showStatus) {
+          soundCheck.className = `sound-check ${audioUnlocked ? 'ok' : 'warn'}`;
+          soundCheck.textContent = audioUnlocked ? '✓' : '⚠';
+        }
+        return audioUnlocked;
+      }
+
+      function writeWaveText(view, offset, text) {
+        for (let characterIndex = 0; characterIndex < text.length; characterIndex += 1) {
+          view.setUint8(offset + characterIndex, text.charCodeAt(characterIndex));
+        }
+      }
+
+      function createToneWave(pattern) {
+        const sampleRate = 22050;
+        const totalSeconds = pattern.reduce((sum, tone) => sum + (tone.duration ?? .13) + (tone.gap ?? .035), 0);
+        const sampleCount = Math.ceil(totalSeconds * sampleRate);
+        const buffer = new ArrayBuffer(44 + sampleCount * 2);
+        const view = new DataView(buffer);
+        writeWaveText(view, 0, 'RIFF');
+        view.setUint32(4, 36 + sampleCount * 2, true);
+        writeWaveText(view, 8, 'WAVE');
+        writeWaveText(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeWaveText(view, 36, 'data');
+        view.setUint32(40, sampleCount * 2, true);
+
+        let outputIndex = 0;
+        pattern.forEach(({ frequency, duration = .13, gap = .035, type = 'sine', gain = .2 }) => {
+          const toneSamples = Math.floor(duration * sampleRate);
+          const gapSamples = Math.floor(gap * sampleRate);
+          const fadeSamples = Math.max(1, Math.floor(sampleRate * .015));
+          for (let toneIndex = 0; toneIndex < toneSamples; toneIndex += 1) {
+            const phase = 2 * Math.PI * frequency * toneIndex / sampleRate;
+            const rawWave = type === 'triangle'
+              ? (2 / Math.PI) * Math.asin(Math.sin(phase))
+              : type === 'square'
+                ? Math.sign(Math.sin(phase))
+                : type === 'sawtooth'
+                  ? 2 * ((frequency * toneIndex / sampleRate) % 1) - 1
+                  : Math.sin(phase);
+            const fadeIn = Math.min(1, toneIndex / fadeSamples);
+            const fadeOut = Math.min(1, (toneSamples - toneIndex) / fadeSamples);
+            const audibleGain = Math.min(.95, gain * 3.4);
+            const sample = rawWave * audibleGain * Math.min(fadeIn, fadeOut);
+            view.setInt16(44 + outputIndex * 2, Math.max(-1, Math.min(1, sample)) * 32767, true);
+            outputIndex += 1;
+          }
+          outputIndex += gapSamples;
+        });
+        return new Blob([buffer], { type: 'audio/wav' });
+      }
+
+      function playMediaTones(pattern, id = runId) {
+        return new Promise(resolve => {
+          if (!soundOn || id !== runId || !('Audio' in window) || !('URL' in window)) return resolve(false);
+          if (!mediaAudio) {
+            mediaAudio = new Audio();
+            mediaAudio.preload = 'auto';
+            mediaAudio.playsInline = true;
+          }
+          mediaAudio.pause();
+          if (mediaAudioUrl) URL.revokeObjectURL(mediaAudioUrl);
+          mediaAudioUrl = URL.createObjectURL(createToneWave(pattern));
+          mediaAudio.src = mediaAudioUrl;
+          mediaAudio.volume = 1;
+          let settled = false;
+          const finish = result => {
+            if (settled) return;
+            settled = true;
+            mediaAudio.onended = null;
+            mediaAudio.onerror = null;
+            resolve(result);
+          };
+          mediaAudio.onended = () => finish(true);
+          mediaAudio.onerror = () => finish(false);
+          const playback = mediaAudio.play();
+          if (playback?.catch) playback.catch(() => finish(false));
+          const duration = pattern.reduce((sum, tone) => sum + (tone.duration ?? .13) + (tone.gap ?? .035), 0);
+          setTimeout(() => finish(false), duration * 1000 + 700);
+        });
+      }
+
+      function ensureBackgroundAudio() {
+        if (!('Audio' in window) || !('URL' in window)) return null;
+        if (!backgroundAudio) {
+          backgroundAudio = new Audio();
+          backgroundAudio.preload = 'auto';
+          backgroundAudio.playsInline = true;
+          backgroundAudio.loop = true;
+        }
+        if (!backgroundAudioUrl) {
+          backgroundAudioUrl = URL.createObjectURL(createToneWave(backgroundTonePattern));
+          backgroundAudio.src = backgroundAudioUrl;
+        }
+        backgroundAudio.volume = backgroundDuckDepth ? backgroundDuckVolume : backgroundVolume;
+        return backgroundAudio;
+      }
+
+      async function startBackgroundMusic() {
+        if (!soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
+        const audio = ensureBackgroundAudio();
+        if (!audio) return false;
+        try {
+          const playback = audio.play();
+          if (playback?.then) await playback;
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function pauseBackgroundMusic(reset = false) {
+        backgroundDuckDepth = 0;
+        if (!backgroundAudio) return;
+        backgroundAudio.pause();
+        backgroundAudio.volume = backgroundVolume;
+        if (reset) {
+          try { backgroundAudio.currentTime = 0; } catch {}
+        }
+      }
+
+      function duckBackground() {
+        if (!backgroundAudio || backgroundAudio.paused) return false;
+        backgroundDuckDepth += 1;
+        backgroundAudio.volume = backgroundDuckVolume;
+        return true;
+      }
+
+      function restoreBackground(wasDucked) {
+        if (!wasDucked) return;
+        backgroundDuckDepth = Math.max(0, backgroundDuckDepth - 1);
+        if (backgroundAudio && !backgroundAudio.paused) {
+          backgroundAudio.volume = backgroundDuckDepth ? backgroundDuckVolume : backgroundVolume;
+        }
+      }
+
+      function ensureAudioContext() {
+        if (!soundOn) return null;
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+        if (!audioContext) audioContext = new AudioContextClass();
+        if (audioContext.state === 'suspended') audioContext.resume();
+        return audioContext;
+      }
+
+      async function playTones(pattern, id = runId) {
+        if (!soundOn || id !== runId) return;
+        const backgroundWasDucked = duckBackground();
+        try {
+          const mediaPlayed = await playMediaTones(pattern, id);
+          if (mediaPlayed || !soundOn || id !== runId) return;
+          await new Promise(resolve => {
+            const context = ensureAudioContext();
+            if (!soundOn || !context || id !== runId) return resolve();
+            const start = context.currentTime + .02;
+            let cursor = start;
+            pattern.forEach(({ frequency, duration = .13, gap = .035, type = 'sine', gain = .15 }) => {
+              const oscillator = context.createOscillator();
+              const volume = context.createGain();
+              oscillator.type = type;
+              oscillator.frequency.setValueAtTime(frequency, cursor);
+              volume.gain.setValueAtTime(.0001, cursor);
+              volume.gain.exponentialRampToValueAtTime(gain, cursor + .018);
+              volume.gain.exponentialRampToValueAtTime(.0001, cursor + duration);
+              oscillator.connect(volume).connect(context.destination);
+              oscillator.start(cursor);
+              oscillator.stop(cursor + duration + .02);
+              cursor += duration + gap;
+            });
+            setTimeout(resolve, Math.max(0, (cursor - start) * 1000 + 35));
+          });
+        } finally {
+          restoreBackground(backgroundWasDucked);
+        }
+      }
+
+      async function questionCue(item, id) {
+        await playTones([
+          { frequency: 247, duration: .07, gap: .045, type: 'square', gain: .18 },
+          { frequency: 330, duration: .07, gap: .045, type: 'square', gain: .21 },
+          { frequency: 440, duration: .08, gap: .045, type: 'square', gain: .24 },
+          { frequency: 659, duration: .13, gap: .02, type: 'triangle', gain: .3 }
+        ], id);
+        if (id !== runId) return;
+        await sleep(360);
+      }
+
+      function nextPositiveTonePattern() {
+        const pattern = positiveTonePatterns[positiveToneStep];
+        positiveToneStep = (positiveToneStep + 1) % positiveTonePatterns.length;
+        return pattern;
+      }
+
+      async function positiveAudio(id, item) {
+        await playTones(nextPositiveTonePattern(), id);
+        await speak(item.word, .78, id, 'en-US', 1.08);
+      }
+
+      async function retryAudio(id, correct, item) {
+        await playTones([
+          { frequency: 220, duration: .09, gap: .04, type: 'square', gain: .2 },
+          { frequency: 185, duration: .1, gap: .04, type: 'square', gain: .22 },
+          { frequency: 147, duration: .16, gap: .02, type: 'triangle', gain: .26 }
+        ], id);
+        await speak(correct.toUpperCase(), .78, id, 'en-US', .92);
+        await speak(item.word, .78, id, 'en-US', .94);
+      }
+
+      function feedbackAnimation(kind) {
+        wordPanel.classList.remove('success-flash', 'retry-flash');
+        void wordPanel.offsetWidth;
+        wordPanel.classList.add(kind === 'success' ? 'success-flash' : 'retry-flash');
+        const icon = kind === 'success'
+          ? '<div class="arcade-pop"><span class="arcade-pop-runner">ᗧ</span><span class="arcade-pop-dots">•••</span><span class="arcade-pop-prize">★</span></div>'
+          : '<div class="arcade-pop retry"><span>👾</span><span>↺</span></div>';
+        const particles = Array.from({ length: 12 }, (_, particleIndex) => `<span class="fx-particle" style="--angle:${particleIndex * 30}deg"></span>`).join('');
+        fxLayer.className = `fx-layer ${kind} show`;
+        fxLayer.innerHTML = `<div class="fx-icon">${icon}</div>${particles}`;
+        setTimeout(() => { fxLayer.className = 'fx-layer'; fxLayer.innerHTML = ''; }, 950);
+      }
+
+      async function showWord(wordIndex) {
+        const id = ++runId;
+        clearChallengeTimer();
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        index = wordIndex;
+        wordStage.hidden = false;
+        challengeStage.hidden = true;
+        finishStage.hidden = true;
+        await startBackgroundMusic();
+        if (id !== runId) return;
+        encounterLabel.hidden = false;
+        const item = runWords[wordIndex];
+        encounterLabel.textContent = item.kind === 'transfer' ? `↔ ${wordIndex + 1} / ${runWords.length}` : `${wordIndex + 1} / ${runWords.length} · LISTEN`;
+        updateDashboard();
+        const characters = [...item.word];
+
+        wordStage.innerHTML = `
+          <h2 class="word" lang="en">${item.word.toUpperCase()}</h2>
+          <div class="translation">${item.translation}</div>
+          <div class="letters" aria-label="איות ${item.word}">
+            ${characters.map(letter => `<span class="letter">${letter.toLowerCase()}</span>`).join('')}
+          </div>
+          <div class="instruction" lang="en">READY</div>
+          <div class="word-actions">
+            <button class="secondary" type="button" id="repeatButton" aria-label="השמעה חוזרת">🔊</button>
+            <button class="primary" type="button" id="continueButton" aria-label="מעבר לאתגר" hidden>▶</button>
+          </div>`;
+
+        const instruction = wordStage.querySelector('.instruction');
+        const letters = [...wordStage.querySelectorAll('.letter')];
+        const repeatButton = wordStage.querySelector('#repeatButton');
+        const continueButton = wordStage.querySelector('#continueButton');
+        repeatButton.addEventListener('click', () => showWord(wordIndex));
+        continueButton.addEventListener('click', completeCurrentWord);
+
+        await sleep(600);
+        if (id !== runId) return;
+        instruction.textContent = 'LISTEN';
+        liveStatus.textContent = `המילה ${item.word}`;
+        await speak(item.word, .82, id);
+        if (id !== runId) return;
+        instruction.textContent = 'SPELL';
+        for (let letterIndex = 0; letterIndex < characters.length; letterIndex += 1) {
+          if (id !== runId) return;
+          letters.forEach(letter => letter.classList.remove('active'));
+          letters[letterIndex].classList.add('active');
+          if (/[a-z]/i.test(characters[letterIndex])) {
+            await speak(characters[letterIndex].toUpperCase(), 1, id);
+            if (!soundOn) await sleep(190);
+          } else {
+            await sleep(120);
+          }
+        }
+        if (id !== runId) return;
+        letters.forEach(letter => letter.classList.remove('active'));
+        instruction.textContent = 'ONE MORE';
+        await speak(item.word, .82, id);
+        if (id !== runId) return;
+        instruction.textContent = 'GO';
+        continueButton.hidden = false;
+        continueButton.focus();
+      }
+
+      function completeCurrentWord() {
+        if (completedWords <= index) {
+          completedWords = index + 1;
+          reactorCore.classList.remove('pulse');
+          void reactorCore.offsetWidth;
+          reactorCore.classList.add('pulse');
+        }
+        updateDashboard();
+        showChallenge(index, false);
+      }
+
+      function advanceAfterChallenge() {
+        const dueReview = pendingReviews.find(review => review.dueAt <= completedWords);
+        if (dueReview) {
+          pendingReviews = pendingReviews.filter(review => review !== dueReview);
+          showChallenge(dueReview.wordIndex, true);
+          return;
+        }
+        if (index >= runWords.length - 1) {
+          const remainingReview = pendingReviews.shift();
+          if (remainingReview) showChallenge(remainingReview.wordIndex, true);
+          else if (challengeResolved.size === runWords.length) showFinish();
+          return;
+        }
+        showWord(index + 1);
+      }
+
+      function clearChallengeTimer() {
+        if (challengeTimerFrame) cancelAnimationFrame(challengeTimerFrame);
+        challengeTimerFrame = 0;
+        challengeTimerDeadline = 0;
+      }
+
+      function startChallengeTimer(id) {
+        clearChallengeTimer();
+        const timer = challengeStage.querySelector('#challengeTimer');
+        const fill = challengeStage.querySelector('#challengeTimerFill');
+        if (!timer || !fill) return;
+        challengeTimerDeadline = performance.now() + challengeDurationMs;
+        const tick = now => {
+          if (id !== runId || !currentChallenge || currentChallenge.answered) return clearChallengeTimer();
+          const remaining = Math.max(0, challengeTimerDeadline - now);
+          const ratio = remaining / challengeDurationMs;
+          fill.style.transform = `scaleX(${ratio})`;
+          timer.classList.toggle('warning', ratio <= .35);
+          timer.setAttribute('aria-valuenow', String(Math.ceil(remaining / 1000)));
+          if (remaining <= 0) {
+            clearChallengeTimer();
+            answerChallenge(null, { timedOut: true });
+            return;
+          }
+          challengeTimerFrame = requestAnimationFrame(tick);
+        };
+        challengeTimerFrame = requestAnimationFrame(tick);
+      }
+
+      async function showChallenge(wordIndex, isReview) {
+        const id = ++runId;
+        clearChallengeTimer();
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        pauseBackgroundMusic();
+        wordStage.hidden = true;
+        challengeStage.hidden = false;
+        finishStage.hidden = true;
+        encounterLabel.hidden = false;
+        encounterLabel.textContent = isReview ? '↺ retry' : '★ quiz';
+
+        const item = runWords[wordIndex];
+        const characters = [...item.word];
+        const hiddenIndex = chooseLetterIndex(item.word);
+        const correct = characters[hiddenIndex].toLowerCase();
+        const distractors = ['a', 'e', 'i', 'o', 'r', 't', 'l', 's'].filter(letter => letter !== correct);
+        const options = [correct, ...distractors.slice((wordIndex * 2) % 4, ((wordIndex * 2) % 4) + 3)].slice(0, 4);
+        while (options.length < 4) options.push(distractors[options.length]);
+        options.sort((a, b) => (a.charCodeAt(0) + wordIndex) % 7 - (b.charCodeAt(0) + wordIndex) % 7);
+        const displayWord = characters.map((letter, letterIndex) => letterIndex === hiddenIndex ? '<span class="missing-slot">_</span>' : letter.toLowerCase()).join('');
+        currentChallenge = { wordIndex, isReview, correct, answered: false };
+        updateDashboard();
+
+        challengeStage.classList.add('question-wait');
+        challengeStage.innerHTML = `
+          <p class="challenge-kicker">${isReview ? '↺' : '🎧'}</p>
+          <div class="hebrew-hint"><span aria-hidden="true">💡</span><span>${item.translation}</span></div>
+          <div class="tone-cue" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h2 class="challenge-title" lang="en" aria-label="איזו אות חסרה">letter?</h2>
+          <div class="missing-word" lang="en" aria-live="polite">${displayWord}</div>
+          <div class="challenge-timer" id="challengeTimer" role="progressbar" aria-label="שבע שניות לבחירת תשובה" aria-valuemin="0" aria-valuemax="7" aria-valuenow="7"><span id="challengeTimerFill"></span></div>
+          <div class="choices" role="group" aria-label="בחרו את האות החסרה">
+            ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="האות ${option.toLowerCase()}" disabled>${option.toLowerCase()}</button>`).join('')}
+          </div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite"></div>`;
+
+        challengeStage.querySelectorAll('.choice').forEach(button => button.addEventListener('click', () => answerChallenge(button)));
+        await questionCue(item, id);
+        if (id !== runId) return;
+        challengeStage.classList.remove('question-wait');
+        const choices = [...challengeStage.querySelectorAll('.choice')];
+        choices.forEach(choice => { choice.disabled = false; });
+        choices[0].focus();
+        startChallengeTimer(id);
+      }
+
+      async function answerChallenge(button, { timedOut = false } = {}) {
+        if (!currentChallenge || currentChallenge.answered) return;
+        currentChallenge.answered = true;
+        clearChallengeTimer();
+        const feedbackId = runId;
+        const answer = button?.dataset.answer || '';
+        const correct = currentChallenge.correct;
+        const item = runWords[currentChallenge.wordIndex];
+        const feedback = challengeStage.querySelector('#feedback');
+        const missingWord = challengeStage.querySelector('.missing-word');
+        const buttons = [...challengeStage.querySelectorAll('.choice')];
+        buttons.forEach(choice => {
+          choice.disabled = true;
+          if (choice.dataset.answer === correct) choice.classList.add('correct');
+        });
+        if (missingWord) {
+          missingWord.textContent = item.word.toLowerCase();
+          missingWord.setAttribute('aria-label', item.word.toLowerCase());
+        }
+
+        let audioFeedback;
+        let coinsAwarded = 0;
+        if (answer === correct) {
+          coinsAwarded = recordStageResult(true);
+          chain += 1;
+          if (!currentChallenge.isReview) firstPassCorrect += 1;
+          challengeResolved.add(currentChallenge.wordIndex);
+          const segment = segments.children[currentChallenge.wordIndex];
+          if (segment) segment.classList.add('lit');
+          updateBuildPreview();
+          feedback.classList.add('compact');
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">★</span><div><strong lang="en">yes!</strong><strong class="coins-pop" aria-label="נוספו ${coinsAwarded} מטבעות">🪙 +${coinsAwarded}</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `נכון. נוספו ${coinsAwarded} מטבעות זהב. האות החסרה היא ${correct.toLowerCase()}`;
+          feedbackAnimation('success');
+          audioFeedback = positiveAudio(feedbackId, item);
+        } else {
+          recordStageResult(false);
+          if (button) button.classList.add('wrong');
+          chain = 0;
+          positiveToneStep = 0;
+          if (!currentChallenge.isReview) {
+            pendingReviews.push({ wordIndex: currentChallenge.wordIndex, dueAt: Math.min(runWords.length, completedWords + 2) });
+          } else {
+            pendingReviews.push({ wordIndex: currentChallenge.wordIndex, dueAt: runWords.length });
+          }
+          feedback.classList.add('compact');
+          feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">${timedOut ? '⌛' : '↺'}</span><div><strong lang="en">try again</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
+          liveStatus.textContent = `${timedOut ? 'הזמן הסתיים' : 'התשובה תוקנה'}. האות החסרה היא ${correct.toLowerCase()}`;
+          feedbackAnimation('retry');
+          audioFeedback = retryAudio(feedbackId, correct, item);
+        }
+
+        updateDashboard();
+        const continueButton = document.createElement('button');
+        continueButton.className = 'primary';
+        continueButton.type = 'button';
+        continueButton.disabled = true;
+        continueButton.textContent = '•••';
+        continueButton.setAttribute('aria-label', answer === correct ? 'ממשיכים למילה הבאה' : 'ממשיכים; המילה תחזור בהמשך');
+        continueButton.addEventListener('click', advanceAfterChallenge);
+        feedback.append(continueButton);
+        await audioFeedback;
+        if (feedbackId !== runId || !continueButton.isConnected) return;
+        continueButton.disabled = false;
+        continueButton.textContent = '▶';
+        continueButton.focus();
+      }
+
+      function updateDashboard() {
+        const percent = Math.round((challengeResolved.size / runWords.length) * 100);
+        const activeWordIndex = !challengeStage.hidden && currentChallenge ? currentChallenge.wordIndex : index;
+        progressFill.style.width = `${percent}%`;
+        progressLabel.textContent = challengeResolved.size === runWords.length ? `⭐ ${runWords.length} / ${runWords.length}` : `${currentChallenge?.isReview && !challengeStage.hidden ? '↺' : '🎧'} ${activeWordIndex + 1} / ${runWords.length}`;
+        progressPercent.textContent = `${percent}%`;
+        totalCoinCount.textContent = formatCoins(totalCoins);
+        coinMetric.setAttribute('aria-label', `${totalCoins} מטבעות זהב מצטברים`);
+        stageValue.textContent = `${stageTheme.name} · 🪙 +${coinsPerSuccess} · ${formatCoins(totalCoins)}`;
+        chainCount.textContent = chain;
+        reactorCore.textContent = `${percent}%`;
+      }
+
+      function updateBuildPreview() {
+        const lit = rewardLadder.filter(reward => totalCoins >= reward.threshold).length;
+        buildPreview.innerHTML = rewardLadder.map(reward => `<span class="build-piece${totalCoins >= reward.threshold ? ' on' : ''}" style="--reward-color:${reward.color}" title="${reward.label} · ${reward.threshold}">${reward.symbol}</span>`).join('');
+        buildLabel.textContent = lit >= rewardLadder.length ? 'האוסף הושלם' : `🪙 ${rewardLadder[lit].threshold}`;
+      }
+
+      const certificatePalettes = [
+        { bgA: '#063f3d', bgB: '#071c2c', metal: '#efb979', accent: '#55e2d2', gem: '#72ffd9' },
+        { bgA: '#172b5b', bgB: '#0a1028', metal: '#ffd978', accent: '#82b8ff', gem: '#67e7ff' },
+        { bgA: '#4a173d', bgB: '#1b102b', metal: '#f3b2a5', accent: '#f78ac5', gem: '#c99aff' },
+        { bgA: '#34214f', bgB: '#11142d', metal: '#e8c48b', accent: '#ae9bff', gem: '#72e9ff' },
+        { bgA: '#4d2b16', bgB: '#19141a', metal: '#ffd08a', accent: '#ff9f72', gem: '#ffe67c' },
+        { bgA: '#173f2b', bgB: '#081f24', metal: '#e5d89a', accent: '#72e4a8', gem: '#8affdf' },
+        { bgA: '#293a4d', bgB: '#111824', metal: '#d7e3f2', accent: '#8db9df', gem: '#c8edff' },
+        { bgA: '#541d29', bgB: '#211321', metal: '#f1c27d', accent: '#ff7d89', gem: '#ffb4d1' }
+      ];
+
+      function randomInteger(maximum) {
+        if (window.crypto?.getRandomValues) {
+          const value = new Uint32Array(1);
+          window.crypto.getRandomValues(value);
+          return value[0] % maximum;
+        }
+        return Math.floor(Math.random() * maximum);
+      }
+
+      function applyCertificateTheme(certificateNumber) {
+        let paletteIndex = randomInteger(certificatePalettes.length);
+        if (paletteIndex === lastCertificatePalette) paletteIndex = (paletteIndex + 1) % certificatePalettes.length;
+        lastCertificatePalette = paletteIndex;
+        const palette = certificatePalettes[paletteIndex];
+        const angle = 108 + randomInteger(85) + (certificateNumber % 7);
+        const uniqueGemHue = (certificateNumber * 137.508 + paletteIndex * 23) % 360;
+        certificateCard.style.setProperty('--cert-bg-a', palette.bgA);
+        certificateCard.style.setProperty('--cert-bg-b', palette.bgB);
+        certificateCard.style.setProperty('--cert-metal', palette.metal);
+        certificateCard.style.setProperty('--cert-accent', palette.accent);
+        certificateCard.style.setProperty('--cert-gem', `hsl(${uniqueGemHue} 88% 70%)`);
+        certificateCard.style.setProperty('--cert-angle', `${angle}deg`);
+        certificateCard.style.setProperty('--cert-corner', `${35 + randomInteger(40)}deg`);
+        certificateCard.style.setProperty('--cert-x', `${28 + randomInteger(45)}%`);
+        certificateCard.style.setProperty('--cert-y', `${48 + randomInteger(34)}%`);
+      }
+
+      function showDialog(dialog) {
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+      }
+
+      function closeDialog(dialog) {
+        if (!dialog.open) return;
+        if (typeof dialog.close === 'function') dialog.close();
+        else dialog.removeAttribute('open');
+      }
+
+      function openCertificateNameDialog() {
+        clearAutoAdvance();
+        certificateNameInput.value = '';
+        showDialog(certificateNameDialog);
+        setTimeout(() => certificateNameInput.focus(), 30);
+      }
+
+      certificateNameForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const learnerName = certificateNameInput.value.trim();
+        if (!learnerName) {
+          certificateNameInput.setCustomValidity('יש לכתוב שם');
+          certificateNameInput.reportValidity();
+          return;
+        }
+        certificateNameInput.setCustomValidity('');
+        const profile = progressApi?.issueWordForgeCertificate?.() || {};
+        const certificateNumber = Math.max(1, Number(profile.wordForgeCertificates) || 1);
+        certificateName.textContent = learnerName;
+        certificateStages.textContent = `${stageLevelCount} רמות · ${totalStageCount} שלבים`;
+        certificateWords.textContent = `${uniqueTargetWordCount} מילים`;
+        certificateTransfer.textContent = `${transferChallengeCount} אתגרי העברה`;
+        applyCertificateTheme(certificateNumber);
+        closeDialog(certificateNameDialog);
+        showDialog(certificateDialog);
+        certificateCloseButton.focus();
+      });
+
+      certificateNameInput.addEventListener('input', () => certificateNameInput.setCustomValidity(''));
+      certificateNameClose.addEventListener('click', () => closeDialog(certificateNameDialog));
+      certificateCloseButton.addEventListener('click', () => closeDialog(certificateDialog));
+      certificatePrintButton.addEventListener('click', () => window.print());
+      certificateNameDialog.addEventListener('click', event => { if (event.target === certificateNameDialog) closeDialog(certificateNameDialog); });
+      certificateDialog.addEventListener('click', event => { if (event.target === certificateDialog) closeDialog(certificateDialog); });
+
+      function clearAutoAdvance() {
+        if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = 0;
+      }
+
+      function startAutoAdvance(href) {
+        clearAutoAdvance();
+        let remaining = 3;
+        const countdown = finishStage.querySelector('#autoCountdown');
+        const step = () => {
+          remaining -= 1;
+          if (remaining <= 0) {
+            location.href = href;
+            return;
+          }
+          if (countdown) countdown.textContent = String(remaining);
+          autoAdvanceTimer = setTimeout(step, 1000);
+        };
+        autoAdvanceTimer = setTimeout(step, 1000);
+      }
+
+      function showFinish() {
+        ++runId;
+        clearChallengeTimer();
+        clearAutoAdvance();
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        gameFinished = true;
+        pauseBackgroundMusic(true);
+        wordStage.hidden = true;
+        challengeStage.hidden = true;
+        finishStage.hidden = false;
+        encounterLabel.hidden = true;
+        const model = routeModels[route];
+        const accuracy = Math.round((firstPassCorrect / Math.max(1, challengeIndexes.size)) * 100);
+        const completionProfile = progressApi?.completeWordForgeStage?.(courseLevel, courseLesson) || progressApi?.getProfile?.() || {};
+        const completedStageKeys = new Set(completionProfile.wordForgeCompletedStages || []);
+        const completedStageCount = completedStageKeys.size;
+        const allStagesComplete = completedStageCount >= totalStageCount;
+        const currentLevelComplete = Array.from({ length: stageCountForLevel(courseLevel) }, (_, stageIndex) => completedStageKeys.has(`${courseLevel}-${stageIndex + 1}`)).every(Boolean);
+        const firstMissingStage = Array.from({ length: stageCountForLevel(courseLevel) }, (_, stageIndex) => stageIndex + 1).find(stage => !completedStageKeys.has(`${courseLevel}-${stage}`));
+        const levelAdvanceReady = Boolean(autoLevelHref && currentLevelComplete);
+        let nextAction;
+        if (allStagesComplete) {
+          nextAction = '<button class="primary next-stage certificate-action" id="certificateButton" type="button" aria-label="קבלת תעודת הסיום">🏅 תעודת סיום</button>';
+        } else if (levelAdvanceReady) {
+          nextAction = `<a class="primary auto-level" id="nextStageLink" href="${autoLevelHref}" aria-label="מעבר אוטומטי מ-Level ${courseLevel} ל-Level ${courseLevel + 1}"><strong>LEVEL ${courseLevel} ✓</strong><span aria-hidden="true">→</span><strong>LEVEL ${courseLevel + 1}</strong><span class="auto-countdown" id="autoCountdown">3</span><small>AUTO</small></a>`;
+        } else if (isLevelBoundary && firstMissingStage) {
+          nextAction = `<a class="primary next-stage" id="nextStageLink" href="./?level=${courseLevel}&lesson=${firstMissingStage}" aria-label="השלמת שלב ${firstMissingStage}">◆ ${firstMissingStage}</a>`;
+        } else if (nextStageHref) {
+          nextAction = `<a class="primary next-stage" id="nextStageLink" href="${nextStageHref}">השלב הבא <span aria-hidden="true">←</span></a>`;
+        } else {
+          nextAction = '<button class="primary next-stage" type="button" id="finalStageMapButton">שלבים</button>';
+        }
+        const autoPauseAction = levelAdvanceReady && !allStagesComplete ? '<button class="secondary" type="button" id="cancelAutoButton" aria-label="עצירת המעבר האוטומטי">Ⅱ</button>' : '';
+        const stageMapAction = !nextStageHref && !allStagesComplete ? '' : '<button class="secondary" type="button" id="finishStageMapButton">שלבים</button>';
+        finishStage.innerHTML = `
+          <div class="finish-mark" aria-hidden="true">${model.symbol}</div>
+          <h2>${model.finish}</h2>
+          <p aria-label="שלב ${courseLesson} הושלם">STAGE ${courseLesson} COMPLETE</p>
+          <div class="summary-grid" aria-label="סיכום השלב">
+            <div><strong>🪙 +${runCoins}</strong><span>בשלב</span></div>
+            <div><strong>🪙 ${formatCoins(totalCoins)}</strong><span>מצטבר</span></div>
+            <div><strong>${accuracy}%</strong><span>דיוק ראשון</span></div>
+          </div>
+          <div class="finish-actions">
+            ${nextAction}
+            ${autoPauseAction}
+            <button class="secondary" type="button" id="restartButton">לשחק שוב</button>
+            ${stageMapAction}
+          </div>`;
+        finishStage.querySelector('#restartButton').addEventListener('click', () => {
+          clearAutoAdvance();
+          pauseBackgroundMusic(true);
+          game.classList.remove('active');
+          intro.hidden = false;
+          intro.scrollIntoView({ block: 'start' });
+          startButton.focus();
+        });
+        const finishStageMapButton = finishStage.querySelector('#finishStageMapButton, #finalStageMapButton');
+        finishStageMapButton?.addEventListener('click', () => openStageMap(finishStageMapButton));
+        finishStage.querySelector('#cancelAutoButton')?.addEventListener('click', event => {
+          clearAutoAdvance();
+          event.currentTarget.disabled = true;
+          event.currentTarget.textContent = '✓';
+          liveStatus.textContent = 'המעבר האוטומטי נעצר';
+        });
+        finishStage.querySelector('#certificateButton')?.addEventListener('click', openCertificateNameDialog);
+        finishStage.querySelector('#nextStageLink, #certificateButton, #finalStageMapButton')?.focus();
+        liveStatus.textContent = `${model.finish}. שלב ${courseLesson} הושלם. נוספו ${runCoins} מטבעות וסך הכול ${totalCoins} מטבעות. ${completedStageCount} מתוך ${totalStageCount} שלבים הושלמו.`;
+        feedbackAnimation('success');
+        if (currentLevelComplete || allStagesComplete) triggerCoinBurst(true);
+        playTones([
+          { frequency: 392, duration: .07, gap: .025, type: 'square', gain: .17 },
+          { frequency: 523, duration: .07, gap: .025, type: 'square', gain: .19 },
+          { frequency: 659, duration: .08, gap: .025, type: 'square', gain: .21 },
+          { frequency: 784, duration: .09, gap: .025, type: 'square', gain: .23 },
+          { frequency: 1047, duration: .2, gap: .02, type: 'triangle', gain: .3 }
+        ], runId);
+        if (levelAdvanceReady && !allStagesComplete) startAutoAdvance(autoLevelHref);
+        if (allStagesComplete) setTimeout(() => {
+          if (!certificateNameDialog.open && !certificateDialog.open) openCertificateNameDialog();
+        }, 1100);
+      }
+
+      if ('speechSynthesis' in window) speechSynthesis.getVoices();
+    })();
+  </script>
+</body>
+</html>
