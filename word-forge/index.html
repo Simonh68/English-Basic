@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#071120">
-  <title>Word Forge — English Basic</title>
+  <meta name="author" content="שמעון הרצל הלוי גובני (Simon Halevi)">
+  <meta name="copyright" content="© 2026 שמעון הרצל הלוי גובני. כל הזכויות שמורות.">
+  <title>Word Forge — English Basics</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <style>
     :root {
@@ -1614,10 +1616,10 @@
   <a class="skip-link" href="#main">דלגו לפעילות</a>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basic">
+      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basics">
         <div class="brand-mark" aria-hidden="true">W</div>
         <div class="brand-copy">
-          <strong lang="en">ENGLISH BASIC · WORD FORGE</strong>
+          <strong lang="en">ENGLISH BASICS · WORD FORGE</strong>
           <small lang="en">PREMIUM WORD ARCADE</small>
         </div>
       </a>
@@ -1952,7 +1954,7 @@
       const certificateCloseButton = document.querySelector('#certificateCloseButton');
 
       lessonBackLink.href = lessonHref;
-      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basic');
+      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basics');
       stageMenuButton.innerHTML = `LEVEL ${courseLevel} · STAGE ${courseLesson} <span aria-hidden="true">⌄</span>`;
       stageMenuButton.setAttribute('aria-label', `פתיחת בחירת השלבים. שלב נוכחי ${courseLesson}`);
       groupLabel.textContent = `LEVEL ${courseLevel} · STAGE ${courseLesson} · ${pedagogicalRoundCount} ROUNDS · ${pedagogicalRoundSizes.join('/')} · ${targetWords.length} ◆ · ${transferWords.length} ↔`;
@@ -3244,6 +3246,5 @@
       if ('speechSynthesis' in window) speechSynthesis.getVoices();
     })();
   </script>
-  <script src="../analytics.js"></script>
 </body>
 </html>

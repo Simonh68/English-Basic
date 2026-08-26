@@ -425,6 +425,6 @@ test('Word Forge keeps the approved privacy and audio boundaries', async () => {
   assert.match(html, /language = 'en-US'/);
   assert.match(html, /if \(\/\[a-z\]\/i\.test\(characters\[letterIndex\]\)\)/);
   assert.match(html, /<script src="\.\.\/progress\.js\?v=3"><\/script>/);
-  assert.match(html, /lessonBackLink\.setAttribute\('aria-label', 'יציאה ל-English Basic'\)/);
+  assert.match(html, /lessonBackLink\.setAttribute\('aria-label', 'יציאה ל-English Basics'\)/);
   assert.match(html, /game: 'word_forge',[\s\S]*xp: gained/);
 });

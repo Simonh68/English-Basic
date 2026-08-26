@@ -213,3 +213,13 @@
     issueWordForgeCertificate
   };
 })();
+
+(() => {
+  if (typeof document === "undefined") return;
+  const source = document.currentScript?.src;
+  if (!source || document.querySelector("script[data-efn-ownership-loader]")) return;
+  const script = document.createElement("script");
+  script.src = new URL("ownership.js?v=1", source).href;
+  script.dataset.efnOwnershipLoader = "true";
+  document.head.appendChild(script);
+})();

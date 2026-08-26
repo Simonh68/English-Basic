@@ -39,7 +39,7 @@ test('the temporary Maayan edition is branded separately and uses a silent seven
 test('the production Word Forge edition uses fixed ten-second speed rewards without Maayan branding', async () => {
   const html = await source('word-forge/index.html');
 
-  assert.match(html, /ENGLISH BASIC · WORD FORGE/);
+  assert.match(html, /ENGLISH BASICS · WORD FORGE/);
   assert.match(html, /const challengeDurationMs = 10000/);
   assert.match(html, /const responseBonusByTier = \{ fast: 5, steady: 2, slow: 0, untimed: 0 \}/);
   assert.match(html, /aria-label="עשר שניות לבחירת תשובה"[^>]*aria-valuemax="10"[^>]*aria-valuenow="10"/);
