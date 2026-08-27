@@ -43,6 +43,15 @@ test('the mobile opening is content-sized and starts directly below the topbar',
   assert.doesNotMatch(mobileRules, /\.intro \{[^}]*100svh/);
 });
 
+test('hidden Word Forge screens stay out of the question layout', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+
+  assert.match(html, /\[hidden\] \{ display: none !important; \}/);
+  assert.ok(inlineScript);
+  assert.match(inlineScript, /async function showChallenge\(wordIndex, isReview\) \{[\s\S]*wordStage\.hidden = true;[\s\S]*challengeStage\.hidden = false;/);
+});
+
 test('the production game compiles and reshuffles within pedagogical rounds', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
