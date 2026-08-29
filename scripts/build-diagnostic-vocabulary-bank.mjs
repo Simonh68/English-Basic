@@ -21,7 +21,8 @@ const bandTwo = readJson(bandTwoPath).records
     meaning: clean(record.translation)
   }));
 
-const bandThree = readJson(bandThreePath).map((record, index) => ({
+const bandThreeSource = readJson(bandThreePath);
+const bandThree = bandThreeSource.map((record, index) => ({
   id: `b3-${clean(record.source_entry_id) || index + 1}`,
   band: 'Band III',
   word: clean(record.en),
@@ -35,8 +36,23 @@ const bank = [...bandTwo, ...bandThree].filter(item => item.word && item.example
 const output = path.resolve('diagnostic/data/vocabulary-bank.json');
 fs.writeFileSync(output, `${JSON.stringify(bank, null, 2)}\n`);
 
+const definitions = Object.fromEntries(bandThreeSource
+  .map((record, index) => [
+    `b3-${clean(record.source_entry_id) || index + 1}`,
+    clean(record.support_text)
+  ])
+  .filter(([, definition]) => definition));
+const definitionOutput = path.resolve('diagnostic/data/band3-definitions.json');
+fs.writeFileSync(definitionOutput, `${JSON.stringify(definitions)}\n`);
+
 const counts = bank.reduce((summary, item) => {
   summary[item.band] = (summary[item.band] || 0) + 1;
   return summary;
 }, {});
-console.log(JSON.stringify({ output, records: bank.length, counts }, null, 2));
+console.log(JSON.stringify({
+  output,
+  definitionOutput,
+  records: bank.length,
+  definitions: Object.keys(definitions).length,
+  counts
+}, null, 2));

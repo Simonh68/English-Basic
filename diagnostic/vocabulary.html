@@ -5,20 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0d1730">
   <meta name="robots" content="noindex,nofollow">
-  <title>מבחן אוצר מילים | English for Noar</title>
+  <title>מבחן אנגלית | English for Noar</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body class="home-page diagnostic-page exam-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
   <header class="home-topbar diagnostic-topbar" aria-label="ניווט ראשי">
     <a class="home-brand" href="../index.html" aria-label="English Basic – דף הבית">
       <span class="brand-mark" aria-hidden="true">EB</span>
-      <span><strong lang="en" dir="ltr">English for Noar</strong><small>אבחון אוצר מילים</small></span>
+      <span><strong lang="en" dir="ltr">English for Noar</strong><small>מבחן אנגלית</small></span>
     </a>
     <nav class="home-nav" aria-label="קישורים ראשיים">
-      <a href="index.html">מרכז האבחון</a>
       <a class="home-return" href="../index.html">⌂ דף הבית</a>
     </nav>
   </header>
@@ -26,56 +25,38 @@
   <main id="mainContent" class="exam-shell">
     <section id="loadingView" class="exam-panel status-panel" aria-live="polite">
       <div class="loading-orb" aria-hidden="true"></div>
-      <h1>מכינים מבחן חדש…</h1>
-      <p>בוחרים שאלות שונות מהניסיונות הקודמים.</p>
-    </section>
-
-    <section id="introView" class="exam-panel intro-panel" hidden>
-      <span class="audience-chip">Core I · Core II · Band III</span>
-      <h1>מבחן אוצר מילים</h1>
-      <p>בכל שאלה מופיעה מילה בתוך משפט. בחרו את המשמעות המתאימה ביותר. אם אינכם יודעים, עדיף לבחור „לא יודע/ת” ולא לנחש.</p>
-      <div class="intro-facts">
-        <span><strong>36</strong> שאלות</span>
-        <span><strong>3</strong> מאגרים</span>
-        <span><strong>8–10</strong> דקות</span>
-      </div>
-      <button class="primary-action" id="startButton" type="button">מתחילים</button>
+      <h1>מכינים את המבחן…</h1>
     </section>
 
     <section id="questionView" class="exam-panel question-panel" hidden aria-labelledby="questionTitle">
       <div class="exam-progress-row">
-        <span id="sectionLabel">חלק 1 מתוך 3</span>
-        <strong id="questionCounter">1 / 36</strong>
+        <span id="sectionLabel">אוצר מילים</span>
+        <strong id="questionCounter">1 / 15</strong>
       </div>
-      <div class="exam-progress" role="progressbar" aria-label="התקדמות במבחן" aria-valuemin="0" aria-valuemax="36" aria-valuenow="1"><span id="progressBar"></span></div>
-      <div class="vocab-prompt">
-        <span class="prompt-label">מה משמעות המילה?</span>
+      <div class="exam-progress" role="progressbar" aria-label="התקדמות במבחן" aria-valuemin="0" aria-valuemax="15" aria-valuenow="1"><span id="progressBar"></span></div>
+
+      <div class="question-timer" id="questionTimer" aria-label="זמן לשאלה">
+        <div><strong id="timerValue">8.0</strong><small>שניות</small></div>
+        <span class="timer-line" aria-hidden="true"><i id="timerTrack"></i></span>
+      </div>
+
+      <div class="vocab-prompt" id="vocabPrompt">
+        <span class="prompt-label" id="promptLabel">מה משמעות המילה?</span>
         <h1 id="questionTitle" lang="en" dir="ltr"></h1>
         <p id="exampleSentence" lang="en" dir="ltr"></p>
       </div>
       <div class="answer-grid vocab-answers" id="answerGrid" aria-label="תשובות אפשריות"></div>
-      <button class="unknown-button" id="unknownButton" type="button">לא יודע/ת — ממשיכים</button>
+      <button class="unknown-button" id="unknownButton" type="button">לא יודע/ת</button>
     </section>
 
-    <section id="resultView" class="exam-panel result-panel" hidden aria-live="polite">
-      <span class="result-kicker">האבחון הושלם</span>
-      <h1>פרופיל אוצר המילים שלך</h1>
-      <p class="result-lead">הכיסוי מוצג כטווח משוער, משום שהמבחן בודק מדגם מתוך כל מאגר.</p>
-      <div class="result-grid" id="resultGrid"></div>
-      <div class="class-comparison" id="classComparison"></div>
-      <section class="recommendations" aria-labelledby="recommendationTitle">
-        <h2 id="recommendationTitle">המשימות המומלצות שלך</h2>
-        <div id="recommendationList" class="recommendation-list"></div>
-      </section>
-      <div class="result-actions">
-        <a class="primary-action link-action" href="../index.html">חזרה לדף הבית</a>
-        <a class="secondary-action" href="index.html">מבחן נוסף</a>
-      </div>
+    <section id="transitionView" class="exam-panel status-panel transition-panel" hidden aria-live="polite">
+      <div class="transition-mark" aria-hidden="true">✓</div>
+      <h1>ממשיכים להבנת הנקרא</h1>
     </section>
   </main>
 
-  <script src="common.js?v=1"></script>
-  <script src="vocabulary.js?v=1"></script>
+  <script src="common.js?v=2"></script>
+  <script src="vocabulary.js?v=2"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

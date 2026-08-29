@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0d1730">
   <meta name="author" content="שמעון הרצל הלוי גובני (Simon Halevi)">
   <meta name="robots" content="noindex,nofollow">
-  <title>אבחון אנגלית | English for Noar</title>
-  <meta name="description" content="שני מבחני אבחון נפרדים לאוצר מילים ולהבנת הנקרא.">
+  <title>מבחן אנגלית | English for Noar</title>
+  <meta name="description" content="מבחן קצר לאוצר מילים ולהבנת הנקרא.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body class="home-page diagnostic-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -18,32 +18,24 @@
   <header class="home-topbar diagnostic-topbar" aria-label="ניווט ראשי">
     <a class="home-brand" href="../index.html" aria-label="English Basic – דף הבית">
       <span class="brand-mark" aria-hidden="true">EB</span>
-      <span><strong lang="en" dir="ltr">English for Noar</strong><small>אבחון אנגלית</small></span>
+      <span><strong lang="en" dir="ltr">English for Noar</strong><small>מבחן אנגלית</small></span>
     </a>
     <nav class="home-nav" aria-label="קישורים ראשיים">
       <a class="home-return" href="../index.html">⌂ חזרה לדף הבית</a>
     </nav>
   </header>
 
-  <main id="mainContent" class="diagnostic-shell">
-    <section class="diagnostic-hero" aria-labelledby="pageTitle">
+  <main id="mainContent" class="diagnostic-shell diagnostic-start-shell">
+    <section class="diagnostic-hero simple-hero" aria-labelledby="pageTitle">
       <div>
-        <span class="audience-chip">שני מבחנים · שתי תוצאות נפרדות</span>
-        <h1 id="pageTitle">מה רמת האנגלית שלי?</h1>
-        <p>בודקים בנפרד את כיסוי אוצר המילים ואת רמת הבנת הנקרא. כל ניסיון נבנה מחדש מתוך מאגר שאלות מאוזן.</p>
-      </div>
-      <div class="version-card" aria-label="גרסת המבחן">
-        <span>גרסת המאגר</span>
-        <strong id="bankVersion">טוען…</strong>
-        <small id="bankDate"></small>
+        <h1 id="pageTitle">מבחן</h1>
+        <p>נתחיל באוצר מילים, ואחר כך נעבור להבנת הנקרא.</p>
       </div>
     </section>
 
-    <section class="grade-panel" aria-labelledby="gradeTitle">
+    <section class="grade-panel single-start-panel" aria-labelledby="gradeTitle">
       <div>
-        <span class="section-kicker">לפני שמתחילים</span>
         <h2 id="gradeTitle">באיזו כיתה אתם?</h2>
-        <p>הכיתה אינה משנה את השאלות. היא משמשת רק להשוואת התוצאה לרמה המצופה.</p>
       </div>
       <label class="grade-control" for="gradeSelect">
         <span>בחרו כיתה</span>
@@ -57,48 +49,20 @@
           <option value="12">י״ב</option>
         </select>
       </label>
+      <button class="primary-action start-test-action" id="startTest" type="button">מתחילים</button>
+      <p class="form-error" id="gradeError" hidden>בחרו כיתה כדי להתחיל.</p>
     </section>
-
-    <section class="test-grid" aria-label="בחירת מבחן">
-      <article class="test-card vocab-card">
-        <div class="test-icon" aria-hidden="true">Aa</div>
-        <span class="card-kicker">מבחן 1</span>
-        <h2>אוצר מילים</h2>
-        <p>הערכת כיסוי נפרדת של Core I, ‏Core II ו־Band III.</p>
-        <ul>
-          <li>36 שאלות קצרות</li>
-          <li>טווח כיסוי לכל מאגר</li>
-          <li>משימות תרגול לפי הפערים</li>
-        </ul>
-        <a class="diagnostic-cta" data-test-link href="vocabulary.html">מתחילים באוצר מילים <span aria-hidden="true">←</span></a>
-      </article>
-
-      <article class="test-card reading-card">
-        <div class="test-icon" aria-hidden="true">¶</div>
-        <span class="card-kicker">מבחן 2</span>
-        <h2>הבנת הנקרא</h2>
-        <p>בדיקה מדורגת: קרוב ל־A, קרוב ל־C, מגיע ל־E או מגיע ל־G.</p>
-        <ul>
-          <li>קטעים שונים בכל ניסיון</li>
-          <li>שאלות Bagrut-style בלבד</li>
-          <li>ארבע משפחות מלכודות</li>
-        </ul>
-        <a class="diagnostic-cta" data-test-link href="reading.html">מתחילים בקריאה <span aria-hidden="true">←</span></a>
-      </article>
-    </section>
-
-    <p class="privacy-note">אין צורך בשם או בהרשמה. היסטוריית השאלות נשמרת במכשיר בלבד כדי לצמצם חזרות בין ניסיונות.</p>
   </main>
 
   <footer class="home-footer" data-efn-ownership="true">
-    <div><strong lang="en" dir="ltr">English for Noar</strong><span>אבחון אנגלית</span></div>
+    <div><strong lang="en" dir="ltr">English for Noar</strong><span>מבחן אנגלית</span></div>
     <p><strong>© 2026 שמעון הרצל הלוי גובני</strong><br>כל הזכויות שמורות</p>
     <a href="../index.html">דף הבית</a>
     <a href="../privacy.html">Privacy · פרטיות</a>
   </footer>
 
-  <script src="common.js?v=1"></script>
-  <script src="landing.js?v=1"></script>
+  <script src="common.js?v=2"></script>
+  <script src="landing.js?v=2"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

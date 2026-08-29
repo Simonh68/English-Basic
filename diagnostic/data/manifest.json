@@ -1,12 +1,15 @@
 {
-  "version": "2026.08-B",
+  "version": "2026.08-C",
   "released": "2026-08-29",
   "releasedHe": "29.8.2026",
   "nextReview": "2026-09-12",
   "vocabulary": {
     "file": "data/vocabulary-bank.json",
+    "definitionFile": "data/band3-definitions.json",
+    "foundationalFile": "data/foundational-reading.json",
+    "foundationalQuestions": 3,
     "bands": ["Core I", "Core II", "Band III"],
-    "questionsPerBand": 12
+    "questionsPerBand": 4
   },
   "reading": {
     "levels": ["A", "C", "E", "G"],

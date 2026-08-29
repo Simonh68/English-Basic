@@ -3,7 +3,6 @@
   const api = window.EFN_DIAGNOSTIC;
   const views = {
     loading: document.querySelector('#loadingView'),
-    intro: document.querySelector('#introView'),
     question: document.querySelector('#questionView'),
     result: document.querySelector('#resultView')
   };
@@ -11,12 +10,15 @@
     manifest: null,
     banks: {},
     grade: api.getGrade(),
+    sessionId: api.getSessionId(),
+    vocabularyResult: null,
     passage: null,
     questionIndex: 0,
     passageAnswers: [],
     attempts: [],
     usedDomains: new Set(),
-    resultLevel: null
+    readingLevel: null,
+    clock: null
   };
 
   function show(name) {
@@ -37,48 +39,70 @@
   }
 
   function startPassage(level) {
+    state.clock?.stop();
     state.passage = choosePassage(level);
     state.questionIndex = 0;
     state.passageAnswers = [];
+    const passageNumber = state.attempts.length + 1;
+    document.querySelector('#levelProgress').textContent = `קטע ${passageNumber}`;
+    document.querySelector('#questionCounter').textContent = 'הבנת הנקרא';
+    document.querySelector('#progressBar').style.width = '0%';
+    document.querySelector('.exam-progress').setAttribute('aria-valuenow', '0');
+    document.querySelector('#passageTitle').textContent = state.passage.title;
+    document.querySelector('#passageText').textContent = state.passage.text;
+    document.querySelector('#passageReady').hidden = false;
+    document.querySelector('#readingQuestion').hidden = true;
     show('question');
-    renderQuestion();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function beginQuestions() {
+    document.querySelector('#passageReady').hidden = true;
+    document.querySelector('#readingQuestion').hidden = false;
+    renderQuestion();
+  }
+
   function renderQuestion() {
-    const passage = state.passage;
-    const question = passage.questions[state.questionIndex];
-    const passageNumber = state.attempts.length + 1;
-    document.querySelector('#levelProgress').textContent = `קטע ${passageNumber}`;
-    document.querySelector('#questionCounter').textContent = `שאלה ${state.questionIndex + 1} מתוך ${passage.questions.length}`;
-    document.querySelector('#passageTitle').textContent = passage.title;
-    document.querySelector('#passageText').textContent = passage.text;
+    const question = state.passage.questions[state.questionIndex];
+    document.querySelector('#questionCounter').textContent = `שאלה ${state.questionIndex + 1} מתוך ${state.passage.questions.length}`;
     document.querySelector('#questionText').textContent = question.question;
-    const progress = Math.round(((state.questionIndex + 1) / passage.questions.length) * 100);
-    document.querySelector('#progressBar').style.width = `${progress}%`;
+    document.querySelector('#progressBar').style.width = `${Math.round(((state.questionIndex + 1) / state.passage.questions.length) * 100)}%`;
     document.querySelector('.exam-progress').setAttribute('aria-valuenow', String(state.questionIndex + 1));
     const answerGrid = document.querySelector('#answerGrid');
     answerGrid.innerHTML = question.options.map((option, index) => `<button class="answer-option" type="button" data-index="${index}"><span class="answer-letter" aria-hidden="true">${api.letters[index]}</span>${api.escapeHtml(option)}</button>`).join('');
     answerGrid.querySelectorAll('button').forEach(button => button.addEventListener('click', () => submit(Number(button.dataset.index), false)));
     document.querySelector('#skipButton').disabled = false;
+
+    const timer = document.querySelector('#questionTimer');
+    timer.classList.remove('is-overtime');
+    state.clock = api.startQuestionClock(
+      document.querySelector('#timerValue'),
+      document.querySelector('#timerTrack'),
+      timer
+    );
+    requestAnimationFrame(() => answerGrid.querySelector('button')?.focus());
   }
 
   function submit(selectedIndex, skipped) {
     const question = state.passage.questions[state.questionIndex];
+    const elapsedMs = state.clock?.stop() ?? api.TARGET_MS;
+    const correct = !skipped && selectedIndex === question.answer;
     document.querySelectorAll('#answerGrid button').forEach(button => { button.disabled = true; });
     document.querySelector('#skipButton').disabled = true;
     state.passageAnswers.push({
       id: question.id,
       group: question.group,
-      correct: !skipped && selectedIndex === question.answer,
-      skipped
+      correct,
+      skipped,
+      elapsedMs: Math.round(elapsedMs),
+      points: api.scoreTimedAnswer(correct, elapsedMs)
     });
     state.questionIndex += 1;
     if (state.questionIndex < state.passage.questions.length) {
-      window.setTimeout(renderQuestion, 110);
+      window.setTimeout(renderQuestion, 100);
       return;
     }
-    window.setTimeout(finishPassage, 120);
+    window.setTimeout(finishPassage, 110);
   }
 
   function finishPassage() {
@@ -86,73 +110,104 @@
     state.attempts.push({
       passageId: state.passage.id,
       level: state.passage.level,
-      title: state.passage.title,
       correct,
       total: state.passage.questions.length,
+      ratio: api.scoreRatio(state.passageAnswers),
       answers: state.passageAnswers
     });
     routeNext();
   }
 
-  function result(level) {
-    state.resultLevel = level;
+  function finishReading(level) {
+    state.readingLevel = level;
     showResults();
   }
 
   function routeNext() {
     const last = state.attempts.at(-1);
     if (state.attempts.length === 1 && last.level === 'C') {
-      if (last.correct <= 1) return startPassage('A');
-      if (last.correct === 2) return startPassage('C');
+      if (last.correct <= 1 || last.ratio < 0.45) return startPassage('A');
+      if (last.correct === 2 || last.ratio < 0.68) return startPassage('C');
       return startPassage('E');
     }
-    if (last.level === 'A') return result('A');
+    if (last.level === 'A') return finishReading('A');
     if (last.level === 'C') {
-      const cAttempts = state.attempts.filter(item => item.level === 'C');
-      const totalCorrect = cAttempts.reduce((sum, item) => sum + item.correct, 0);
-      return result(totalCorrect >= 5 ? 'C' : 'A');
+      const attempts = state.attempts.filter(item => item.level === 'C');
+      const answers = attempts.flatMap(item => item.answers);
+      const correct = answers.filter(answer => answer.correct).length;
+      return finishReading(correct >= 5 && api.scoreRatio(answers) >= 0.62 ? 'C' : 'A');
     }
     if (last.level === 'E') {
-      return last.correct >= 3 ? startPassage('G') : result('C');
+      return last.correct >= 3 && last.ratio >= 0.68 ? startPassage('G') : finishReading('C');
     }
-    if (last.level === 'G') return result(last.correct >= 3 ? 'G' : 'E');
-    return result('A');
+    if (last.level === 'G') {
+      return finishReading(last.correct >= 3 && last.ratio >= 0.68 ? 'G' : 'E');
+    }
+    return finishReading('A');
   }
 
-  function levelCopy(level) {
-    return ({
-      A: { title: 'קרוב יותר לרמת A', detail: 'הבסיס קיים, אך שאלות ברמת C עדיין אינן יציבות.' },
-      C: { title: 'קרוב יותר לרמת C', detail: 'יש שליטה בטקסט בסיסי ובשאלות איתור, דיוק והסקה ברמת C.' },
-      E: { title: 'מגיע לרמת E', detail: 'הקריאה מתמודדת בהצלחה עם טקסט אקדמי ועם מסיחים מורכבים.' },
-      G: { title: 'מגיע לרמת G', detail: 'הקריאה מראה יכולת מתקדמת של סינתזה, הבחנה והסקה.' }
-    })[level];
-  }
+  function showResults(existingResult = null) {
+    const foundationalPassed = state.vocabularyResult.foundational.passed;
+    const combined = existingResult?.combined || api.combineLevels(
+      state.vocabularyResult.level,
+      state.readingLevel,
+      foundationalPassed
+    );
+    const level = combined.level;
+    const title = foundationalPassed
+      ? `רמת ההכנה המתאימה: ${level}`
+      : 'השלב המתאים עכשיו: חיזוק קריאה בסיסית';
+    const detail = foundationalPassed
+      ? 'התוצאה משלבת את אוצר המילים ואת הבנת הנקרא.'
+      : 'כדאי לחזק תחילה הבחנה בין מילים דומות וקריאה מדויקת.';
 
-  function showResults() {
-    const copy = levelCopy(state.resultLevel);
-    const evidence = state.attempts.map(item => `<span>${api.escapeHtml(item.level)} · ${item.correct}/${item.total}</span>`).join('');
     document.querySelector('#readingResult').innerHTML = `<div class="reading-level">
-      <span class="level-badge" aria-hidden="true">${state.resultLevel}</span>
-      <div><h2>${copy.title}</h2><p>${copy.detail}</p></div>
-    </div><div class="level-evidence" aria-label="תוצאות הקטעים">${evidence}</div>`;
-    document.querySelector('#classComparison').innerHTML = api.readingComparison(state.resultLevel, state.grade);
-    api.renderRecommendations(document.querySelector('#recommendationList'), api.readingRecommendations(state.resultLevel));
-    api.writeStorage('last-reading-result', {
+      <span class="level-badge" aria-hidden="true">${level}</span>
+      <div><h2>${api.escapeHtml(title)}</h2><p>${api.escapeHtml(detail)}</p></div>
+    </div>`;
+    document.querySelector('#classComparison').innerHTML = api.placementCopy(level, state.grade);
+    api.renderRecommendations(
+      document.querySelector('#recommendationList'),
+      api.combinedRecommendations(level, foundationalPassed)
+    );
+
+    const result = existingResult || {
+      sessionId: state.sessionId,
       version: state.manifest.version,
       grade: state.grade,
-      level: state.resultLevel,
-      attempts: state.attempts,
+      vocabularyLevel: state.vocabularyResult.level,
+      readingLevel: state.readingLevel,
+      foundational: state.vocabularyResult.foundational,
+      combined,
+      readingAttempts: state.attempts,
       completedAt: new Date().toISOString()
-    });
+    };
+    api.writeStorage('last-combined-result', result);
     show('result');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function initialize() {
-    if (!state.grade) {
-      location.replace('index.html?target=reading');
+    const session = api.validSession(state.sessionId);
+    state.vocabularyResult = api.readStorage('active-vocabulary', null);
+    if (
+      !state.grade
+      || !session
+      || session.grade !== state.grade
+      || state.vocabularyResult?.sessionId !== state.sessionId
+    ) {
+      location.replace('index.html');
       return;
     }
+
+    const priorResult = api.readStorage('last-combined-result', null);
+    if (priorResult?.sessionId === state.sessionId) {
+      state.readingLevel = priorResult.readingLevel;
+      state.attempts = priorResult.readingAttempts || [];
+      showResults(priorResult);
+      return;
+    }
+
     try {
       state.manifest = await api.loadManifest();
       const entries = await Promise.all(state.manifest.reading.levels.map(async level => {
@@ -160,11 +215,11 @@
         return [level, await api.loadJson(`${file}?v=${encodeURIComponent(state.manifest.version)}`)];
       }));
       state.banks = Object.fromEntries(entries);
-      show('intro');
-      document.querySelector('#startButton').addEventListener('click', () => startPassage('C'), { once: true });
+      document.querySelector('#beginQuestions').addEventListener('click', beginQuestions);
       document.querySelector('#skipButton').addEventListener('click', () => submit(-1, true));
+      startPassage('C');
     } catch {
-      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את מאגר הקריאה.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
+      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את המבחן.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
     }
   }
 

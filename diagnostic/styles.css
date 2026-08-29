@@ -18,6 +18,10 @@
 .diagnostic-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:end;min-height:250px;color:#fff}
 .diagnostic-hero h1{margin:17px 0 10px;font-size:clamp(2.7rem,7vw,5.5rem);font-weight:900;line-height:1;letter-spacing:-.05em}
 .diagnostic-hero p{max-width:700px;margin:0;color:#c7d3eb;font-size:clamp(1.04rem,2vw,1.28rem);font-weight:600;line-height:1.7}
+.diagnostic-start-shell{max-width:920px}
+.simple-hero{min-height:235px;grid-template-columns:1fr;align-items:center}
+.simple-hero h1{font-size:clamp(4rem,13vw,8rem)}
+.simple-hero p{font-size:clamp(1.2rem,3vw,1.55rem)}
 .version-card{min-width:190px;padding:19px 21px;border:1px solid #ffffff22;border-radius:18px;background:#ffffff0d;box-shadow:0 20px 45px #03091c45;backdrop-filter:blur(15px)}
 .version-card span,.version-card small{display:block;color:#b9c6e6;font-size:.78rem;font-weight:800}
 .version-card strong{display:block;margin:5px 0;color:var(--diag-lime);font:700 1.16rem Andika,sans-serif;direction:ltr;text-align:right}
@@ -27,6 +31,9 @@
 .grade-control{display:grid;gap:7px;color:#45516a;font-weight:900}
 .grade-control select{width:100%;min-height:52px;padding:10px 14px;border:2px solid #d9e2f0;border-radius:13px;background:#f8faff;color:var(--diag-ink);font-size:1.08rem;font-weight:900}
 .grade-control select:focus{outline:3px solid #62d9cf55;border-color:var(--diag-cyan)}
+.single-start-panel{grid-template-columns:minmax(170px,1fr) minmax(190px,250px) auto}
+.start-test-action{align-self:end;min-width:145px}
+.form-error{grid-column:1/-1;margin:0;color:#a82e43;font-weight:800}
 .test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:24px}
 .test-card{position:relative;min-height:420px;padding:32px;display:flex;flex-direction:column;overflow:hidden;border:1px solid #fff;border-radius:25px;background:#fff;box-shadow:var(--diag-shadow)}
 .test-card::before{position:absolute;top:-70px;left:-50px;width:220px;height:220px;border-radius:50%;content:"";opacity:.13}
@@ -50,7 +57,7 @@
 .exam-panel{padding:clamp(24px,5vw,45px);border:1px solid #fff;border-radius:25px;background:#fff;box-shadow:var(--diag-shadow)}
 .status-panel,.intro-panel{text-align:center}
 .status-panel{min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.status-panel[hidden],.intro-panel[hidden],.question-panel[hidden],.result-panel[hidden],.reading-workspace[hidden]{display:none!important}
+.status-panel[hidden],.intro-panel[hidden],.question-panel[hidden],.result-panel[hidden],.reading-workspace[hidden],.reading-question[hidden],.passage-ready[hidden]{display:none!important}
 .loading-orb{width:58px;height:58px;border:6px solid #dfe6f5;border-top-color:var(--diag-blue);border-radius:50%;animation:diag-spin .8s linear infinite}
 .status-panel h1{margin:22px 0 6px;font-size:1.8rem}.status-panel p{margin:0;color:var(--diag-muted)}
 @keyframes diag-spin{to{transform:rotate(360deg)}}
@@ -68,18 +75,31 @@
 .exam-progress-row strong{font:700 1rem Andika,sans-serif;direction:ltr}
 .exam-progress{height:8px;margin-top:11px;overflow:hidden;border-radius:999px;background:#e8edf5}
 .exam-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--diag-cyan),var(--diag-blue));transition:width .3s ease}
+.question-timer{width:min(250px,100%);margin:18px auto 0;direction:ltr;text-align:center}
+.question-timer>div{display:flex;align-items:baseline;justify-content:center;gap:6px;color:#28426f}
+.question-timer strong{font:700 1.35rem Andika,sans-serif}
+.question-timer small{color:#65728a;font-weight:800}
+.timer-line{height:5px;margin-top:6px;display:block;overflow:hidden;border-radius:999px;background:#e4eaf3}
+.timer-line i{display:block;width:100%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--diag-cyan),var(--diag-blue))}
+.question-timer.is-overtime>div{color:#a53b4d}
+.question-timer.is-overtime .timer-line i{width:100%!important;background:#d05769}
+.compact-timer{width:100%;margin:12px 0 17px}
 .vocab-prompt{margin:35px auto 26px;text-align:center}
 .prompt-label,.passage-label{color:#4c67c7;font-size:.74rem;font-weight:900;letter-spacing:.08em}
 .vocab-prompt h1{margin:8px 0 10px;font:700 clamp(2.7rem,9vw,5.3rem) Andika,sans-serif;color:#111c38;line-height:1.05}
 .vocab-prompt p{max-width:690px;margin:0 auto;padding:17px;border-right:4px solid var(--diag-cyan);border-radius:12px;background:#f6f9fd;color:#35415a;font:700 clamp(1.03rem,2.7vw,1.3rem) Andika,sans-serif;line-height:1.7;text-align:left}
+.vocab-prompt.foundation-prompt h1{font-size:clamp(1.8rem,6vw,3.5rem);line-height:1.35}
 .answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .answer-option{position:relative;min-height:66px;padding:13px 58px 13px 15px;border:2px solid #dfe5ef;border-radius:15px;background:#fff;color:#26334e;text-align:right;font-weight:800;cursor:pointer;transition:border-color .15s,transform .15s,background .15s}
 .answer-option:hover{border-color:#91a6ff;background:#f6f8ff;transform:translateY(-1px)}
 .answer-option .answer-letter{position:absolute;top:50%;right:13px;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#edf1fb;color:#405ab6;font:700 .95rem Andika,sans-serif;transform:translateY(-50%)}
 .reading-answers .answer-option{direction:ltr;text-align:left;padding:13px 15px 13px 58px;font-family:Andika,Arial,sans-serif}
 .reading-answers .answer-letter{right:auto;left:13px}
+.english-options .answer-option{direction:ltr;text-align:left;padding:13px 15px 13px 58px;font-family:Andika,Arial,sans-serif}
+.english-options .answer-letter{right:auto;left:13px}
 .unknown-button{display:block;margin:17px auto 0;padding:10px 15px;border:0;background:transparent;color:#68758d;text-decoration:underline;text-underline-offset:4px;font-weight:800;cursor:pointer}
 .answer-option:disabled,.unknown-button:disabled{cursor:default;opacity:.65}
+.transition-mark{width:72px;height:72px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--diag-lime),var(--diag-cyan));color:#0d3e39;font-size:2rem;font-weight:900;box-shadow:0 14px 30px #2e9f8933}
 
 .result-panel h1{margin:6px 0 8px;font-size:clamp(2.15rem,6vw,3.5rem);letter-spacing:-.035em}
 .result-kicker{color:#168f72;font-weight:900}
@@ -110,6 +130,8 @@
 .reading-passage div{color:#26334d;font:400 clamp(1.04rem,2.2vw,1.18rem) Andika,sans-serif;line-height:1.8;white-space:pre-line}
 .reading-question{direction:rtl}
 .reading-question h2{margin:8px 0 20px;color:#182540;font:700 clamp(1.13rem,2.5vw,1.35rem) Andika,sans-serif;line-height:1.55;text-align:left;direction:ltr}
+.passage-ready{text-align:center;direction:rtl}
+.passage-ready h2{margin:0 0 24px;text-align:center;direction:rtl}
 .reading-answers{grid-template-columns:1fr}
 .reading-result{margin-top:24px;padding:25px;border-radius:20px;background:linear-gradient(145deg,#eef4ff,#e8faf5)}
 .reading-result .reading-level{display:flex;align-items:center;gap:15px}
@@ -121,7 +143,7 @@
 @media(max-width:800px){
   .diagnostic-topbar{width:calc(100% - 24px);gap:12px}.diagnostic-topbar .home-nav a:not(.home-return){display:none}.home-nav .home-return{padding:9px 10px;font-size:.8rem}
   .diagnostic-shell{width:min(100% - 24px,680px);padding-top:35px}.diagnostic-hero{grid-template-columns:1fr;gap:20px;min-height:270px;align-items:start}.diagnostic-hero h1{font-size:clamp(2.65rem,14vw,4.2rem)}.version-card{width:100%}
-  .grade-panel{grid-template-columns:1fr;padding:21px}.test-grid{grid-template-columns:1fr}.test-card{min-height:390px;padding:25px}
+  .grade-panel{grid-template-columns:1fr;padding:21px}.single-start-panel{grid-template-columns:1fr}.start-test-action{width:100%}.test-grid{grid-template-columns:1fr}.test-card{min-height:390px;padding:25px}
   .exam-shell,.reading-shell{width:calc(100% - 20px);padding-top:25px}.exam-panel{padding:22px;border-radius:20px}.answer-grid{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.reading-workspace{grid-template-columns:1fr}.reading-passage{position:static}.reading-progress-row,.reading-workspace>.exam-progress{grid-column:auto}.recommendation-item{grid-template-columns:44px 1fr}.recommendation-arrow{display:none}
 }
 
