@@ -4,7 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#071120">
-  <title>Maayan — English Basic</title>
+  <meta name="author" content="שמעון הרצל הלוי גובני (Simon Halevi)">
+  <meta name="copyright" content="© 2026 שמעון הרצל הלוי גובני. כל הזכויות שמורות.">
+  <title>MAAYAN — English Basics</title>
+  <link rel="canonical" href="https://simonh68.github.io/English-Basic/temp/">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <style>
     :root {
@@ -110,6 +113,26 @@
     .brand-copy strong { font-size: .94rem; letter-spacing: .08em; }
     .brand-copy small { color: var(--muted); font-size: .72rem; }
 
+    .ownership-mark {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto 16px;
+      padding: 10px 14px;
+      border: 1px solid #284263;
+      border-radius: 12px;
+      background: #091628;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 12px;
+      text-align: center;
+      font-size: .72rem;
+      line-height: 1.5;
+    }
+
+    .ownership-mark strong { color: var(--text); }
+    .ownership-mark a { color: var(--gold); text-underline-offset: 3px; }
+
     .lab-chip {
       padding: 7px 11px;
       display: inline-flex;
@@ -128,6 +151,8 @@
     .lab-chip:hover { border-color: var(--cyan); background: var(--cyan-soft); }
 
     main { padding-top: 0; }
+
+    [hidden] { display: none !important; }
 
     .intro {
       max-width: 810px;
@@ -1614,10 +1639,10 @@
   <a class="skip-link" href="#main">דלגו לפעילות</a>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basic">
+      <a class="brand" id="lessonBackLink" href="https://simonh68.github.io/English-Basic/lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basics">
         <div class="brand-mark" aria-hidden="true">W</div>
         <div class="brand-copy">
-          <strong lang="en">ENGLISH BASIC · MAAYAN</strong>
+          <strong lang="en">ENGLISH BASICS · MAAYAN</strong>
           <small lang="en">PREMIUM WORD ARCADE</small>
         </div>
       </a>
@@ -1664,7 +1689,7 @@
         <p class="intro-note" aria-label="קול אופציונלי, הפעלה במקלדת, ללא חשבון, ללא דירוג וללא שמירת תשובות">🔊 &nbsp; ⌨️ &nbsp; 🔒</p>
       </section>
 
-      <section class="game" id="game" aria-label="Maayan">
+      <section class="game" id="game" aria-label="MAAYAN">
         <div class="mission-bar" aria-label="מצב המשחק">
           <div class="mission-progress">
             <div class="mission-progress-top"><strong id="progressLabel">🎧 1 / 15</strong><span id="progressPercent">0%</span></div>
@@ -1674,7 +1699,7 @@
           <div class="metric chain"><strong id="chainCount">0</strong><span aria-label="רצף במשימה">🔥</span></div>
           <div class="mission-controls" role="group" aria-label="בקרות משחק">
             <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="כיבוי צלילי המשחק">🔊</button>
-            <button class="timer-toggle" id="timePressureToggle" type="button" aria-pressed="true" aria-label="ביטול לחץ הזמן. כרגע שבע שניות">⏱ 7</button>
+            <button class="timer-toggle" id="timePressureToggle" type="button" aria-pressed="true" aria-label="ביטול לחץ הזמן. כרגע עשר שניות">⏱ 10</button>
           </div>
         </div>
 
@@ -1703,6 +1728,12 @@
       </section>
     </main>
   </div>
+
+  <section class="ownership-mark" data-efn-ownership="true" role="contentinfo" aria-label="בעלות וזכויות יוצרים">
+    <strong>© 2026 שמעון הרצל הלוי גובני · כל הזכויות שמורות</strong>
+    <span>MAAYAN</span>
+    <a href="../copyright.html">הצהרת הזכויות המלאה</a>
+  </section>
 
   <dialog class="stage-map" id="stageMap" aria-labelledby="stageMapTitle">
     <div class="stage-map-card">
@@ -1753,8 +1784,8 @@
     </div>
   </dialog>
 
-  <script src="../curriculum-data.js?v=2"></script>
-  <script src="../progress.js?v=3"></script>
+  <script src="./curriculum-data.js?v=2"></script>
+  <script src="./progress.js?v=3"></script>
   <script>
     (() => {
       const params = new URLSearchParams(location.search);
@@ -1765,7 +1796,7 @@
       const targetWords = lessonData.words.map(([word, translation]) => ({ word, translation, kind: 'target' }));
       const transferWords = lessonData.transfer.map(([word, translation]) => ({ word, translation, kind: 'transfer' }));
       const words = [...targetWords, ...transferWords];
-      const lessonHref = `../lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
+      const lessonHref = `https://simonh68.github.io/English-Basic/lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
       const stageCoinValues = [5, 7, 12, 14, 16, 18, 20, 22, 24, 25];
       const coinsPerSuccess = stageCoinValues[courseLesson - 1];
       const stageThemes = [
@@ -1804,7 +1835,7 @@
       const progressApi = window.EBR_PROGRESS;
       const initialProfile = progressApi?.getProfile?.() || {};
       const initialWordForgeCoins = Math.max(0, Number(initialProfile.wordForgeCoins ?? initialProfile.wordForgePoints) || 0);
-      const challengeDurationMs = 7000;
+      const challengeDurationMs = 10000;
       const responseSpeedThresholdsMs = { fast: 3000, steady: 6000 };
       const responseBonusByTier = { fast: 5, steady: 2, slow: 0, untimed: 0 };
       const feedbackAdvanceDurationMs = 3000;
@@ -1952,14 +1983,14 @@
       const certificateCloseButton = document.querySelector('#certificateCloseButton');
 
       lessonBackLink.href = lessonHref;
-      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basic');
+      lessonBackLink.setAttribute('aria-label', 'יציאה ל-English Basics');
       stageMenuButton.innerHTML = `LEVEL ${courseLevel} · STAGE ${courseLesson} <span aria-hidden="true">⌄</span>`;
       stageMenuButton.setAttribute('aria-label', `פתיחת בחירת השלבים. שלב נוכחי ${courseLesson}`);
       groupLabel.textContent = `LEVEL ${courseLevel} · STAGE ${courseLesson} · ${pedagogicalRoundCount} ROUNDS · ${pedagogicalRoundSizes.join('/')} · ${targetWords.length} ◆ · ${transferWords.length} ↔`;
       stageValue.textContent = `${stageTheme.name} · ◉ +${coinsPerSuccess}${stagePatternBonusCeiling ? ` · CHUNK +${stagePatternBonusCeiling}` : ''} · ${initialWordForgeCoins}`;
       stageValue.setAttribute('aria-label', `כל הצלחה בשלב זה שווה לפחות ${coinsPerSuccess} מטבעות כסף.${stagePatternBonusCeiling ? ` אתגר צירוף יכול להוסיף עד ${stagePatternBonusCeiling} מטבעות כחלק מערך הקושי.` : ''} תגובה מהירה יכולה להוסיף עד 5 מטבעות. סך הכול ${initialWordForgeCoins} מטבעות`);
-      document.title = `Maayan · Level ${courseLevel} · Stage ${courseLesson}`;
-      progressApi?.setLastLocation({ href: `temp/?level=${courseLevel}&lesson=${courseLesson}`, label: `Maayan · שלב ${courseLesson}` });
+      document.title = `MAAYAN · Level ${courseLevel} · Stage ${courseLesson}`;
+      progressApi?.setLastLocation({ href: `temp/?level=${courseLevel}&lesson=${courseLesson}`, label: `MAAYAN · שלב ${courseLesson}` });
 
       let route = 'space';
       let soundOn = true;
@@ -2234,7 +2265,7 @@
           if (timePressureOn && !challengeStage.classList.contains('question-wait')) startChallengeTimer(runId);
         }
         liveStatus.textContent = timePressureOn
-          ? 'לחץ הזמן הופעל. מתחילים בשבע שניות'
+          ? 'לחץ הזמן הופעל. מתחילים בעשר שניות'
           : 'לחץ הזמן בוטל. אפשר לענות ללא הגבלת זמן';
       });
 
@@ -2663,14 +2694,12 @@
         await speak(item.word, .78, id, 'en-US', 1.08);
       }
 
-      async function retryAudio(id, correct, item, unitKind = 'letter', { playCue = true } = {}) {
-        if (playCue) {
-          await playTones([
-            { frequency: 220, duration: .09, gap: .04, type: 'square', gain: .2 },
-            { frequency: 185, duration: .1, gap: .04, type: 'square', gain: .22 },
-            { frequency: 147, duration: .16, gap: .02, type: 'triangle', gain: .26 }
-          ], id);
-        }
+      async function retryAudio(id, correct, item, unitKind = 'letter') {
+        await playTones([
+          { frequency: 220, duration: .09, gap: .04, type: 'square', gain: .2 },
+          { frequency: 185, duration: .1, gap: .04, type: 'square', gain: .22 },
+          { frequency: 147, duration: .16, gap: .02, type: 'triangle', gain: .26 }
+        ], id);
         if (unitKind === 'letter') await speak(correct.toUpperCase(), .78, id, 'en-US', .92);
         await speak(item.word, .78, id, 'en-US', .94);
       }
@@ -2937,7 +2966,7 @@
           <h2 class="challenge-title" lang="en" aria-label="${plan.kind === 'chunk' ? 'איזה צירוף חסר' : 'איזו אות חסרה'}">${plan.kind === 'chunk' ? 'chunk?' : 'letter?'}</h2>
           <div class="missing-word" lang="en" aria-live="polite">${displayWord}</div>
           <div class="challenge-pressure" id="challengePressure" aria-hidden="true"></div>
-          <div class="challenge-timer" id="challengeTimer" role="progressbar" aria-label="שבע שניות לבחירת תשובה" aria-valuemin="0" aria-valuemax="7" aria-valuenow="7"><span id="challengeTimerFill"></span></div>
+          <div class="challenge-timer" id="challengeTimer" role="progressbar" aria-label="עשר שניות לבחירת תשובה" aria-valuemin="0" aria-valuemax="10" aria-valuenow="10"><span id="challengeTimerFill"></span></div>
           <div class="choices${plan.kind === 'chunk' ? ' chunk-choices' : ''}" role="group" aria-label="${plan.kind === 'chunk' ? 'בחרו את הצירוף החסר' : 'בחרו את האות החסרה'}">
             ${options.map(option => `<button class="choice" type="button" data-answer="${option}" aria-label="${plan.kind === 'chunk' ? 'הצירוף' : 'האות'} ${option.toLowerCase()}" disabled>${option.toLowerCase()}</button>`).join('')}
           </div>
@@ -3009,7 +3038,7 @@
           feedback.innerHTML = `<span class="feedback-icon" aria-hidden="true">${timedOut ? '⌛' : '↺'}</span><div><strong lang="en">try again</strong><p><span lang="en">${item.word.toLowerCase()}</span> · ${item.translation} · <strong lang="en">${correct.toLowerCase()}</strong></p></div>`;
           liveStatus.textContent = `${timedOut ? 'הזמן הסתיים' : 'התשובה תוקנה'}. ${unitLabel} החסר הוא ${correct.toLowerCase()}`;
           feedbackAnimation('retry');
-          audioFeedback = retryAudio(feedbackId, correct, item, currentChallenge.kind, { playCue: !timedOut });
+          audioFeedback = retryAudio(feedbackId, correct, item, currentChallenge.kind);
         }
 
         updateDashboard();
@@ -3246,5 +3275,6 @@
       if ('speechSynthesis' in window) speechSynthesis.getVoices();
     })();
   </script>
+  <script src="/analytics-v2.js"></script>
 </body>
 </html>
