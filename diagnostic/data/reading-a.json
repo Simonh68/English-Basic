@@ -1,0 +1,166 @@
+[
+  {
+    "id": "A-01",
+    "level": "A",
+    "domain": "community gardening",
+    "title": "The Seed Shelf",
+    "text": "At Cedar Street Library, a small shelf near the entrance holds packets of seeds. The project was started by Lina, a local student. She first brought tomato and bean seeds from her family’s garden. Visitors may take one packet, but they are asked to leave another packet later. They must write the plant’s name and simple growing instructions on every packet.\n\nDuring the first month, only twelve people used the shelf. Then the library shared a photo of it online. Now families visit every week. Some people come only for seeds, but many also borrow gardening books. The librarian explains that the project does not sell anything. Its purpose is to help neighbors share knowledge and try plants that they might not usually buy.",
+    "questions": [
+      {
+        "id": "A-01-Q1",
+        "group": "A",
+        "trap": "Topic vs. Detail",
+        "question": "What is the main purpose of the seed shelf?",
+        "options": ["To teach Lina how to work in a library", "To help neighbors exchange seeds and knowledge", "To sell unusual plants to local families", "To advertise the library’s online page"],
+        "answer": 1
+      },
+      {
+        "id": "A-01-Q2",
+        "group": "B",
+        "trap": "Small-Word Precision",
+        "question": "What are visitors asked to do after taking a packet?",
+        "options": ["Leave another packet later", "Buy a gardening book", "Return the same seeds", "Send Lina a photograph"],
+        "answer": 0
+      },
+      {
+        "id": "A-01-Q3",
+        "group": "C",
+        "trap": "Time Reference",
+        "question": "What happened after the library posted a photo online?",
+        "options": ["The shelf was moved outside", "Lina stopped bringing seeds", "The library began selling plants", "More families started visiting"],
+        "answer": 3
+      },
+      {
+        "id": "A-01-Q4",
+        "group": "D",
+        "trap": "Negative Question",
+        "question": "Which statement is NOT true about the project?",
+        "options": ["Packets include growing instructions", "People can borrow gardening books", "The library charges money for seeds", "The shelf began with seeds from a family garden"],
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "A-02",
+    "level": "A",
+    "domain": "public transport technology",
+    "title": "A New Screen at the Bus Stop",
+    "text": "A new information screen was placed at the main bus stop in Green Hill. It shows when the next three buses are expected to arrive. It also displays a yellow triangle when there is a change in a route. Passengers can touch the triangle to read a short message about the change.\n\nThe screen receives information from devices on the buses. The times are usually correct, but traffic can still make a bus late. For this reason, the screen says “expected time” and not “exact time.” Large letters make the information easier to read, and a button reads the message aloud for passengers who need it. During its first week, many people used the screen. The town plans to place similar screens at two more stops if passengers continue to find it useful.",
+    "questions": [
+      {
+        "id": "A-02-Q1",
+        "group": "A",
+        "trap": "World Knowledge",
+        "question": "Why was the screen placed at the bus stop?",
+        "options": ["To provide arrival and route information", "To make buses travel faster", "To sell tickets to passengers", "To control the traffic lights"],
+        "answer": 0
+      },
+      {
+        "id": "A-02-Q2",
+        "group": "B",
+        "trap": "Absolute Language",
+        "question": "What does the text say about the times on the screen?",
+        "options": ["They are never correct", "They are always exact", "They are usually correct", "They appear only after a bus arrives"],
+        "answer": 2
+      },
+      {
+        "id": "A-02-Q3",
+        "group": "C",
+        "trap": "Line/Reference",
+        "question": "What can passengers do when they see the yellow triangle?",
+        "options": ["Call the bus driver", "Read a message about a route change", "Request a new bus", "Turn off the screen"],
+        "answer": 1
+      },
+      {
+        "id": "A-02-Q4",
+        "group": "D",
+        "trap": "Completion vs. Interpretation",
+        "question": "The town will add more screens if —",
+        "options": ["all buses arrive early", "traffic becomes heavier", "passengers keep finding the screen useful", "the main screen stops working"],
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "A-03",
+    "level": "A",
+    "domain": "museum access",
+    "title": "The Museum’s Quiet Hour",
+    "text": "The City Museum is usually busy and noisy on weekends. Last spring, it began offering a “quiet hour” every Sunday morning. During this hour, fewer tickets are sold, the lights are softer, and loud videos are turned off. Visitors can also borrow headphones at the entrance.\n\nThe quiet hour was first planned for people who find crowds or strong sounds difficult. However, other visitors soon became interested too. Parents said that their children could look at the displays for longer, and older visitors enjoyed moving through the rooms slowly. The museum did not remove any displays. It simply changed the environment for one hour. Because the program has been popular, the museum will continue it next year and may add a second quiet hour during school vacations.",
+    "questions": [
+      {
+        "id": "A-03-Q1",
+        "group": "A",
+        "trap": "Cause–Effect Confusion",
+        "question": "Why did the museum begin the quiet hour?",
+        "options": ["To make visits easier for people sensitive to crowds or sound", "To repair the loud videos", "To attract only older visitors", "To remove unpopular displays"],
+        "answer": 0
+      },
+      {
+        "id": "A-03-Q2",
+        "group": "B",
+        "trap": "Synonym Distortion",
+        "question": "During the quiet hour, fewer tickets are sold. This means that —",
+        "options": ["tickets cost less", "the museum is closed", "fewer people enter", "visitors receive free tickets"],
+        "answer": 2
+      },
+      {
+        "id": "A-03-Q3",
+        "group": "C",
+        "trap": "Scope",
+        "question": "Who became interested in the quiet hour besides the people it was first planned for?",
+        "options": ["Only museum workers", "Parents, children, and older visitors", "Only tourists from other cities", "People who wanted to watch loud videos"],
+        "answer": 1
+      },
+      {
+        "id": "A-03-Q4",
+        "group": "D",
+        "trap": "Negative Question",
+        "question": "What did the museum NOT do during the quiet hour?",
+        "options": ["Use softer lights", "Turn off loud videos", "Limit ticket sales", "Remove its displays"],
+        "answer": 3
+      }
+    ]
+  },
+  {
+    "id": "A-04",
+    "level": "A",
+    "domain": "school food waste",
+    "title": "The Lunch Box Team",
+    "text": "Students at River School noticed that many unopened food items were thrown away after lunch. They created the Lunch Box Team to reduce this waste. At the end of lunch, students may place unopened fruit, snack bars, or drink boxes on a clean table. Other students may take these items if they are still hungry.\n\nTeachers check the table and do not allow opened food. At first, some students thought using the table might be embarrassing. The team therefore made colorful signs saying, “Share what you do not need.” Soon, students began using it every day. After six weeks, the school counted much less unopened food in its bins. The team now wants to teach two nearby schools how to start similar tables. It also reminds students to bring only the amount of food they expect to eat.",
+    "questions": [
+      {
+        "id": "A-04-Q1",
+        "group": "A",
+        "trap": "Logical Guess",
+        "question": "What problem does the Lunch Box Team try to solve?",
+        "options": ["Students arrive late for lunch", "Too much unopened food is thrown away", "Teachers do not check the lunch area", "The school has no place to buy snacks"],
+        "answer": 1
+      },
+      {
+        "id": "A-04-Q2",
+        "group": "B",
+        "trap": "Attractive/Emotional Word",
+        "question": "Which food may be placed on the table?",
+        "options": ["Any delicious meal", "Only food prepared by teachers", "Unopened food that another student can take", "Food that has already been eaten"],
+        "answer": 2
+      },
+      {
+        "id": "A-04-Q3",
+        "group": "C",
+        "trap": "Wrong Question",
+        "question": "How did the team make students feel more comfortable using the table?",
+        "options": ["It gave students extra lunch time", "It placed colorful sharing signs nearby", "It hid the table from teachers", "It asked nearby schools for food"],
+        "answer": 1
+      },
+      {
+        "id": "A-04-Q4",
+        "group": "D",
+        "trap": "Grammar-Driven",
+        "question": "The words “these items” refer to —",
+        "options": ["the school bins", "the colorful signs", "the nearby schools", "the unopened foods on the table"],
+        "answer": 3
+      }
+    ]
+  }
+]

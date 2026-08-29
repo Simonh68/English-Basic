@@ -1,0 +1,21 @@
+{
+  "version": "2026.08-B",
+  "released": "2026-08-29",
+  "releasedHe": "29.8.2026",
+  "nextReview": "2026-09-12",
+  "vocabulary": {
+    "file": "data/vocabulary-bank.json",
+    "bands": ["Core I", "Core II", "Band III"],
+    "questionsPerBand": 12
+  },
+  "reading": {
+    "levels": ["A", "C", "E", "G"],
+    "files": {
+      "A": "data/reading-a.json",
+      "C": "data/reading-c.json",
+      "E": "data/reading-e.json",
+      "G": "data/reading-g.json"
+    },
+    "questionsPerPassage": 4
+  }
+}
