@@ -30,6 +30,7 @@ function normalizeMaayanToPublic(html) {
     ['<p class="certificate-brand" lang="en">MAAYAN</p>', '<p class="certificate-brand" lang="en">WORD FORGE</p>'],
     ['<script src="./curriculum-data.js?v=2"></script>', '<script src="/curriculum-data.js?v=2"></script>'],
     ['<script src="./progress.js?v=3"></script>', '<script src="/progress.js?v=3"></script>'],
+    ['<script src="../analytics-v2.js"></script>', '<script src="/analytics-v2.js"></script>'],
     ['document.title = `MAAYAN · Level ${courseLevel} · Stage ${courseLesson}`;', 'document.title = `Word Forge · Level ${courseLevel} · Stage ${courseLesson}`;'],
     ['progressApi?.setLastLocation({ href: `temp/?level=${courseLevel}&lesson=${courseLesson}`, label: `MAAYAN · שלב ${courseLesson}` });', 'progressApi?.setLastLocation({ href: `/word-forge/?level=${courseLevel}&lesson=${courseLesson}`, label: `Word Forge · שלב ${courseLesson}` });'],
     ["stageMapTitle.textContent = 'MAAYAN · 50';", "stageMapTitle.textContent = 'WORD FORGE · 50';"]
@@ -73,6 +74,7 @@ test('the isolated MAAYAN edition matches the current public Word Forge source e
   assert.match(html, /\[hidden\] \{ display: none !important; \}/);
   assert.match(html, /src="\.\/curriculum-data\.js\?v=2"/);
   assert.match(html, /src="\.\/progress\.js\?v=3"/);
+  assert.match(html, /src="\.\.\/analytics-v2\.js"/);
 
   assert.equal(sha256(curriculum), '7bdf2c2104375aeebfcc530a4ff63e1178cde577c17fe76374bc605d4a4bb90a');
   assert.equal(sha256(progress), '32324d5260511d557f51399954a9fdd9b8bc8aeb936a7226ea7c94ddff4dec7b');
