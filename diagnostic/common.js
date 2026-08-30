@@ -157,6 +157,44 @@
     return typeof paragraph === 'string' ? [paragraph] : [];
   }
 
+  const sensitiveEnglishVocabulary = /\b(?:gay|gender|homosexual|lesbian|bisexual|transgender|transsexual|nonbinary|non-binary|queer|sexual|sexuality|sex|male|female)\b/i;
+  const sensitiveHebrewVocabulary = new Set([
+    'הומו', 'הומואים', 'הומוסקסואל', 'הומוסקסואלי', 'הומוסקסואלית',
+    'לסבית', 'לסביות', 'ביסקסואל', 'ביסקסואלית', 'טרנסג׳נדר', 'טרנסגדר',
+    'מגדר', 'מגדרי', 'מגדרית', 'מיניות', 'מיני', 'מינית', 'מין', 'זכר', 'נקבה'
+  ]);
+
+  function normalizeVocabularyWord(value) {
+    return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  function hasSensitiveVocabularyContent(item) {
+    const content = [item?.word, item?.meaning, item?.example, item?.definition]
+      .filter(Boolean)
+      .join(' ');
+    if (sensitiveEnglishVocabulary.test(content) || /להט[״"']?ב/u.test(content)) return true;
+    const hebrewWords = content.match(/[\u0590-\u05ff׳״]+/gu) || [];
+    return hebrewWords.some(word => sensitiveHebrewVocabulary.has(word));
+  }
+
+  function filterDiagnosticVocabulary(items) {
+    const list = Array.isArray(items) ? items : [];
+    const lowerBandWords = new Set(list
+      .filter(item => item.band === 'Core I' || item.band === 'Core II')
+      .map(item => normalizeVocabularyWord(item.word))
+      .filter(Boolean));
+
+    return list.filter(item => {
+      if (hasSensitiveVocabularyContent(item)) return false;
+      if (item.band !== 'Band III') return true;
+      const word = normalizeVocabularyWord(item.word);
+      if (!word || lowerBandWords.has(word)) return false;
+      const isSingleWord = !/[\s/–—-]/.test(word);
+      const lettersOnly = word.replace(/[^a-z]/g, '');
+      return !(isSingleWord && lettersOnly.length <= 3);
+    });
+  }
+
   function vocabularyProfile(summary) {
     const first = summary['Core I'];
     const second = summary['Core II'];
@@ -308,6 +346,7 @@
     scoreTimedAnswer,
     scoreRatio,
     visibleReadingParagraphs,
+    filterDiagnosticVocabulary,
     vocabularyProfile,
     vocabularyLevel,
     nextReadingStep,

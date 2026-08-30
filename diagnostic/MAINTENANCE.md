@@ -9,6 +9,7 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 - The opening asks for no class or unit-track information. The result never identifies the level as a Bagrut questionnaire.
 - Every vocabulary item keeps its source band: Core I, Core II, or Band III.
 - Core I and Core II use the reviewed Hebrew meanings. Band III uses the exact English `support_text` definition from the canonical database.
+- The level check excludes gender/sexuality content from every band. Band III sampling also excludes short single words and entries duplicated in Core I/II, because those items do not distinguish an advanced vocabulary level reliably.
 - Every reading passage and question keeps its reviewed level: A, C, E, or G.
 - Runtime performance never changes an item's level. An unsuitable item is retired or replaced during editorial review.
 

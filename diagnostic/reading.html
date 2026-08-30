@@ -8,7 +8,7 @@
   <title>בדיקת רמה אישית | English for Noar</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body class="home-page diagnostic-page exam-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -38,7 +38,15 @@
       <article class="reading-passage">
         <span class="passage-label">READING TEXT</span>
         <h1 id="passageTitle" lang="en" dir="ltr"></h1>
-        <div id="passageText" class="staged-passage" lang="en" dir="ltr" aria-live="polite"></div>
+        <div class="reading-stage-frame">
+          <div class="paragraph-progress" id="paragraphProgress" role="progressbar" aria-label="התקדמות בפסקאות הקטע" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+            <span class="paragraph-cube is-lit" aria-hidden="true"></span>
+            <span class="paragraph-cube" aria-hidden="true"></span>
+            <span class="paragraph-cube" aria-hidden="true"></span>
+            <span class="paragraph-cube" aria-hidden="true"></span>
+          </div>
+          <div id="passageText" class="staged-passage" lang="en" dir="ltr" aria-live="polite"></div>
+        </div>
       </article>
 
       <section class="reading-question" id="readingQuestion" aria-labelledby="questionText">
@@ -69,8 +77,8 @@
     </section>
   </main>
 
-  <script src="common.js?v=7"></script>
-  <script src="reading.js?v=7"></script>
+  <script src="common.js?v=8"></script>
+  <script src="reading.js?v=8"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

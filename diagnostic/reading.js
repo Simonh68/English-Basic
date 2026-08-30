@@ -63,6 +63,16 @@
     const question = state.passage.questions[state.questionIndex];
     const isSummary = question.scope === 'whole-text';
     const visible = api.visibleReadingParagraphs(state.paragraphs, state.questionIndex, question.scope);
+    const paragraphProgress = document.querySelector('#paragraphProgress');
+    const progressStep = Math.min(state.questionIndex + 1, 4);
+    paragraphProgress.style.setProperty('--paragraph-progress-scale', String((progressStep - 1) / 3));
+    paragraphProgress.setAttribute('aria-valuenow', String(progressStep));
+    paragraphProgress.setAttribute('aria-valuetext', isSummary
+      ? 'שאלה כללית — כל הקטע מוצג'
+      : `פסקה ${progressStep} מתוך 3`);
+    paragraphProgress.querySelectorAll('.paragraph-cube').forEach((cube, index) => {
+      cube.classList.toggle('is-lit', index < progressStep);
+    });
     const paragraphNodes = visible.map(paragraph => {
       const node = document.createElement('p');
       node.className = 'is-new';

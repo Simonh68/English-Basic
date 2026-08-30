@@ -48,6 +48,8 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.match(landing, /id="startTest"/);
   assert.match(landing, /הכלי מיועד לתרגול ולהערכה ראשונית באתר בלבד/);
   assert.match(reading, /התוצאה אינה מחליפה הערכה או שיקול דעת של מורה מוסמך/);
+  assert.match(reading, /id="paragraphProgress"/);
+  assert.equal((reading.match(/class="paragraph-cube/g) || []).length, 4);
   assert.match(vocabulary, /id="foundationStopView"/);
   assert.match(vocabulary, /word-forge\/\?level=1&amp;lesson=1/);
   assert.match(vocabulary, /id="transitionTitle">אוצר מילים/);
@@ -290,6 +292,31 @@ test('vocabulary coverage selects the correlated reading start level', async () 
   assert.equal(api.vocabularyLevel(bandThree), 'E');
 });
 
+test('the diagnostic excludes sensitive content and weak advanced discriminators without changing the source bank', async () => {
+  const [api, bank] = await Promise.all([
+    loadCommonApi(),
+    json('diagnostic/data/vocabulary-bank.json')
+  ]);
+  const filtered = [...api.filterDiagnosticVocabulary(bank)];
+  const filteredIds = new Set(filtered.map(item => item.id));
+  const lowerWords = new Set(filtered
+    .filter(item => item.band === 'Core I' || item.band === 'Core II')
+    .map(item => item.word.trim().toLowerCase()));
+  const advanced = filtered.filter(item => item.band === 'Band III');
+
+  assert.equal(bank.find(item => item.id === 'b2-c2-1575').word, 'gay');
+  assert.equal(bank.find(item => item.id === 'b3-B3-017').word, 'to');
+  assert.ok(!filteredIds.has('b2-c2-1575'));
+  assert.ok(!filteredIds.has('b2-c1-845'));
+  assert.ok(!filteredIds.has('b3-B3-017'));
+  assert.ok(advanced.length > 700);
+  for (const item of advanced) {
+    const word = item.word.trim().toLowerCase();
+    assert.ok(!lowerWords.has(word), `${item.id} duplicates a lower-band word`);
+    if (!/[\s/–—-]/.test(word)) assert.ok(word.replace(/[^a-z]/g, '').length > 3, `${item.id} is too short`);
+  }
+});
+
 test('recommendations resume the next saved vocabulary group and link directly to one story', async () => {
   const completed = group => [String(group).padStart(2, '0'), { completedAt: '2026-08-29T00:00:00.000Z' }];
   const progress = JSON.stringify({ version: 1, groups: Object.fromEntries([completed(1), completed(2), completed(3)]) });
@@ -329,10 +356,12 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
     read('diagnostic/reading.html')
   ]);
   assert.match(common, /function selectFresh/);
+  assert.match(common, /function filterDiagnosticVocabulary/);
   assert.match(common, /function vocabularyProfile/);
   assert.match(common, /function nextReadingStep/);
   assert.doesNotMatch(landing, /getGrade|setGrade|grade=/);
   assert.match(vocabulary, /selectFresh\(/);
+  assert.match(vocabulary, /api\.filterDiagnosticVocabulary/);
   assert.match(vocabulary, /filter\(item => item\.anchor\)/);
   assert.match(vocabulary, /correct >= 5/);
   assert.match(vocabulary, /show\('foundationStop'\)/);
@@ -348,6 +377,7 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
   assert.match(reading, /question\.scope === 'whole-text'/);
   assert.match(reading, /api\.visibleReadingParagraphs\(state\.paragraphs, state\.questionIndex, question\.scope\)/);
   assert.match(reading, /replaceChildren\(\.\.\.paragraphNodes\)/);
+  assert.match(reading, /cube\.classList\.toggle\('is-lit', index < progressStep\)/);
   assert.doesNotMatch(reading, /state\.paragraphs\.slice\(0, state\.questionIndex \+ 1\)/);
   assert.doesNotMatch(reading, /shuffle\(selected\.questions\)/);
   assert.doesNotMatch(`${common}\n${reading}\n${readingHtml}`, /יחידות|placementCopy|classComparison|השאלון המתאים|combineLevels/);

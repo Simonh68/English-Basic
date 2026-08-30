@@ -252,9 +252,9 @@
         api.loadJson(`${state.manifest.vocabulary.definitionFile}?v=${encodeURIComponent(state.manifest.version)}`),
         api.loadJson(`${state.manifest.vocabulary.foundationalFile}?v=${encodeURIComponent(state.manifest.version)}`)
       ]);
-      state.bank = bank.map(item => item.band === 'Band III'
+      state.bank = api.filterDiagnosticVocabulary(bank.map(item => item.band === 'Band III'
         ? { ...item, definition: definitions[item.id] }
-        : item);
+        : item));
       state.foundationalBank = foundationalBank;
       state.questions = prepareFoundationQuestions();
       document.querySelector('#unknownButton').addEventListener('click', () => submit(-1, true));
