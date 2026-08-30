@@ -8,7 +8,7 @@
   <title>מבחן אנגלית | English for Noar</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body class="home-page diagnostic-page exam-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -44,7 +44,7 @@
       <section class="reading-question" id="readingQuestion" aria-labelledby="questionText">
         <span class="prompt-label">QUESTION</span>
         <div class="question-timer compact-timer" id="questionTimer" aria-label="זמן לשאלה">
-          <div><strong id="timerValue">20.0</strong><small>seconds</small></div>
+          <div><strong id="timerValue">5:00</strong><small>min:sec</small></div>
           <span class="timer-line" aria-hidden="true"><i id="timerTrack"></i></span>
         </div>
         <h2 id="questionText" lang="en" dir="ltr"></h2>
@@ -61,6 +61,7 @@
         <h2 id="recommendationTitle">המשימות המומלצות שלך</h2>
         <div id="recommendationList" class="recommendation-list"></div>
       </section>
+      <p class="diagnostic-disclaimer result-disclaimer">הכלי מיועד לתרגול ולהערכה ראשונית באתר בלבד. התוצאה אינה מחליפה מבחן או שיקול דעת של מורה מוסמך.</p>
       <div class="result-actions">
         <a class="primary-action link-action" href="../index.html">חזרה לדף הבית</a>
         <a class="secondary-action" href="index.html">מבחן נוסף</a>
@@ -68,8 +69,8 @@
     </section>
   </main>
 
-  <script src="common.js?v=4"></script>
-  <script src="reading.js?v=4"></script>
+  <script src="common.js?v=6"></script>
+  <script src="reading.js?v=5"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

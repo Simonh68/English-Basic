@@ -18,8 +18,8 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 - Vocabulary: 4 items from each fixed band, 12 items total.
 - Reading: two passages for most students and three only when the E/G boundary must be checked.
 - Total length: 23 questions normally, 27 questions at the advanced boundary.
-- Vocabulary and foundational-reading questions use a 10-second target. Reading-comprehension questions use a 20-second target.
-- Each correct answer is worth 4 points inside its target, 5 points in the first half of the target, then 3/2/1 points as response time passes 1×/1.5×/2× the target. Incorrect or skipped answers receive 0.
+- Vocabulary and foundational-reading questions have a hard 30-second limit. Reading-comprehension questions have a hard 5-minute limit.
+- When either limit expires, the unanswered question receives 0 and the test advances automatically. Each correct answer is worth 4 points inside its limit and 5 points in the first half. Incorrect, skipped, or timed-out answers receive 0.
 - The reading test starts from the vocabulary correlation: Band I or Band II Core I starts at A; Band II Core II starts at C; Band III starts at E.
 - Every reading passage contains exactly three staged paragraphs. Questions 1–3 each show only their own paragraph; Question 4 shows all three paragraphs and asks about the whole text.
 - Final placement gives 70% weight to the lower demonstrated skill level and 30% to the higher level. A failed foundational gate forces the foundational-reading recommendation.

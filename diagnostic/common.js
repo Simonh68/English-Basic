@@ -2,8 +2,8 @@
   'use strict';
 
   const STORAGE_PREFIX = 'efn-diagnostic-v2';
-  const TARGET_MS = 10000;
-  const READING_TARGET_MS = 20000;
+  const TARGET_MS = 30000;
+  const READING_TARGET_MS = 300000;
   const BASE_POINTS = 4;
   const letters = ['A', 'B', 'C', 'D'];
   const levelValues = { A: 25, C: 50, E: 75, G: 100 };
@@ -88,7 +88,7 @@
       .replaceAll("'", '&#039;');
   }
 
-  function startQuestionClock(valueElement, trackElement, wrapperElement, targetMs = TARGET_MS) {
+  function startQuestionClock(valueElement, trackElement, wrapperElement, targetMs = TARGET_MS, onExpire = null) {
     const startedAt = performance.now();
     let frame = 0;
     let stopped = false;
@@ -100,11 +100,27 @@
       const overtime = elapsed > targetMs;
       wrapperElement?.classList.toggle('is-overtime', overtime);
       if (valueElement) {
-        valueElement.textContent = overtime
-          ? `+${((elapsed - targetMs) / 1000).toFixed(1)}`
-          : (remaining / 1000).toFixed(1);
+        if (targetMs >= 60000) {
+          const shownMs = overtime ? elapsed - targetMs : remaining;
+          const totalSeconds = overtime
+            ? Math.floor(shownMs / 1000)
+            : Math.ceil(shownMs / 1000);
+          const minutes = Math.floor(totalSeconds / 60);
+          const seconds = String(totalSeconds % 60).padStart(2, '0');
+          valueElement.textContent = `${overtime ? '+' : ''}${minutes}:${seconds}`;
+        } else {
+          valueElement.textContent = overtime
+            ? `+${((elapsed - targetMs) / 1000).toFixed(1)}`
+            : (remaining / 1000).toFixed(1);
+        }
       }
       if (trackElement) trackElement.style.width = `${Math.max(0, (remaining / targetMs) * 100)}%`;
+      if (elapsed >= targetMs && typeof onExpire === 'function') {
+        stopped = true;
+        cancelAnimationFrame(frame);
+        onExpire();
+        return;
+      }
       frame = requestAnimationFrame(paint);
     }
 

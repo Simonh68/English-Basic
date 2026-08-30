@@ -19,7 +19,8 @@
     usedDomains: new Set(),
     startLevel: null,
     readingLevel: null,
-    clock: null
+    clock: null,
+    acceptingAnswer: false
   };
 
   function show(name) {
@@ -81,6 +82,7 @@
     answerGrid.innerHTML = question.options.map((option, index) => `<button class="answer-option" type="button" data-index="${index}"><span class="answer-letter" aria-hidden="true">${api.letters[index]}</span>${api.escapeHtml(option)}</button>`).join('');
     answerGrid.querySelectorAll('button').forEach(button => button.addEventListener('click', () => submit(Number(button.dataset.index), false)));
     document.querySelector('#skipButton').disabled = false;
+    state.acceptingAnswer = true;
 
     const timer = document.querySelector('#questionTimer');
     timer.classList.remove('is-overtime');
@@ -88,22 +90,27 @@
       document.querySelector('#timerValue'),
       document.querySelector('#timerTrack'),
       timer,
-      api.READING_TARGET_MS
+      api.READING_TARGET_MS,
+      () => submit(-1, true, true)
     );
     requestAnimationFrame(() => answerGrid.querySelector('button')?.focus());
   }
 
-  function submit(selectedIndex, skipped) {
+  function submit(selectedIndex, skipped, timedOut = false) {
+    if (!state.acceptingAnswer) return;
+    state.acceptingAnswer = false;
     const question = state.passage.questions[state.questionIndex];
-    const elapsedMs = state.clock?.stop() ?? api.TARGET_MS;
-    const correct = !skipped && selectedIndex === question.answer;
+    const elapsedMs = state.clock?.stop() ?? api.READING_TARGET_MS;
+    const expired = timedOut || elapsedMs >= api.READING_TARGET_MS;
+    const correct = !skipped && !expired && selectedIndex === question.answer;
     document.querySelectorAll('#answerGrid button').forEach(button => { button.disabled = true; });
     document.querySelector('#skipButton').disabled = true;
     state.passageAnswers.push({
       id: question.id,
       group: question.group,
       correct,
-      skipped,
+      skipped: skipped || expired,
+      timedOut: expired,
       elapsedMs: Math.round(elapsedMs),
       points: api.scoreTimedAnswer(correct, elapsedMs, api.READING_TARGET_MS)
     });

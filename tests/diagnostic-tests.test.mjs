@@ -7,7 +7,7 @@ import vm from 'node:vm';
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const json = async path => JSON.parse(await read(path));
 
-async function loadCommonApi(initialStorage = {}) {
+async function loadCommonApi(initialStorage = {}, overrides = {}) {
   const storage = new Map(Object.entries(initialStorage));
   const context = {
     window: {},
@@ -22,7 +22,8 @@ async function loadCommonApi(initialStorage = {}) {
     performance: { now: () => 0 },
     requestAnimationFrame: () => 1,
     cancelAnimationFrame: () => {},
-    fetch: async () => { throw new Error('not used'); }
+    fetch: async () => { throw new Error('not used'); },
+    ...overrides
   };
   vm.runInNewContext(await read('diagnostic/common.js'), context);
   return context.window.EFN_DIAGNOSTIC;
@@ -45,6 +46,8 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.match(landing, /<h1 id="pageTitle">מבחן<\/h1>/);
   assert.match(landing, /נתחיל באוצר מילים, ואחר כך נעבור להבנת הנקרא/);
   assert.match(landing, /id="startTest"/);
+  assert.match(landing, /הכלי מיועד לתרגול ולהערכה ראשונית באתר בלבד/);
+  assert.match(reading, /התוצאה אינה מחליפה מבחן או שיקול דעת של מורה מוסמך/);
   assert.doesNotMatch(landing, /באיזו כיתה|בחרו כיתה|gradeSelect|gradeError/);
   assert.doesNotMatch(landing, /Core I|Core II|Band III|A · C · E · G|גרסת המאגר|כיסוי/);
   assert.doesNotMatch(vocabulary, /המשימות המומלצות שלך|פרופיל אוצר המילים|Core I|Core II|Band III/);
@@ -152,22 +155,44 @@ test('every reading level has parallel forms with balanced trap groups', async (
   assert.ok(averages.E < averages.G);
 });
 
-test('vocabulary uses ten seconds and staged reading questions use twenty seconds', async () => {
+test('simple questions use a hard thirty seconds and reading questions use a hard five minutes', async () => {
   const api = await loadCommonApi();
-  assert.equal(api.TARGET_MS, 10000);
-  assert.equal(api.READING_TARGET_MS, 20000);
+  assert.equal(api.TARGET_MS, 30000);
+  assert.equal(api.READING_TARGET_MS, 300000);
   assert.equal(api.BASE_POINTS, 4);
-  assert.equal(api.scoreTimedAnswer(true, 4500), 5);
-  assert.equal(api.scoreTimedAnswer(true, 10000), 4);
-  assert.equal(api.scoreTimedAnswer(true, 11000), 3);
-  assert.equal(api.scoreTimedAnswer(true, 16000), 2);
-  assert.equal(api.scoreTimedAnswer(true, 21000), 1);
+  assert.equal(api.scoreTimedAnswer(true, 14000), 5);
+  assert.equal(api.scoreTimedAnswer(true, 30000), 4);
+  assert.equal(api.scoreTimedAnswer(true, 40000), 3);
+  assert.equal(api.scoreTimedAnswer(true, 55000), 2);
+  assert.equal(api.scoreTimedAnswer(true, 65000), 1);
   assert.equal(api.scoreTimedAnswer(false, 2000), 0);
-  assert.equal(api.scoreTimedAnswer(true, 9000, api.READING_TARGET_MS), 5);
-  assert.equal(api.scoreTimedAnswer(true, 20000, api.READING_TARGET_MS), 4);
-  assert.equal(api.scoreTimedAnswer(true, 25000, api.READING_TARGET_MS), 3);
-  assert.equal(api.scoreTimedAnswer(true, 35000, api.READING_TARGET_MS), 2);
-  assert.equal(api.scoreTimedAnswer(true, 45000, api.READING_TARGET_MS), 1);
+  assert.equal(api.scoreTimedAnswer(true, 140000, api.READING_TARGET_MS), 5);
+  assert.equal(api.scoreTimedAnswer(true, 300000, api.READING_TARGET_MS), 4);
+  assert.equal(api.scoreTimedAnswer(true, 400000, api.READING_TARGET_MS), 3);
+  assert.equal(api.scoreTimedAnswer(true, 500000, api.READING_TARGET_MS), 2);
+  assert.equal(api.scoreTimedAnswer(true, 620000, api.READING_TARGET_MS), 1);
+  const timerValue = { textContent: '' };
+  const timerTrack = { style: {} };
+  const timerWrapper = { classList: { toggle() {} } };
+  api.startQuestionClock(timerValue, timerTrack, timerWrapper, api.READING_TARGET_MS);
+  assert.equal(timerValue.textContent, '5:00');
+  assert.equal(timerTrack.style.width, '100%');
+  let now = 0;
+  let nextFrame = null;
+  let expired = 0;
+  const timedApi = await loadCommonApi({}, {
+    performance: { now: () => now },
+    requestAnimationFrame: callback => { nextFrame = callback; return 7; },
+    cancelAnimationFrame() {}
+  });
+  const simpleValue = { textContent: '' };
+  timedApi.startQuestionClock(simpleValue, { style: {} }, timerWrapper, timedApi.TARGET_MS, () => { expired += 1; });
+  now = timedApi.TARGET_MS;
+  nextFrame();
+  assert.equal(simpleValue.textContent, '0.0');
+  assert.equal(expired, 1);
+  nextFrame();
+  assert.equal(expired, 1);
   const paragraphs = ['Paragraph one', 'Paragraph two', 'Paragraph three'];
   assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 0, 'paragraph')], ['Paragraph one']);
   assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 1, 'paragraph')], ['Paragraph two']);
@@ -184,9 +209,11 @@ test('vocabulary uses ten seconds and staged reading questions use twenty second
     assert.match(source, /startQuestionClock/);
     assert.match(source, /scoreTimedAnswer/);
     assert.match(source, /elapsedMs/);
+    assert.match(source, /submit\(-1, true, true\)/);
+    assert.match(source, /timedOut/);
   }
-  assert.match(vocabularyHtml, />10\.0<\/strong>/);
-  assert.match(readingHtml, />20\.0<\/strong>/);
+  assert.match(vocabularyHtml, />30\.0<\/strong>/);
+  assert.match(readingHtml, />5:00<\/strong>/);
   assert.match(reading, /scoreTimedAnswer\(correct, elapsedMs, api\.READING_TARGET_MS\)/);
 });
 

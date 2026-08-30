@@ -14,7 +14,8 @@
     index: 0,
     answers: [],
     sessionId: api.getSessionId(),
-    clock: null
+    clock: null,
+    acceptingAnswer: false
   };
 
   function show(name) {
@@ -102,21 +103,27 @@
     answerGrid.innerHTML = question.options.map((option, index) => `<button class="answer-option" type="button" data-index="${index}"><span class="answer-letter" aria-hidden="true">${api.letters[index]}</span>${api.escapeHtml(option)}</button>`).join('');
     answerGrid.querySelectorAll('button').forEach(button => button.addEventListener('click', () => submit(Number(button.dataset.index), false)));
     document.querySelector('#unknownButton').disabled = false;
+    state.acceptingAnswer = true;
 
     const timer = document.querySelector('#questionTimer');
     timer.classList.remove('is-overtime');
     state.clock = api.startQuestionClock(
       document.querySelector('#timerValue'),
       document.querySelector('#timerTrack'),
-      timer
+      timer,
+      api.TARGET_MS,
+      () => submit(-1, true, true)
     );
     requestAnimationFrame(() => answerGrid.querySelector('button')?.focus());
   }
 
-  function submit(selectedIndex, unknown) {
+  function submit(selectedIndex, unknown, timedOut = false) {
+    if (!state.acceptingAnswer) return;
+    state.acceptingAnswer = false;
     const question = state.questions[state.index];
     const elapsedMs = state.clock?.stop() ?? api.TARGET_MS;
-    const correct = !unknown && selectedIndex === question.correctIndex;
+    const expired = timedOut || elapsedMs >= api.TARGET_MS;
+    const correct = !unknown && !expired && selectedIndex === question.correctIndex;
     document.querySelectorAll('#answerGrid button').forEach(button => { button.disabled = true; });
     document.querySelector('#unknownButton').disabled = true;
     state.answers.push({
@@ -125,7 +132,8 @@
       band: question.band || null,
       family: question.family || null,
       correct,
-      unknown,
+      unknown: unknown || expired,
+      timedOut: expired,
       elapsedMs: Math.round(elapsedMs),
       points: api.scoreTimedAnswer(correct, elapsedMs)
     });
