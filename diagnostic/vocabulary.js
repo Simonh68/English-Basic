@@ -4,15 +4,18 @@
   const views = {
     loading: document.querySelector('#loadingView'),
     question: document.querySelector('#questionView'),
-    transition: document.querySelector('#transitionView')
+    transition: document.querySelector('#transitionView'),
+    foundationStop: document.querySelector('#foundationStopView')
   };
   const state = {
     manifest: null,
     bank: [],
     foundationalBank: [],
+    stage: 'foundation',
     questions: [],
     index: 0,
     answers: [],
+    foundation: null,
     sessionId: api.getSessionId(),
     clock: null,
     acceptingAnswer: false
@@ -55,15 +58,25 @@
     return shuffleOptions([correct, ...distractors], 0);
   }
 
-  function prepareQuestions() {
-    const foundationalFamilies = [...new Set(state.foundationalBank.map(item => item.family))];
-    const foundational = foundationalFamilies.slice(0, state.manifest.vocabulary.foundationalQuestions).map(family => {
-      const familyItems = state.foundationalBank.filter(item => item.family === family);
-      const [item] = api.selectFresh(familyItems, 1, `foundation:${family}`, state.manifest.version);
-      return { ...item, ...shuffleOptions(item.options, item.answer), kind: 'foundation' };
-    });
+  function prepareFoundationQuestions() {
+    const count = state.manifest.vocabulary.foundationalQuestions;
+    const anchors = state.foundationalBank.filter(item => item.anchor).slice(0, count);
+    const extrasNeeded = Math.max(0, count - anchors.length);
+    const extras = api.selectFresh(
+      state.foundationalBank.filter(item => !item.anchor),
+      extrasNeeded,
+      'foundation:extra-spelling',
+      state.manifest.version
+    );
+    return api.shuffle([...anchors, ...extras]).map(item => ({
+      ...item,
+      ...shuffleOptions(item.options, item.answer),
+      kind: 'foundation'
+    }));
+  }
 
-    const vocabulary = [];
+  function prepareVocabularyQuestions() {
+    const questions = [];
     state.manifest.vocabulary.bands.forEach(band => {
       const bandItems = state.bank.filter(item => item.band === band);
       const sample = api.selectFresh(
@@ -72,16 +85,27 @@
         `vocabulary:${band}`,
         state.manifest.version
       );
-      sample.forEach(item => vocabulary.push({ ...item, ...makeOptions(item, bandItems), kind: 'vocabulary' }));
+      sample.forEach(item => questions.push({ ...item, ...makeOptions(item, bandItems), kind: 'vocabulary' }));
     });
-    state.questions = [...foundational, ...vocabulary];
+    return questions;
+  }
+
+  function showTransition(title, text, next) {
+    state.clock?.stop();
+    state.acceptingAnswer = false;
+    document.querySelector('#transitionTitle').textContent = title;
+    document.querySelector('#transitionText').textContent = text;
+    show('transition');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.setTimeout(next, 850);
   }
 
   function renderQuestion() {
     const question = state.questions[state.index];
     const total = state.questions.length;
-    const isFoundation = question.kind === 'foundation';
+    const isFoundation = state.stage === 'foundation';
     const isEnglishMeaning = question.band === 'Band III';
+    document.querySelector('#sectionLabel').textContent = isFoundation ? 'קריאה בסיסית' : 'אוצר מילים';
     document.querySelector('#questionCounter').textContent = `${state.index + 1} / ${total}`;
     document.querySelector('#progressBar').style.width = `${Math.round(((state.index + 1) / total) * 100)}%`;
     const progress = document.querySelector('.exam-progress');
@@ -89,12 +113,15 @@
     progress.setAttribute('aria-valuenow', String(state.index + 1));
 
     const prompt = document.querySelector('#vocabPrompt');
+    const title = document.querySelector('#questionTitle');
     const example = document.querySelector('#exampleSentence');
     prompt.classList.toggle('foundation-prompt', isFoundation);
     document.querySelector('#promptLabel').textContent = isFoundation
-      ? 'Choose the correct word'
+      ? 'איך כותבים באנגלית?'
       : isEnglishMeaning ? 'Choose the best meaning' : 'מה משמעות המילה?';
-    document.querySelector('#questionTitle').textContent = isFoundation ? question.prompt : question.word;
+    title.textContent = isFoundation ? question.prompt : question.word;
+    title.lang = isFoundation ? 'he' : 'en';
+    title.dir = isFoundation ? 'rtl' : 'ltr';
     example.hidden = isFoundation;
     example.textContent = isFoundation ? '' : question.example;
 
@@ -130,7 +157,6 @@
       id: question.id,
       kind: question.kind,
       band: question.band || null,
-      family: question.family || null,
       correct,
       unknown: unknown || expired,
       timedOut: expired,
@@ -138,11 +164,11 @@
       points: api.scoreTimedAnswer(correct, elapsedMs)
     });
     state.index += 1;
-    if (state.index >= state.questions.length) {
-      window.setTimeout(finishVocabulary, 100);
-    } else {
+    if (state.index < state.questions.length) {
       window.setTimeout(renderQuestion, 100);
+      return;
     }
+    window.setTimeout(state.stage === 'foundation' ? finishFoundation : finishVocabulary, 100);
   }
 
   function summarizeVocabulary() {
@@ -158,33 +184,59 @@
     }, {});
   }
 
+  function finishFoundation() {
+    state.clock?.stop();
+    const answers = state.answers.filter(answer => answer.kind === 'foundation');
+    const correct = answers.filter(answer => answer.correct).length;
+    const ratio = api.scoreRatio(answers);
+    const passed = correct >= 5 && ratio >= 0.70;
+    state.foundation = { passed, correct, total: answers.length, ratio };
+
+    if (!passed) {
+      api.writeStorage('active-vocabulary', {
+        sessionId: state.sessionId,
+        version: state.manifest.version,
+        level: 'A',
+        profile: 'foundation-stop',
+        foundational: state.foundation,
+        summary: {},
+        answers: state.answers,
+        stoppedAt: 'foundation',
+        completedAt: new Date().toISOString()
+      });
+      show('foundationStop');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    state.stage = 'vocabulary';
+    state.questions = prepareVocabularyQuestions();
+    state.index = 0;
+    showTransition('אוצר מילים', 'עוברים לשלב הבא', () => {
+      show('question');
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   function finishVocabulary() {
     state.clock?.stop();
-    const foundationalAnswers = state.answers.filter(answer => answer.kind === 'foundation');
-    const foundationalRatio = api.scoreRatio(foundationalAnswers);
-    const foundationalCorrect = foundationalAnswers.filter(answer => answer.correct).length;
-    const foundationalPassed = foundationalCorrect >= 2 && foundationalRatio >= 0.55;
     const summary = summarizeVocabulary();
+    const profile = api.vocabularyProfile(summary);
     const level = api.vocabularyLevel(summary);
     api.writeStorage('active-vocabulary', {
       sessionId: state.sessionId,
       version: state.manifest.version,
       level,
-      foundational: {
-        passed: foundationalPassed,
-        correct: foundationalCorrect,
-        total: foundationalAnswers.length,
-        ratio: foundationalRatio
-      },
+      profile,
+      foundational: state.foundation,
       summary,
       answers: state.answers,
       completedAt: new Date().toISOString()
     });
-    show('transition');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    window.setTimeout(() => {
+    showTransition('הבנת הנקרא', 'עוברים לשלב האחרון', () => {
       location.href = `reading.html?session=${encodeURIComponent(state.sessionId)}`;
-    }, 850);
+    });
   }
 
   async function initialize() {
@@ -204,12 +256,12 @@
         ? { ...item, definition: definitions[item.id] }
         : item);
       state.foundationalBank = foundationalBank;
-      prepareQuestions();
+      state.questions = prepareFoundationQuestions();
       document.querySelector('#unknownButton').addEventListener('click', () => submit(-1, true));
       show('question');
       renderQuestion();
     } catch {
-      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את המבחן.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
+      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את בדיקת הרמה האישית.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
     }
   }
 

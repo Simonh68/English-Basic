@@ -1,65 +1,98 @@
 [
   {
-    "id": "basic-know-no-01",
-    "family": "know-no",
-    "prompt": "I ___ the answer.",
-    "options": ["know", "no", "now", "new"],
+    "id": "basic-spelling-israel",
+    "anchor": true,
+    "wordHe": "ישראל",
+    "prompt": "איך כותבים באנגלית את המילה „ישראל”?",
+    "options": ["Israel", "Isreal", "Israell", "Izrael"],
     "answer": 0
   },
   {
-    "id": "basic-know-no-02",
-    "family": "know-no",
-    "prompt": "There is ___ milk left.",
-    "options": ["now", "know", "no", "new"],
-    "answer": 2
+    "id": "basic-spelling-doctor",
+    "anchor": true,
+    "wordHe": "דוקטור",
+    "prompt": "איך כותבים באנגלית את המילה „דוקטור”?",
+    "options": ["doctor", "docter", "doktor", "doctar"],
+    "answer": 0
   },
   {
-    "id": "basic-know-no-03",
-    "family": "know-no",
-    "prompt": "Do you ___ her name?",
-    "options": ["new", "no", "now", "know"],
-    "answer": 3
+    "id": "basic-spelling-ambulance",
+    "anchor": true,
+    "wordHe": "אמבולנס",
+    "prompt": "איך כותבים באנגלית את המילה „אמבולנס”?",
+    "options": ["ambulance", "ambulence", "ambullance", "ambulanse"],
+    "answer": 0
   },
   {
-    "id": "basic-thought-taught-01",
-    "family": "thought-taught",
-    "prompt": "Our teacher ___ us this rule.",
-    "options": ["thought", "though", "through", "taught"],
-    "answer": 3
+    "id": "basic-spelling-google",
+    "anchor": true,
+    "wordHe": "גוגל",
+    "prompt": "איך כותבים באנגלית את המילה „גוגל”?",
+    "options": ["Google", "Gogle", "Googel", "Gugle"],
+    "answer": 0
   },
   {
-    "id": "basic-thought-taught-02",
-    "family": "thought-taught",
-    "prompt": "I ___ about the question.",
-    "options": ["taught", "thought", "through", "though"],
-    "answer": 1
+    "id": "basic-spelling-telephone",
+    "anchor": false,
+    "wordHe": "טלפון",
+    "prompt": "איך כותבים באנגלית את המילה „טלפון”?",
+    "options": ["telephone", "telefone", "telephon", "teliphone"],
+    "answer": 0
   },
   {
-    "id": "basic-thought-taught-03",
-    "family": "thought-taught",
-    "prompt": "The lesson ___ me something important.",
-    "options": ["through", "though", "taught", "thought"],
-    "answer": 2
+    "id": "basic-spelling-internet",
+    "anchor": false,
+    "wordHe": "אינטרנט",
+    "prompt": "איך כותבים באנגלית את המילה „אינטרנט”?",
+    "options": ["internet", "interent", "internat", "intarnet"],
+    "answer": 0
   },
   {
-    "id": "basic-here-hear-01",
-    "family": "here-hear",
-    "prompt": "Please sit ___.",
-    "options": ["hear", "her", "hair", "here"],
-    "answer": 3
+    "id": "basic-spelling-pizza",
+    "anchor": false,
+    "wordHe": "פיצה",
+    "prompt": "איך כותבים באנגלית את המילה „פיצה”?",
+    "options": ["pizza", "piza", "pitza", "pezza"],
+    "answer": 0
   },
   {
-    "id": "basic-here-hear-02",
-    "family": "here-hear",
-    "prompt": "I can ___ the music.",
-    "options": ["here", "hair", "hear", "her"],
-    "answer": 2
+    "id": "basic-spelling-chocolate",
+    "anchor": false,
+    "wordHe": "שוקולד",
+    "prompt": "איך כותבים באנגלית את המילה „שוקולד”?",
+    "options": ["chocolate", "choclate", "chocolat", "shocolate"],
+    "answer": 0
   },
   {
-    "id": "basic-here-hear-03",
-    "family": "here-hear",
-    "prompt": "Did you ___ that noise?",
-    "options": ["hair", "hear", "her", "here"],
-    "answer": 1
+    "id": "basic-spelling-radio",
+    "anchor": false,
+    "wordHe": "רדיו",
+    "prompt": "איך כותבים באנגלית את המילה „רדיו”?",
+    "options": ["radio", "redio", "radiyo", "raddio"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-banana",
+    "anchor": false,
+    "wordHe": "בננה",
+    "prompt": "איך כותבים באנגלית את המילה „בננה”?",
+    "options": ["banana", "bannana", "bananna", "benana"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-music",
+    "anchor": false,
+    "wordHe": "מוזיקה",
+    "prompt": "איך כותבים באנגלית את המילה „מוזיקה”?",
+    "options": ["music", "muzic", "musick", "musik"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-university",
+    "anchor": false,
+    "wordHe": "אוניברסיטה",
+    "prompt": "איך כותבים באנגלית את המילה „אוניברסיטה”?",
+    "options": ["university", "univercity", "universety", "universty"],
+    "answer": 0
   }
 ]

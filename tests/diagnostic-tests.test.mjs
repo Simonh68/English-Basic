@@ -43,15 +43,19 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
     assert.match(html, /name="robots" content="noindex,nofollow"/);
     assert.match(html, /analytics\.js/);
   }
-  assert.match(landing, /<h1 id="pageTitle">מבחן<\/h1>/);
-  assert.match(landing, /נתחיל באוצר מילים, ואחר כך נעבור להבנת הנקרא/);
+  assert.match(landing, /<h1 id="pageTitle">בדיקת רמה אישית<\/h1>/);
+  assert.match(landing, /נתחיל בקריאה בסיסית, נמשיך לאוצר מילים/);
   assert.match(landing, /id="startTest"/);
   assert.match(landing, /הכלי מיועד לתרגול ולהערכה ראשונית באתר בלבד/);
-  assert.match(reading, /התוצאה אינה מחליפה מבחן או שיקול דעת של מורה מוסמך/);
+  assert.match(reading, /התוצאה אינה מחליפה הערכה או שיקול דעת של מורה מוסמך/);
+  assert.match(vocabulary, /id="foundationStopView"/);
+  assert.match(vocabulary, /word-forge\/\?level=1&amp;lesson=1/);
+  assert.match(vocabulary, /id="transitionTitle">אוצר מילים/);
   assert.doesNotMatch(landing, /באיזו כיתה|בחרו כיתה|gradeSelect|gradeError/);
   assert.doesNotMatch(landing, /Core I|Core II|Band III|A · C · E · G|גרסת המאגר|כיסוי/);
   assert.doesNotMatch(vocabulary, /המשימות המומלצות שלך|פרופיל אוצר המילים|Core I|Core II|Band III/);
   assert.match(reading, /המשימות המומלצות שלך/);
+  assert.doesNotMatch(`${landing}\n${vocabulary}\n${reading}`, />[^<]*(?:מבחן|שאלון בגרות)[^<]*</);
 });
 
 test('the biweekly manifest implements the shortest reliable question policy', async () => {
@@ -63,27 +67,29 @@ test('the biweekly manifest implements the shortest reliable question policy', a
 
   assert.match(manifest.version, /^\d{4}\.\d{2}-[A-Z]$/);
   assert.equal((review - released) / 86400000, 14);
-  assert.equal(manifest.vocabulary.foundationalQuestions, 3);
+  assert.equal(manifest.vocabulary.foundationalQuestions, 6);
   assert.equal(manifest.vocabulary.questionsPerBand, 4);
-  assert.equal(vocabularyQuestions, 15);
+  assert.equal(vocabularyQuestions, 18);
   assert.equal(manifest.reading.questionsPerPassage, 4);
-  assert.equal(vocabularyQuestions + (2 * manifest.reading.questionsPerPassage), 23);
-  assert.equal(vocabularyQuestions + (3 * manifest.reading.questionsPerPassage), 27);
+  assert.equal(vocabularyQuestions + manifest.reading.questionsPerPassage, 22);
+  assert.equal(vocabularyQuestions + (3 * manifest.reading.questionsPerPassage), 30);
   assert.deepEqual(manifest.reading.levels, ['A', 'C', 'E', 'G']);
 });
 
-test('the foundational gate uses three randomized reading distinctions', async () => {
+test('the basic gate uses four required familiar spellings and rotating cognates', async () => {
   const bank = await json('diagnostic/data/foundational-reading.json');
-  const families = [...new Set(bank.map(item => item.family))];
+  const anchors = bank.filter(item => item.anchor);
 
-  assert.equal(bank.length, 9);
-  assert.deepEqual(families, ['know-no', 'thought-taught', 'here-hear']);
-  for (const family of families) assert.equal(bank.filter(item => item.family === family).length, 3);
+  assert.equal(bank.length, 12);
+  assert.equal(anchors.length, 4);
+  assert.deepEqual(anchors.map(item => item.wordHe), ['ישראל', 'דוקטור', 'אמבולנס', 'גוגל']);
+  assert.equal(bank.filter(item => !item.anchor).length, 8);
   for (const item of bank) {
-    assert.match(item.prompt, /___/);
+    assert.match(item.prompt, /^איך כותבים באנגלית את המילה „.+”\?$/);
     assert.equal(item.options.length, 4);
     assert.equal(new Set(item.options).size, 4);
     assert.ok(Number.isInteger(item.answer) && item.answer >= 0 && item.answer <= 3);
+    assert.equal(item.answer, 0);
   }
 });
 
@@ -217,47 +223,71 @@ test('simple questions use a hard thirty seconds and reading questions use a har
   assert.match(reading, /scoreTimedAnswer\(correct, elapsedMs, api\.READING_TARGET_MS\)/);
 });
 
-test('the final placement weights the lower level 70 percent and the higher level 30 percent', async () => {
+test('vocabulary gates the reading ladder and produces a terminal A C E or G level', async () => {
   const api = await loadCommonApi();
-  assert.deepEqual(
-    { ...api.combineLevels('A', 'G', true) },
-    { level: 'C', weightedScore: 48 }
-  );
-  assert.deepEqual(
-    { ...api.combineLevels('C', 'E', true) },
-    { level: 'C', weightedScore: 58 }
-  );
-  assert.deepEqual(
-    { ...api.combineLevels('G', 'G', true) },
-    { level: 'G', weightedScore: 100 }
-  );
-  assert.equal(api.combineLevels('G', 'G', false).level, 'A');
+  const attempt = (level, passed) => ({
+    level,
+    correct: passed ? 3 : 1,
+    ratio: passed ? 0.75 : 0.25
+  });
+  const step = (profile, attempts) => ({ ...api.nextReadingStep(profile, attempts) });
+
+  assert.deepEqual(step('below-core1', []), { action: 'start', level: 'A' });
+  assert.deepEqual(step('below-core1', [attempt('A', true)]), { action: 'finish', level: 'A' });
+
+  assert.deepEqual(step('core1', []), { action: 'start', level: 'A' });
+  assert.deepEqual(step('core1', [attempt('A', true)]), { action: 'start', level: 'C' });
+  assert.deepEqual(step('core1', [attempt('A', true), attempt('C', true)]), { action: 'finish', level: 'C' });
+  assert.deepEqual(step('core1', [attempt('A', true), attempt('C', false)]), { action: 'finish', level: 'A' });
+
+  assert.deepEqual(step('core2', []), { action: 'start', level: 'C' });
+  assert.deepEqual(step('core2', [attempt('C', true)]), { action: 'finish', level: 'C' });
+  assert.deepEqual(step('core2', [attempt('C', false)]), { action: 'start', level: 'A' });
+  assert.deepEqual(step('core2', [attempt('C', false), attempt('A', true)]), { action: 'finish', level: 'A' });
+
+  assert.deepEqual(step('band3', []), { action: 'start', level: 'E' });
+  assert.deepEqual(step('band3', [attempt('E', true)]), { action: 'start', level: 'G' });
+  assert.deepEqual(step('band3', [attempt('E', true), attempt('G', true)]), { action: 'finish', level: 'G' });
+  assert.deepEqual(step('band3', [attempt('E', true), attempt('G', false)]), { action: 'finish', level: 'E' });
+  assert.deepEqual(step('band3', [attempt('E', false)]), { action: 'start', level: 'C' });
+  assert.deepEqual(step('band3', [attempt('E', false), attempt('C', true)]), { action: 'finish', level: 'C' });
+  assert.deepEqual(step('band3', [attempt('E', false), attempt('C', false)]), { action: 'start', level: 'A' });
+  assert.deepEqual(step('band3', [attempt('E', false), attempt('C', false), attempt('A', true)]), { action: 'finish', level: 'A' });
 });
 
 test('vocabulary coverage selects the correlated reading start level', async () => {
   const api = await loadCommonApi();
   const score = (correct, ratio) => ({ correct, ratio });
 
-  assert.equal(api.vocabularyLevel({
+  const belowCoreOne = {
     'Core I': score(1, 0.5),
     'Core II': score(4, 1),
     'Band III': score(4, 1)
-  }), 'A');
-  assert.equal(api.vocabularyLevel({
+  };
+  const coreOne = {
     'Core I': score(4, 1),
     'Core II': score(1, 0.5),
     'Band III': score(4, 1)
-  }), 'A');
-  assert.equal(api.vocabularyLevel({
+  };
+  const coreTwo = {
     'Core I': score(4, 1),
     'Core II': score(4, 1),
     'Band III': score(2, 0.6)
-  }), 'C');
-  assert.equal(api.vocabularyLevel({
+  };
+  const bandThree = {
     'Core I': score(4, 1),
     'Core II': score(4, 1),
     'Band III': score(3, 0.75)
-  }), 'E');
+  };
+
+  assert.equal(api.vocabularyProfile(belowCoreOne), 'below-core1');
+  assert.equal(api.vocabularyLevel(belowCoreOne), 'A');
+  assert.equal(api.vocabularyProfile(coreOne), 'core1');
+  assert.equal(api.vocabularyLevel(coreOne), 'A');
+  assert.equal(api.vocabularyProfile(coreTwo), 'core2');
+  assert.equal(api.vocabularyLevel(coreTwo), 'C');
+  assert.equal(api.vocabularyProfile(bandThree), 'band3');
+  assert.equal(api.vocabularyLevel(bandThree), 'E');
 });
 
 test('recommendations resume the next saved vocabulary group and link directly to one story', async () => {
@@ -284,7 +314,7 @@ test('recommendations resume the next saved vocabulary group and link directly t
   assert.match(bandThree[1].href, /reader\.html\?id=l3-a1-final-place$/);
 });
 
-test('scripts compile, avoid interim feedback, and continue automatically from vocabulary to reading', async () => {
+test('scripts compile, stop weak basic readers, and use staged transitions', async () => {
   const files = ['diagnostic/common.js', 'diagnostic/landing.js', 'diagnostic/vocabulary.js', 'diagnostic/reading.js'];
   for (const file of files) {
     const source = await read(file);
@@ -299,19 +329,27 @@ test('scripts compile, avoid interim feedback, and continue automatically from v
     read('diagnostic/reading.html')
   ]);
   assert.match(common, /function selectFresh/);
+  assert.match(common, /function vocabularyProfile/);
+  assert.match(common, /function nextReadingStep/);
   assert.doesNotMatch(landing, /getGrade|setGrade|grade=/);
   assert.match(vocabulary, /selectFresh\(/);
+  assert.match(vocabulary, /filter\(item => item\.anchor\)/);
+  assert.match(vocabulary, /correct >= 5/);
+  assert.match(vocabulary, /show\('foundationStop'\)/);
+  assert.match(vocabulary, /showTransition\('אוצר מילים'/);
+  assert.match(vocabulary, /showTransition\('הבנת הנקרא'/);
   assert.match(vocabulary, /location\.href = `reading\.html/);
   assert.doesNotMatch(vocabulary, /getGrade|grade=/);
   assert.match(reading, /active-vocabulary/);
-  assert.match(reading, /api\.vocabularyLevel\(state\.vocabularyResult\.summary \|\| \{\}\)/);
+  assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, state\.attempts\)/);
+  assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, \[\]\)/);
   assert.match(reading, /startPassage\(state\.startLevel\)/);
+  assert.match(reading, /רמת האנגלית שלך/);
   assert.match(reading, /question\.scope === 'whole-text'/);
   assert.match(reading, /api\.visibleReadingParagraphs\(state\.paragraphs, state\.questionIndex, question\.scope\)/);
   assert.match(reading, /replaceChildren\(\.\.\.paragraphNodes\)/);
   assert.doesNotMatch(reading, /state\.paragraphs\.slice\(0, state\.questionIndex \+ 1\)/);
-  assert.match(reading, /attempt\.correct >= 3 && attempt\.ratio >= 0\.68/);
   assert.doesNotMatch(reading, /shuffle\(selected\.questions\)/);
-  assert.doesNotMatch(`${common}\n${reading}\n${readingHtml}`, /יחידות|placementCopy|classComparison/);
+  assert.doesNotMatch(`${common}\n${reading}\n${readingHtml}`, /יחידות|placementCopy|classComparison|השאלון המתאים|combineLevels/);
   assert.doesNotMatch(vocabularyHtml, /נכון|שגוי|Correct|Incorrect|הסבר/);
 });

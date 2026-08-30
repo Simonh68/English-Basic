@@ -1,5 +1,5 @@
 {
-  "version": "2026.08-H",
+  "version": "2026.08-I",
   "released": "2026-08-30",
   "releasedHe": "30.8.2026",
   "nextReview": "2026-09-13",
@@ -7,7 +7,7 @@
     "file": "data/vocabulary-bank.json",
     "definitionFile": "data/band3-definitions.json",
     "foundationalFile": "data/foundational-reading.json",
-    "foundationalQuestions": 3,
+    "foundationalQuestions": 6,
     "bands": ["Core I", "Core II", "Band III"],
     "questionsPerBand": 4
   },

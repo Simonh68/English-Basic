@@ -6,7 +6,6 @@
   const READING_TARGET_MS = 300000;
   const BASE_POINTS = 4;
   const letters = ['A', 'B', 'C', 'D'];
-  const levelValues = { A: 25, C: 50, E: 75, G: 100 };
   const CORE_I_PROGRESS_KEY = 'efn.band2.core1.progress.v1';
   const BAND_II_BASE = 'https://simonh68.github.io/E-Vocab-Band-II/';
   const BAND_III_BASE = 'https://simonh68.github.io/module-e-vocab/';
@@ -158,28 +157,58 @@
     return typeof paragraph === 'string' ? [paragraph] : [];
   }
 
-  function vocabularyLevel(summary) {
+  function vocabularyProfile(summary) {
     const first = summary['Core I'];
     const second = summary['Core II'];
     const third = summary['Band III'];
-    if (!first || first.correct < 2 || first.ratio < 0.55) return 'A';
-    if (!second || second.correct < 2 || second.ratio < 0.60) return 'A';
-    if (!third || third.correct < 3 || third.ratio < 0.65) return 'C';
-    return 'E';
+    if (!first || first.correct < 2 || first.ratio < 0.55) return 'below-core1';
+    if (!second || second.correct < 2 || second.ratio < 0.60) return 'core1';
+    if (!third || third.correct < 3 || third.ratio < 0.65) return 'core2';
+    return 'band3';
   }
 
-  function combineLevels(firstLevel, secondLevel, foundationalPassed) {
-    const first = levelValues[firstLevel] || levelValues.A;
-    const second = levelValues[secondLevel] || levelValues.A;
-    const lower = Math.min(first, second);
-    const higher = Math.max(first, second);
-    let weightedScore = Math.round((lower * 0.70) + (higher * 0.30));
-    let level = weightedScore < 38 ? 'A' : weightedScore < 63 ? 'C' : weightedScore < 88 ? 'E' : 'G';
-    if (!foundationalPassed) {
-      weightedScore = Math.min(weightedScore, levelValues.A);
-      level = 'A';
+  function vocabularyLevel(summary) {
+    const profile = vocabularyProfile(summary);
+    if (profile === 'band3') return 'E';
+    if (profile === 'core2') return 'C';
+    return 'A';
+  }
+
+  function nextReadingStep(profile, attempts = []) {
+    const list = Array.isArray(attempts) ? attempts : [];
+    const last = list.at(-1);
+    const passed = attempt => Boolean(attempt && attempt.correct >= 3 && attempt.ratio >= 0.68);
+
+    if (!last) {
+      if (profile === 'band3') return { action: 'start', level: 'E' };
+      if (profile === 'core2') return { action: 'start', level: 'C' };
+      return { action: 'start', level: 'A' };
     }
-    return { level, weightedScore };
+
+    if (profile === 'below-core1') return { action: 'finish', level: 'A' };
+
+    if (profile === 'core1') {
+      if (last.level === 'A') return passed(last)
+        ? { action: 'start', level: 'C' }
+        : { action: 'finish', level: 'A' };
+      return { action: 'finish', level: passed(last) ? 'C' : 'A' };
+    }
+
+    if (profile === 'core2') {
+      if (last.level === 'C') return passed(last)
+        ? { action: 'finish', level: 'C' }
+        : { action: 'start', level: 'A' };
+      return { action: 'finish', level: 'A' };
+    }
+
+    if (last.level === 'E') return passed(last)
+      ? { action: 'start', level: 'G' }
+      : { action: 'start', level: 'C' };
+    if (last.level === 'G') return { action: 'finish', level: passed(last) ? 'G' : 'E' };
+    if (last.level === 'C') return passed(last)
+      ? { action: 'finish', level: 'C' }
+      : { action: 'start', level: 'A' };
+    return { action: 'finish', level: 'A' };
   }
 
   function recommendation(icon, title, detail, href) {
@@ -279,8 +308,9 @@
     scoreTimedAnswer,
     scoreRatio,
     visibleReadingParagraphs,
+    vocabularyProfile,
     vocabularyLevel,
-    combineLevels,
+    nextReadingStep,
     nextCoreIGroup,
     combinedRecommendations,
     renderRecommendations

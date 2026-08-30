@@ -4,9 +4,9 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 
 ## Fixed-level policy
 
-- The student sees one continuous flow: foundational reading, vocabulary, reading comprehension, and one final placement.
-- The test flow never exposes Core/Band coverage, intermediate levels, or item feedback. Direct group labels appear only in the final recommendations.
-- The opening asks for no class or unit-track information. The result names only the recommended Bagrut questionnaire.
+- The student sees a level-check flow: basic spelling/reading, vocabulary, reading comprehension, and one final A/C/E/G level.
+- The level check never exposes Core/Band coverage, intermediate levels, or item feedback. Direct group labels appear only in the final recommendations.
+- The opening asks for no class or unit-track information. The result never identifies the level as a Bagrut questionnaire.
 - Every vocabulary item keeps its source band: Core I, Core II, or Band III.
 - Core I and Core II use the reviewed Hebrew meanings. Band III uses the exact English `support_text` definition from the canonical database.
 - Every reading passage and question keeps its reviewed level: A, C, E, or G.
@@ -14,15 +14,16 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 
 ## Short form and scoring
 
-- Foundational reading: 3 items, one each from `know/no`, `thought/taught`, and `here/hear` families.
+- Basic spelling/reading: 6 items. Israel, doctor, ambulance, and Google always appear; two additional familiar cross-language words rotate from the bank.
 - Vocabulary: 4 items from each fixed band, 12 items total.
-- Reading: two passages for most students and three only when the E/G boundary must be checked.
-- Total length: 23 questions normally, 27 questions at the advanced boundary.
+- A student must answer at least 5 of 6 basic items correctly. A lower result stops the check immediately and links directly to Word Forge.
+- Reading: one passage at each level needed by the vocabulary-guided route, with up to three passages total.
+- Total length after passing the first stage: 22–30 questions, depending on the reading route.
 - Vocabulary and foundational-reading questions have a hard 30-second limit. Reading-comprehension questions have a hard 5-minute limit.
-- When either limit expires, the unanswered question receives 0 and the test advances automatically. Each correct answer is worth 4 points inside its limit and 5 points in the first half. Incorrect, skipped, or timed-out answers receive 0.
-- The reading test starts from the vocabulary correlation: Band I or Band II Core I starts at A; Band II Core II starts at C; Band III starts at E.
+- When either limit expires, the unanswered question receives 0 and the level check advances automatically. Each correct answer is worth 4 points inside its limit and 5 points in the first half. Incorrect, skipped, or timed-out answers receive 0.
+- The reading route starts from vocabulary coverage: below Core I starts and ends at A; Core I starts at A and may advance to C; Core II starts at C but never advances to E; Band III starts at E and may move to G, C, or A according to reading performance.
 - Every reading passage contains exactly three staged paragraphs. Questions 1–3 each show only their own paragraph; Question 4 shows all three paragraphs and asks about the whole text.
-- Final placement gives 70% weight to the lower demonstrated skill level and 30% to the higher level. A failed foundational gate forces the foundational-reading recommendation.
+- The final A/C/E/G level is the terminal level of that vocabulary-gated reading route.
 - Recommendations link directly to the next Core I group saved on the device when that progress exists, otherwise to the first relevant vocabulary group. A reading-foundations game is added for the lowest profile, and every result includes one direct story link.
 
 ## Biweekly release

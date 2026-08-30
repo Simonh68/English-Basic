@@ -17,6 +17,7 @@
     passageAnswers: [],
     attempts: [],
     usedDomains: new Set(),
+    vocabularyProfile: null,
     startLevel: null,
     readingLevel: null,
     clock: null,
@@ -141,55 +142,15 @@
   }
 
   function routeNext() {
-    const last = state.attempts.at(-1);
-    const first = state.attempts[0];
-    const passed = attempt => attempt.correct >= 3 && attempt.ratio >= 0.68;
-    const clearlyFailed = attempt => attempt.correct <= 1 || attempt.ratio < 0.45;
-
-    if (state.attempts.length === 1 && first.level === 'A') {
-      return passed(first) ? startPassage('C') : finishReading('A');
-    }
-    if (state.attempts.length === 1 && last.level === 'C') {
-      if (clearlyFailed(last)) return startPassage('A');
-      if (last.correct === 2 || last.ratio < 0.68) return startPassage('C');
-      return startPassage('E');
-    }
-    if (state.attempts.length === 1 && first.level === 'E') {
-      if (passed(first)) return startPassage('G');
-      if (clearlyFailed(first)) return startPassage('C');
-      return startPassage('E');
-    }
-    if (last.level === 'A') return finishReading('A');
-    if (last.level === 'C') {
-      if (first.level === 'A') return finishReading(passed(last) ? 'C' : 'A');
-      if (first.level === 'E') return finishReading(passed(last) ? 'C' : 'A');
-      const attempts = state.attempts.filter(item => item.level === 'C');
-      const answers = attempts.flatMap(item => item.answers);
-      const correct = answers.filter(answer => answer.correct).length;
-      return finishReading(correct >= 5 && api.scoreRatio(answers) >= 0.62 ? 'C' : 'A');
-    }
-    if (last.level === 'E') {
-      if (first.level === 'E') return finishReading(passed(last) ? 'E' : 'C');
-      return passed(last) ? startPassage('G') : finishReading('C');
-    }
-    if (last.level === 'G') {
-      return finishReading(passed(last) ? 'G' : 'E');
-    }
-    return finishReading('A');
+    const step = api.nextReadingStep(state.vocabularyProfile, state.attempts);
+    return step.action === 'start' ? startPassage(step.level) : finishReading(step.level);
   }
 
   function showResults(existingResult = null) {
     const foundationalPassed = state.vocabularyResult.foundational.passed;
-    const combined = existingResult?.combined || api.combineLevels(
-      state.vocabularyResult.level,
-      state.readingLevel,
-      foundationalPassed
-    );
-    const level = combined.level;
-    const title = `השאלון המתאים לך: ${level}`;
-    const detail = foundationalPassed
-      ? 'התוצאה משלבת את אוצר המילים ואת הבנת הנקרא.'
-      : 'מומלץ לחזק במקביל את יסודות הקריאה ואת אוצר המילים הבסיסי.';
+    const level = existingResult?.level || existingResult?.combined?.level || state.readingLevel || 'A';
+    const title = `רמת האנגלית שלך: ${level}`;
+    const detail = 'התוצאה מבוססת על אוצר המילים ועל הבנת הנקרא שהפגנת בבדיקה.';
 
     document.querySelector('#readingResult').innerHTML = `<div class="reading-level">
       <span class="level-badge" aria-hidden="true">${level}</span>
@@ -203,10 +164,11 @@
     const result = existingResult || {
       sessionId: state.sessionId,
       version: state.manifest.version,
+      level,
       vocabularyLevel: state.vocabularyResult.level,
+      vocabularyProfile: state.vocabularyProfile,
       readingLevel: state.readingLevel,
       foundational: state.vocabularyResult.foundational,
-      combined,
       readingAttempts: state.attempts,
       completedAt: new Date().toISOString()
     };
@@ -225,6 +187,12 @@
       location.replace('index.html');
       return;
     }
+    if (state.vocabularyResult.foundational?.passed !== true) {
+      location.replace('index.html');
+      return;
+    }
+    state.vocabularyProfile = state.vocabularyResult.profile
+      || api.vocabularyProfile(state.vocabularyResult.summary || {});
 
     const priorResult = api.readStorage('last-combined-result', null);
     if (priorResult?.sessionId === state.sessionId) {
@@ -242,11 +210,12 @@
       }));
       state.banks = Object.fromEntries(entries);
       document.querySelector('#skipButton').addEventListener('click', () => submit(-1, true));
-      state.startLevel = api.vocabularyLevel(state.vocabularyResult.summary || {});
-      state.vocabularyResult.level = state.startLevel;
+      const firstStep = api.nextReadingStep(state.vocabularyProfile, []);
+      state.startLevel = firstStep.level;
+      state.vocabularyResult.level = api.vocabularyLevel(state.vocabularyResult.summary || {});
       startPassage(state.startLevel);
     } catch {
-      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את המבחן.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
+      views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את בדיקת הרמה האישית.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
     }
   }
 
