@@ -4,39 +4,63 @@
     "level": "G",
     "domain": "algorithmic public services",
     "title": "Predicting What a Library Will Need",
-    "text": "The Metro Library Network owns many copies of popular books, yet readers often face long waiting lists at one branch while copies remain untouched at another. To address this imbalance, the network tested an algorithm that predicts demand and recommends where new and existing copies should be placed. The system considers recent borrowing, reservations, school reading lists, and seasonal patterns.\n\nDuring the six-month pilot, average waiting time fell. Nevertheless, librarians noticed a less obvious effect. Branches with a history of high borrowing received more recommended titles, while small branches were offered an increasingly narrow selection. This did not occur because the algorithm was designed to punish them. Rather, past borrowing was being treated as evidence of future interest. A limited collection could therefore produce limited borrowing, which then justified keeping the collection limited—a feedback loop hidden inside apparently neutral data.\n\nThe network did not abandon the system. Instead, it changed both the data and the goal. Community requests now count even when a requested book was never previously available. Each branch also receives an “exploration budget” for titles that the algorithm predicts will have low demand. Librarians may use this budget to introduce unfamiliar authors, minority languages, or subjects that residents have not yet had an opportunity to discover.\n\nCritics still question whether a prediction system should influence a public institution’s cultural choices. Supporters reply that librarians have always used borrowing patterns when ordering books; the algorithm merely makes the process faster and easier to examine. The pilot suggests that both claims contain some truth. Data can improve access to known demand, but it cannot define the full purpose of a library. The network will continue using the system only if its recommendations remain visible to staff and open to human revision.",
+    "text": "The Metro Library Network owns many copies of popular books, yet readers often face long waiting lists at one branch while copies remain untouched at another. To address this imbalance, the network tested an algorithm that predicts demand and recommends where new and existing copies should be placed. The system considers recent borrowing, reservations, school reading lists, and seasonal patterns. During the six-month pilot, average waiting time fell. Nevertheless, librarians noticed a less obvious effect. Branches with a history of high borrowing received more recommended titles, while small branches were offered an increasingly narrow selection. This did not occur because the algorithm was designed to punish them. Rather, past borrowing was being treated as evidence of future interest. A limited collection could therefore produce limited borrowing, which then justified keeping the collection limited—a feedback loop hidden inside apparently neutral data.\n\nThe network did not abandon the system. Instead, it changed both the data and the goal. Community requests now count even when a requested book was never previously available. Each branch also receives an “exploration budget” for titles that the algorithm predicts will have low demand. Librarians may use this budget to introduce unfamiliar authors, minority languages, or subjects that residents have not yet had an opportunity to discover.\n\nCritics still question whether a prediction system should influence a public institution’s cultural choices. Supporters reply that librarians have always used borrowing patterns when ordering books; the algorithm merely makes the process faster and easier to examine. The pilot suggests that both claims contain some truth. Data can improve access to known demand, but it cannot define the full purpose of a library. The network will continue using the system only if its recommendations remain visible to staff and open to human revision.",
     "questions": [
-      {
-        "id": "G-01-Q1",
-        "group": "A",
-        "trap": "Topic vs. Detail",
-        "question": "What central tension does the text examine?",
-        "options": ["The conflict between reducing waiting times and preserving broad cultural access", "The technical difficulty of moving books between branches", "The difference between school lists and seasonal reading", "The refusal of librarians to examine borrowing data"],
-        "answer": 0
-      },
-      {
-        "id": "G-01-Q2",
-        "group": "B",
-        "trap": "Absolute Language",
-        "question": "Which statement best reflects the author’s view of the algorithm?",
-        "options": ["It is completely neutral because it uses numerical data", "It must be rejected whenever a prediction is inaccurate", "It can be useful if its limits are visible and people can revise its recommendations", "It will inevitably eliminate minority-language books"],
-        "answer": 2
-      },
       {
         "id": "G-01-Q3",
         "group": "C",
         "trap": "Cause–Effect Scope",
         "question": "How could a small branch’s limited collection reinforce the algorithm’s prediction?",
-        "options": ["Fewer available choices could produce lower borrowing, which would be read as low demand", "Residents would reserve every unfamiliar title", "The exploration budget would automatically become larger", "School reading lists would stop changing with the seasons"],
-        "answer": 0
+        "options": [
+          "Fewer available choices could produce lower borrowing, which would be read as low demand",
+          "Residents would reserve every unfamiliar title",
+          "The exploration budget would automatically become larger",
+          "School reading lists would stop changing with the seasons"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "G-01-Q4",
         "group": "D",
         "trap": "Negative Question",
         "question": "Which measure was NOT introduced in response to the pilot’s weakness?",
-        "options": ["Counting community requests for previously unavailable books", "Giving branches money to test unfamiliar titles", "Allowing librarians to revise recommendations", "Removing all borrowing history from the system"],
-        "answer": 3
+        "options": [
+          "Counting community requests for previously unavailable books",
+          "Giving branches money to test unfamiliar titles",
+          "Allowing librarians to revise recommendations",
+          "Removing all borrowing history from the system"
+        ],
+        "answer": 3,
+        "scope": "paragraph"
+      },
+      {
+        "id": "G-01-Q2",
+        "group": "B",
+        "trap": "Absolute Language",
+        "question": "Which statement best reflects the author’s view of the algorithm?",
+        "options": [
+          "It is completely neutral because it uses numerical data",
+          "It must be rejected whenever a prediction is inaccurate",
+          "It can be useful if its limits are visible and people can revise its recommendations",
+          "It will inevitably eliminate minority-language books"
+        ],
+        "answer": 2,
+        "scope": "paragraph"
+      },
+      {
+        "id": "G-01-Q1",
+        "group": "A",
+        "trap": "Topic vs. Detail",
+        "question": "What central tension does the text examine?",
+        "options": [
+          "The conflict between reducing waiting times and preserving broad cultural access",
+          "The technical difficulty of moving books between branches",
+          "The difference between school lists and seasonal reading",
+          "The refusal of librarians to examine borrowing data"
+        ],
+        "answer": 0,
+        "scope": "whole-text"
       }
     ]
   },
@@ -45,39 +69,63 @@
     "level": "G",
     "domain": "language preservation technology",
     "title": "An Archive That Is Not Simply Open",
-    "text": "When speakers of the Nami language began building a digital archive, outside researchers assumed that the project’s success would be measured by how much material became publicly available. Community members defined success differently. They wanted young Nami speakers to hear older forms of the language, but some recordings contained ceremonial knowledge traditionally shared only in particular families or seasons. Making every file universally accessible would preserve the sound while violating the practices that gave it meaning.\n\nThe archive therefore uses several access levels. Public stories can be heard by anyone, teaching materials require a free community account, and restricted recordings can be opened only with permission from designated elders. Critics argue that such limits reduce the archive’s value to scholarship. Its directors respond that preservation does not transfer ownership from speakers to researchers.\n\nTechnology created another complication. A speech-recognition model was trained to produce draft transcripts, greatly reducing the time required to process long interviews. Yet the model performed best with the dialect spoken by the largest group of contributors. Words from smaller dialects were often “corrected” into more common forms. If those drafts had been accepted without review, the tool would have made the archive more uniform precisely when the project aimed to record variation.\n\nTo address this problem, every transcript is now reviewed by speakers from the relevant dialect, and uncertain words remain visibly marked rather than silently replaced. The archive also records corrections so that the model may gradually improve. This arrangement is slower than automatic transcription, but speed is not the project’s only objective. The archive seeks to transmit language, authority, and difference together. Its designers see technology as useful when it supports those aims—and dangerous when efficiency quietly redefines them.",
+    "text": "When speakers of the Nami language began building a digital archive, outside researchers assumed that the project’s success would be measured by how much material became publicly available. Community members defined success differently. They wanted young Nami speakers to hear older forms of the language, but some recordings contained ceremonial knowledge traditionally shared only in particular families or seasons. Making every file universally accessible would preserve the sound while violating the practices that gave it meaning. The archive therefore uses several access levels. Public stories can be heard by anyone, teaching materials require a free community account, and restricted recordings can be opened only with permission from designated elders. Critics argue that such limits reduce the archive’s value to scholarship. Its directors respond that preservation does not transfer ownership from speakers to researchers.\n\nTechnology created another complication. A speech-recognition model was trained to produce draft transcripts, greatly reducing the time required to process long interviews. Yet the model performed best with the dialect spoken by the largest group of contributors. Words from smaller dialects were often “corrected” into more common forms. If those drafts had been accepted without review, the tool would have made the archive more uniform precisely when the project aimed to record variation.\n\nTo address this problem, every transcript is now reviewed by speakers from the relevant dialect, and uncertain words remain visibly marked rather than silently replaced. The archive also records corrections so that the model may gradually improve. This arrangement is slower than automatic transcription, but speed is not the project’s only objective. The archive seeks to transmit language, authority, and difference together. Its designers see technology as useful when it supports those aims—and dangerous when efficiency quietly redefines them.",
     "questions": [
       {
         "id": "G-02-Q1",
         "group": "A",
         "trap": "World Knowledge",
         "question": "Why does the archive restrict access to some recordings?",
-        "options": ["Because digital files cannot be copied safely", "Because cultural rules about who may hear material are part of what the archive aims to respect", "Because researchers refuse to create community accounts", "Because older speakers oppose all language teaching"],
-        "answer": 1
+        "options": [
+          "Because digital files cannot be copied safely",
+          "Because cultural rules about who may hear material are part of what the archive aims to respect",
+          "Because researchers refuse to create community accounts",
+          "Because older speakers oppose all language teaching"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "G-02-Q2",
         "group": "B",
         "trap": "Synonym Distortion",
         "question": "In this context, the model made the archive “more uniform” by —",
-        "options": ["preserving differences among dialects", "replacing less common forms with forms from the dominant dialect", "marking uncertain words for later review", "giving every recording the same access level"],
-        "answer": 1
-      },
-      {
-        "id": "G-02-Q3",
-        "group": "C",
-        "trap": "Wrong Question",
-        "question": "What does the discussion of transcription mainly demonstrate?",
-        "options": ["Automatic tools are unable to process any spoken language", "The fastest method necessarily produces the most complete archive", "A tool’s apparent efficiency can conflict with the project’s deeper purpose", "Smaller dialects should be removed from teaching materials"],
-        "answer": 2
+        "options": [
+          "preserving differences among dialects",
+          "replacing less common forms with forms from the dominant dialect",
+          "marking uncertain words for later review",
+          "giving every recording the same access level"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "G-02-Q4",
         "group": "D",
-        "trap": "Completion vs. Interpretation",
-        "question": "The statement that preservation does not transfer ownership implies that —",
-        "options": ["the community may continue to control how its recorded knowledge is used", "researchers become owners after creating transcripts", "public access is the only valid form of preservation", "language authority belongs to the speech-recognition model"],
-        "answer": 0
+        "trap": "Negative Question",
+        "question": "Which action is NOT part of the archive’s transcript-review process?",
+        "options": [
+          "Review by a speaker of the relevant dialect",
+          "Visible marking of uncertain words",
+          "Recording corrections to improve the model",
+          "Accepting the model’s draft without human review"
+        ],
+        "answer": 3,
+        "scope": "paragraph"
+      },
+      {
+        "id": "G-02-Q3",
+        "group": "C",
+        "trap": "Scope",
+        "question": "What central principle guides both the access rules and the transcription decisions?",
+        "options": [
+          "Efficiency should determine every archive policy",
+          "Technology and access should support the community’s authority, language, and differences",
+          "Researchers should own all material they preserve",
+          "Every recording and transcript should be made identical"
+        ],
+        "answer": 1,
+        "scope": "whole-text"
       }
     ]
   },
@@ -86,39 +134,63 @@
     "level": "G",
     "domain": "urban sound policy",
     "title": "Designing for Quiet Without Designing for Silence",
-    "text": "City noise policies traditionally focus on maximum volume: if a machine or event exceeds a certain number of decibels, officials may restrict it. This approach is easy to explain and measure, but it treats all sounds of equal volume as equally disturbing. Residents do not always experience them that way. A predictable train passing at the same time each day may be less disruptive than a quieter but irregular mechanical hum at night. Meaning also matters: music from a festival and an alarm can produce similar readings while creating very different reactions.\n\nThe city of Arden has begun testing “quiet zones” designed around experience rather than silence. Researchers first recorded sound levels, but they also asked residents when a place felt restful and which sounds made them leave. In one square, traffic was not the only concern. Metal chairs scraped sharply across stone, and delivery carts crossed the area at unpredictable times. Replacing chair feet and limiting deliveries during lunch produced a larger improvement in reported comfort than a costly traffic barrier had achieved.\n\nThe project has attracted criticism from two directions. Some business owners fear that subjective surveys will produce arbitrary restrictions. Some activists, meanwhile, argue that pleasant design changes could distract from serious sources of harmful noise in poorer neighborhoods. The researchers accept that experience-based measures cannot replace health limits. They propose using both: decibel rules to protect people from dangerous exposure, and local observation to improve places where sound is legal but unnecessarily stressful.\n\nThis combined approach makes policy more complicated. It also makes disagreement more visible, since a sound welcomed by one group may burden another. The researchers regard that visibility as useful rather than inconvenient. A quiet zone, in their view, is not a silent space created by experts. It is an ongoing agreement about which sounds a shared place should support, reduce, or move elsewhere.",
+    "text": "City noise policies traditionally focus on maximum volume: if a machine or event exceeds a certain number of decibels, officials may restrict it. This approach is easy to explain and measure, but it treats all sounds of equal volume as equally disturbing. Residents do not always experience them that way. A predictable train passing at the same time each day may be less disruptive than a quieter but irregular mechanical hum at night. Meaning also matters: music from a festival and an alarm can produce similar readings while creating very different reactions.\n\nThe city of Arden has begun testing “quiet zones” designed around experience rather than silence. Researchers first recorded sound levels, but they also asked residents when a place felt restful and which sounds made them leave. In one square, traffic was not the only concern. Metal chairs scraped sharply across stone, and delivery carts crossed the area at unpredictable times. Replacing chair feet and limiting deliveries during lunch produced a larger improvement in reported comfort than a costly traffic barrier had achieved.\n\nThe project has attracted criticism from two directions. Some business owners fear that subjective surveys will produce arbitrary restrictions. Some activists, meanwhile, argue that pleasant design changes could distract from serious sources of harmful noise in poorer neighborhoods. The researchers accept that experience-based measures cannot replace health limits. They propose using both: decibel rules to protect people from dangerous exposure, and local observation to improve places where sound is legal but unnecessarily stressful. This combined approach makes policy more complicated. It also makes disagreement more visible, since a sound welcomed by one group may burden another. The researchers regard that visibility as useful rather than inconvenient. A quiet zone, in their view, is not a silent space created by experts. It is an ongoing agreement about which sounds a shared place should support, reduce, or move elsewhere.",
     "questions": [
       {
         "id": "G-03-Q1",
         "group": "A",
         "trap": "Logical Guess",
         "question": "What limitation of decibel-only policies is emphasized in the text?",
-        "options": ["They cannot measure the volume of machines", "They ignore how timing, predictability, and meaning affect people’s experience", "They always favor festivals over alarms", "They apply only in wealthy neighborhoods"],
-        "answer": 1
-      },
-      {
-        "id": "G-03-Q2",
-        "group": "B",
-        "trap": "Small-Word Precision",
-        "question": "How do the researchers position experience-based measures in relation to health limits?",
-        "options": ["They should replace health limits entirely", "They are relevant only when sound is silent", "They should supplement, not replace, protections against dangerous exposure", "They make objective measurement unnecessary"],
-        "answer": 2
+        "options": [
+          "They cannot measure the volume of machines",
+          "They ignore how timing, predictability, and meaning affect people’s experience",
+          "They always favor festivals over alarms",
+          "They apply only in wealthy neighborhoods"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "G-03-Q3",
         "group": "C",
         "trap": "Scope",
         "question": "What does the example of the square show?",
-        "options": ["Relatively small design and scheduling changes can improve comfort significantly", "Traffic barriers never reduce noise", "Residents prefer delivery carts to metal chairs", "Subjective surveys always identify dangerous sound exposure"],
-        "answer": 0
+        "options": [
+          "Relatively small design and scheduling changes can improve comfort significantly",
+          "Traffic barriers never reduce noise",
+          "Residents prefer delivery carts to metal chairs",
+          "Subjective surveys always identify dangerous sound exposure"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
+      },
+      {
+        "id": "G-03-Q2",
+        "group": "B",
+        "trap": "Small-Word Precision",
+        "question": "How do the researchers position experience-based measures in relation to health limits?",
+        "options": [
+          "They should replace health limits entirely",
+          "They are relevant only when sound is silent",
+          "They should supplement, not replace, protections against dangerous exposure",
+          "They make objective measurement unnecessary"
+        ],
+        "answer": 2,
+        "scope": "paragraph"
       },
       {
         "id": "G-03-Q4",
         "group": "D",
         "trap": "Negative Question",
         "question": "Which claim is NOT consistent with the researchers’ approach?",
-        "options": ["Different groups may experience the same sound differently", "Legal sound can still create avoidable stress", "Disagreement should be hidden to simplify policy", "Quiet zones require continuing public choices"],
-        "answer": 2
+        "options": [
+          "Different groups may experience the same sound differently",
+          "Legal sound can still create avoidable stress",
+          "Disagreement should be hidden to simplify policy",
+          "Quiet zones require continuing public choices"
+        ],
+        "answer": 2,
+        "scope": "whole-text"
       }
     ]
   },
@@ -127,39 +199,63 @@
     "level": "G",
     "domain": "scientific replication",
     "title": "When Repeating an Experiment Changes the Question",
-    "text": "A research team reported that students solved puzzles more creatively after spending five minutes in a room containing green plants. The study attracted attention because the intervention was simple and inexpensive. When a second laboratory repeated the experiment, however, it found no measurable improvement. Public discussion quickly divided into two claims: either plants increased creativity, or the original study had been disproved.\n\nThe researchers themselves were more cautious. A failed replication can reveal a problem, but it does not automatically identify the problem. The first result may have been a statistical accident. The second team may also have changed an important condition without recognizing it. In the original study, students worked alone in a quiet room. In the replication, several students entered together and waited while others completed the task. The plants were the same, but the social setting was not.\n\nA third project was therefore organized across twelve laboratories. Before collecting data, the teams agreed on the puzzle instructions, room arrangement, number of participants, and method of analysis. They also registered their predictions publicly, reducing the temptation to select only favorable results afterward. Half the laboratories tested students alone, and half used small groups.\n\nThe larger project found no reliable benefit from plants in either setting. That conclusion weakened the original claim, yet the process produced more than a simple rejection. It showed which details could be standardized, exposed uncertainty in the first two studies, and created a method that other researchers could examine. Scientific reliability did not come from treating one experiment as a final verdict. It came from making disagreement testable. In this sense, replication is valuable not because it always repeats a result, but because it forces a claim to become more precise.",
+    "text": "A research team reported that students solved puzzles more creatively after spending five minutes in a room containing green plants. The study attracted attention because the intervention was simple and inexpensive. When a second laboratory repeated the experiment, however, it found no measurable improvement. Public discussion quickly divided into two claims: either plants increased creativity, or the original study had been disproved. The researchers themselves were more cautious. A failed replication can reveal a problem, but it does not automatically identify the problem. The first result may have been a statistical accident. The second team may also have changed an important condition without recognizing it. In the original study, students worked alone in a quiet room. In the replication, several students entered together and waited while others completed the task. The plants were the same, but the social setting was not.\n\nA third project was therefore organized across twelve laboratories. Before collecting data, the teams agreed on the puzzle instructions, room arrangement, number of participants, and method of analysis. They also registered their predictions publicly, reducing the temptation to select only favorable results afterward. Half the laboratories tested students alone, and half used small groups.\n\nThe larger project found no reliable benefit from plants in either setting. That conclusion weakened the original claim, yet the process produced more than a simple rejection. It showed which details could be standardized, exposed uncertainty in the first two studies, and created a method that other researchers could examine. Scientific reliability did not come from treating one experiment as a final verdict. It came from making disagreement testable. In this sense, replication is valuable not because it always repeats a result, but because it forces a claim to become more precise.",
     "questions": [
       {
         "id": "G-04-Q1",
         "group": "A",
         "trap": "Cause–Effect Confusion",
         "question": "Why did the second study not immediately disprove the first one?",
-        "options": ["The second laboratory used no puzzles", "The studies may have differed in relevant conditions, and either result could contain uncertainty", "Green plants cannot be studied scientifically", "A replication is valid only when it confirms the original result"],
-        "answer": 1
-      },
-      {
-        "id": "G-04-Q2",
-        "group": "B",
-        "trap": "Attractive/Emotional Word",
-        "question": "Which description best matches the role of the twelve-laboratory project?",
-        "options": ["A dramatic competition to prove one team dishonest", "A coordinated attempt to test a more precisely defined claim", "An inexpensive campaign to place plants in classrooms", "A guarantee that all future studies will reach the same conclusion"],
-        "answer": 1
+        "options": [
+          "The second laboratory used no puzzles",
+          "The studies may have differed in relevant conditions, and either result could contain uncertainty",
+          "Green plants cannot be studied scientifically",
+          "A replication is valid only when it confirms the original result"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "G-04-Q3",
         "group": "C",
         "trap": "Line/Reference",
         "question": "Why were predictions registered before data collection?",
-        "options": ["To prevent laboratories from changing the room arrangement", "To make it harder to emphasize only results that supported a preferred conclusion", "To allow students to practice the puzzles in advance", "To ensure that plants produced a positive effect"],
-        "answer": 1
+        "options": [
+          "To prevent laboratories from changing the room arrangement",
+          "To make it harder to emphasize only results that supported a preferred conclusion",
+          "To allow students to practice the puzzles in advance",
+          "To ensure that plants produced a positive effect"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
+      },
+      {
+        "id": "G-04-Q2",
+        "group": "B",
+        "trap": "Attractive/Emotional Word",
+        "question": "Which description best matches the larger project’s result?",
+        "options": [
+          "A dramatic proof that the original researchers were dishonest",
+          "No reliable benefit from plants, together with a clearer method for testing the claim",
+          "A guarantee that all future studies will agree",
+          "A positive effect that appeared only in group settings"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "G-04-Q4",
         "group": "D",
         "trap": "Completion vs. Interpretation",
         "question": "According to the final paragraph, replication strengthens science mainly by —",
-        "options": ["ensuring that an original result is always repeated", "eliminating the need for interpretation", "turning disagreement into clearer claims that can be tested", "proving that small studies have no value"],
-        "answer": 2
+        "options": [
+          "ensuring that an original result is always repeated",
+          "eliminating the need for interpretation",
+          "turning disagreement into clearer claims that can be tested",
+          "proving that small studies have no value"
+        ],
+        "answer": 2,
+        "scope": "whole-text"
       }
     ]
   }

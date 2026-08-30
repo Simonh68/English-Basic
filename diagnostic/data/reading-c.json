@@ -7,36 +7,60 @@
     "text": "On the first Friday of every month, the community center in Bellview becomes a repair café. Despite its name, it does not sell coffee or repair services. Residents bring broken lamps, toys, bicycles, and small household objects. Volunteers sit beside them and show them how to examine and repair each item.\n\nThe organizers began the café after noticing how many useful objects were being thrown away. They hoped to reduce waste, but another benefit soon appeared. People who had never met began sharing tools and advice. A retired electrician now teaches teenagers how to replace damaged wires safely, while a university student helps older residents fix simple computer problems.\n\nNot every object can be saved. If a repair would be dangerous or cost more than a replacement, volunteers explain this clearly. Even then, visitors often say the trip was worthwhile because they learned why the object failed. During its first year, the café examined 640 items and repaired almost three quarters of them. The organizers now plan to publish short repair guides based on the problems they see most often.",
     "questions": [
       {
-        "id": "C-01-Q1",
-        "group": "A",
-        "trap": "Topic vs. Detail",
-        "question": "What is the main idea of the text?",
-        "options": ["A community project helps people repair objects and share skills", "A café has found a new way to sell electrical tools", "Teenagers are better at repairs than older residents", "Most broken objects are too dangerous to repair"],
-        "answer": 0
+        "id": "C-01-Q4",
+        "group": "D",
+        "trap": "Negative Question",
+        "question": "Which service is NOT offered at the repair café?",
+        "options": [
+          "Help examining broken objects",
+          "Guidance from volunteers",
+          "Repairs completed beside residents",
+          "Paid repair services"
+        ],
+        "answer": 3,
+        "scope": "paragraph"
+      },
+      {
+        "id": "C-01-Q3",
+        "group": "C",
+        "trap": "Wrong Question",
+        "question": "What additional benefit appeared after the café began?",
+        "options": [
+          "Residents shared tools and advice",
+          "The center began selling computers",
+          "Volunteers stopped teaching teenagers",
+          "Useful objects were discarded more quickly"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "C-01-Q2",
         "group": "B",
         "trap": "Small-Word Precision",
         "question": "What does the text say about the 640 items examined in the first year?",
-        "options": ["Exactly three quarters were repaired", "Almost three quarters were repaired", "Fewer than one quarter could be repaired", "All but three were repaired"],
-        "answer": 1
+        "options": [
+          "Exactly three quarters were repaired",
+          "Almost three quarters were repaired",
+          "Fewer than one quarter could be repaired",
+          "All but three were repaired"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
-        "id": "C-01-Q3",
-        "group": "C",
-        "trap": "Wrong Question",
-        "question": "Why do some visitors value the trip even when their object cannot be repaired?",
-        "options": ["They receive a free replacement", "They can sell the broken object", "They learn why the object stopped working", "They are given coffee while they wait"],
-        "answer": 2
-      },
-      {
-        "id": "C-01-Q4",
-        "group": "D",
-        "trap": "Negative Question",
-        "question": "Which activity is NOT described in the text?",
-        "options": ["Teaching safe wire replacement", "Fixing simple computer problems", "Explaining when a repair is not sensible", "Collecting payment for repair services"],
-        "answer": 3
+        "id": "C-01-Q1",
+        "group": "A",
+        "trap": "Topic vs. Detail",
+        "question": "What is the main idea of the text?",
+        "options": [
+          "A community project helps people repair objects and share skills",
+          "A café has found a new way to sell electrical tools",
+          "Teenagers are better at repairs than older residents",
+          "Most broken objects are too dangerous to repair"
+        ],
+        "answer": 0,
+        "scope": "whole-text"
       }
     ]
   },
@@ -48,36 +72,60 @@
     "text": "North Valley School tested a later starting time for one term. Classes normally began at 7:45, but during the test they began at 8:25. The school did not shorten the day. It reduced the long morning break and moved two weekly activities to the afternoon.\n\nBefore the change, students completed a survey about sleep and concentration. Teachers also recorded late arrivals and unfinished first-period assignments. The same information was collected at the end of the term. Late arrivals fell by 28 percent, and more students said they felt alert during the first lesson. However, the number of unfinished assignments changed very little.\n\nThe later start also created difficulties. Some parents began work early and could not drive their children at the new time. Sports teams had less daylight for outdoor practice in winter. The principal therefore warned against describing the test as a complete success. She said the results were encouraging, but the school would need new transport and sports arrangements before making the change permanent. The school board will review these practical issues before voting in June.",
     "questions": [
       {
+        "id": "C-02-Q2",
+        "group": "B",
+        "trap": "Absolute Language",
+        "question": "What happened to the length of the school day during the test?",
+        "options": [
+          "It was not shortened",
+          "It was reduced by forty minutes",
+          "It ended at noon",
+          "It changed every week"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
+      },
+      {
         "id": "C-02-Q1",
         "group": "A",
         "trap": "Cause–Effect Confusion",
         "question": "Which result was connected with the later starting time?",
-        "options": ["The school day became shorter", "Late arrivals decreased", "All assignments were completed", "Winter provided more daylight"],
-        "answer": 1
-      },
-      {
-        "id": "C-02-Q2",
-        "group": "B",
-        "trap": "Absolute Language",
-        "question": "Why did the principal avoid calling the test a complete success?",
-        "options": ["No student felt more alert", "The school had already ended the test", "The change helped in some ways but caused practical problems", "Every parent opposed the new schedule"],
-        "answer": 2
+        "options": [
+          "The school day became shorter",
+          "Late arrivals decreased",
+          "All assignments were completed",
+          "Winter provided more daylight"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "C-02-Q3",
         "group": "C",
         "trap": "Time Reference",
         "question": "What will happen before the school board votes in June?",
-        "options": ["The board will examine transport and sports problems", "The school will cancel all afternoon activities", "Students will begin classes at 7:05", "Teachers will stop recording late arrivals"],
-        "answer": 0
+        "options": [
+          "The board will examine transport and sports problems",
+          "The school will cancel all afternoon activities",
+          "Students will begin classes at 7:05",
+          "Teachers will stop recording late arrivals"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "C-02-Q4",
         "group": "D",
         "trap": "Completion vs. Interpretation",
         "question": "The pilot suggests that a later start may improve —",
-        "options": ["the length of the school day", "morning alertness and punctuality", "the amount of winter sunlight", "parents’ working hours"],
-        "answer": 1
+        "options": [
+          "the length of the school day",
+          "morning alertness and punctuality",
+          "the amount of winter sunlight",
+          "parents’ working hours"
+        ],
+        "answer": 1,
+        "scope": "whole-text"
       }
     ]
   },
@@ -89,36 +137,60 @@
     "text": "While renovating the Grand Lake Hotel, workers found a wooden box under a staircase. It contained more than two hundred postcards written by hotel guests between 1924 and 1951. Most cards had never been mailed. Some described family holidays, while others contained short notes that guests apparently planned to finish later.\n\nThe hotel owner gave the box to the town archive. Rather than displaying only the most beautiful cards, the archive created a searchable online collection. Volunteers typed every message and added information about the places and events mentioned. They did not publish home addresses or other private details.\n\nThe cards have already helped researchers understand how tourism changed in the area. Early visitors often arrived by train and stayed for several weeks. Later cards mention private cars and much shorter trips. Yet the collection is also valuable for ordinary families. One resident recognized her grandmother’s handwriting and discovered a description of a childhood picnic that no one in the family remembered. The archive is now asking residents to help identify people who appear in the postcard photographs.",
     "questions": [
       {
-        "id": "C-03-Q1",
-        "group": "A",
-        "trap": "World Knowledge",
-        "question": "What can researchers learn from the postcards?",
-        "options": ["How travel habits in the area changed over time", "Why every guest forgot to mail a card", "How the hotel was built under the staircase", "Which modern cars are most popular"],
-        "answer": 0
+        "id": "C-03-Q3",
+        "group": "C",
+        "trap": "Scope",
+        "question": "What did workers find under the hotel staircase?",
+        "options": [
+          "A box containing more than two hundred old postcards",
+          "A collection of modern car advertisements",
+          "A list of every hotel employee",
+          "A finished book about local tourism"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "C-03-Q2",
         "group": "B",
         "trap": "Synonym Distortion",
         "question": "The online collection is “searchable.” This means users can —",
-        "options": ["change the original messages", "look for particular information in it", "send the postcards to their owners", "buy the most beautiful cards"],
-        "answer": 1
-      },
-      {
-        "id": "C-03-Q3",
-        "group": "C",
-        "trap": "Scope",
-        "question": "What information did the archive choose not to publish?",
-        "options": ["The years in which cards were written", "Descriptions of local events", "Private addresses and similar details", "Information about forms of transport"],
-        "answer": 2
+        "options": [
+          "change the original messages",
+          "look for particular information in it",
+          "send the postcards to their owners",
+          "buy the most beautiful cards"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "C-03-Q4",
         "group": "D",
         "trap": "Reference Ambiguity",
         "question": "In the final sentence, the word “people” refers to people —",
-        "options": ["who worked in the town archive", "who appear in postcard photographs", "who built the hotel staircase", "who own private cars today"],
-        "answer": 1
+        "options": [
+          "who worked in the town archive",
+          "who appear in postcard photographs",
+          "who built the hotel staircase",
+          "who own private cars today"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
+      },
+      {
+        "id": "C-03-Q1",
+        "group": "A",
+        "trap": "World Knowledge",
+        "question": "What can researchers learn from the postcards?",
+        "options": [
+          "How travel habits in the area changed over time",
+          "Why every guest forgot to mail a card",
+          "How the hotel was built under the staircase",
+          "Which modern cars are most popular"
+        ],
+        "answer": 0,
+        "scope": "whole-text"
       }
     ]
   },
@@ -130,36 +202,60 @@
     "text": "A group of college students has created a digital sound map of their city. Instead of showing streets and buildings, the map allows users to hear short recordings from different locations. These include the morning market, waves near the harbor, a basketball game, and bells from an old clock tower.\n\nThe students began the project because they believed that ordinary sounds are an important part of local history. A photograph can show what a place looked like, they explained, but it cannot record the voice of a street seller or the noise of a workshop. To make the collection useful, every recording includes its date, exact location, and a short description.\n\nResidents may send in recordings, but the students review them before publication. They reject files that include private conversations or were recorded in unsafe places. They also ask contributors not to remove all background noise, since that noise often gives the recording its meaning. The team hopes future residents will use the map to compare the city’s sound environment with the way it sounds today.",
     "questions": [
       {
+        "id": "C-04-Q4",
+        "group": "D",
+        "trap": "Grammar-Driven",
+        "question": "The words “These include” refer to examples of —",
+        "options": [
+          "city locations",
+          "short recordings on the map",
+          "streets and buildings",
+          "college students"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
+      },
+      {
         "id": "C-04-Q1",
         "group": "A",
         "trap": "Logical Guess",
         "question": "Why did the students create the sound map?",
-        "options": ["To preserve everyday sounds as part of local history", "To replace every photograph in the city archive", "To measure how loudly college students speak", "To advertise unsafe places"],
-        "answer": 0
-      },
-      {
-        "id": "C-04-Q2",
-        "group": "B",
-        "trap": "Attractive/Emotional Word",
-        "question": "Which recording is most likely to be accepted?",
-        "options": ["A dramatic private argument", "A clear recording of harbor sounds with its date and location", "An exciting file made in a dangerous area", "A silent file from which all background sound was removed"],
-        "answer": 1
+        "options": [
+          "To preserve everyday sounds as part of local history",
+          "To replace every photograph in the city archive",
+          "To measure how loudly college students speak",
+          "To advertise unsafe places"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "C-04-Q3",
         "group": "C",
         "trap": "Line/Reference",
         "question": "Why are contributors asked to keep some background noise?",
-        "options": ["It can help show what the place really sounded like", "It makes private conversations easier to hear", "It reduces the size of the digital file", "It hides the recording’s location"],
-        "answer": 0
+        "options": [
+          "It can help show what the place really sounded like",
+          "It makes private conversations easier to hear",
+          "It reduces the size of the digital file",
+          "It hides the recording’s location"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
-        "id": "C-04-Q4",
-        "group": "D",
-        "trap": "Grammar-Driven",
-        "question": "The words “that noise” refer to —",
-        "options": ["the sound of future residents", "the students’ review process", "background noise in a recording", "noise removed by contributors"],
-        "answer": 2
+        "id": "C-04-Q2",
+        "group": "B",
+        "trap": "Attractive/Emotional Word",
+        "question": "Which recording is most likely to be accepted?",
+        "options": [
+          "A dramatic private argument",
+          "A clear recording of harbor sounds with its date and location",
+          "An exciting file made in a dangerous area",
+          "A silent file from which all background sound was removed"
+        ],
+        "answer": 1,
+        "scope": "whole-text"
       }
     ]
   }

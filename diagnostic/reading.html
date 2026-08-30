@@ -8,7 +8,7 @@
   <title>מבחן אנגלית | English for Noar</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body class="home-page diagnostic-page exam-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -38,18 +38,13 @@
       <article class="reading-passage">
         <span class="passage-label">READING TEXT</span>
         <h1 id="passageTitle" lang="en" dir="ltr"></h1>
-        <div id="passageText" lang="en" dir="ltr"></div>
+        <div id="passageText" class="staged-passage" lang="en" dir="ltr" aria-live="polite"></div>
       </article>
 
-      <section class="reading-question passage-ready" id="passageReady">
-        <h2>קראו את הקטע. כשתהיו מוכנים, התחילו לענות.</h2>
-        <button class="primary-action" id="beginQuestions" type="button">לשאלות</button>
-      </section>
-
-      <section class="reading-question" id="readingQuestion" aria-labelledby="questionText" hidden>
+      <section class="reading-question" id="readingQuestion" aria-labelledby="questionText">
         <span class="prompt-label">QUESTION</span>
         <div class="question-timer compact-timer" id="questionTimer" aria-label="זמן לשאלה">
-          <div><strong id="timerValue">8.0</strong><small>seconds</small></div>
+          <div><strong id="timerValue">20.0</strong><small>seconds</small></div>
           <span class="timer-line" aria-hidden="true"><i id="timerTrack"></i></span>
         </div>
         <h2 id="questionText" lang="en" dir="ltr"></h2>
@@ -62,7 +57,6 @@
       <span class="result-kicker">המבחן הושלם</span>
       <h1>התוצאה שלך</h1>
       <div class="reading-result" id="readingResult"></div>
-      <div class="class-comparison" id="classComparison"></div>
       <section class="recommendations" aria-labelledby="recommendationTitle">
         <h2 id="recommendationTitle">המשימות המומלצות שלך</h2>
         <div id="recommendationList" class="recommendation-list"></div>
@@ -74,8 +68,8 @@
     </section>
   </main>
 
-  <script src="common.js?v=2"></script>
-  <script src="reading.js?v=2"></script>
+  <script src="common.js?v=4"></script>
+  <script src="reading.js?v=4"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
   <meta name="description" content="מבחן קצר לאוצר מילים ולהבנת הנקרא.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=5">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body class="home-page diagnostic-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -33,24 +33,8 @@
       </div>
     </section>
 
-    <section class="grade-panel single-start-panel" aria-labelledby="gradeTitle">
-      <div>
-        <h2 id="gradeTitle">באיזו כיתה אתם?</h2>
-      </div>
-      <label class="grade-control" for="gradeSelect">
-        <span>בחרו כיתה</span>
-        <select id="gradeSelect" required>
-          <option value="">— בחירה —</option>
-          <option value="7">ז׳</option>
-          <option value="8">ח׳</option>
-          <option value="9">ט׳</option>
-          <option value="10">י׳</option>
-          <option value="11">י״א</option>
-          <option value="12">י״ב</option>
-        </select>
-      </label>
+    <section class="start-panel" aria-label="תחילת המבחן">
       <button class="primary-action start-test-action" id="startTest" type="button">מתחילים</button>
-      <p class="form-error" id="gradeError" hidden>בחרו כיתה כדי להתחיל.</p>
     </section>
   </main>
 
@@ -61,8 +45,8 @@
     <a href="../privacy.html">Privacy · פרטיות</a>
   </footer>
 
-  <script src="common.js?v=2"></script>
-  <script src="landing.js?v=2"></script>
+  <script src="common.js?v=4"></script>
+  <script src="landing.js?v=3"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

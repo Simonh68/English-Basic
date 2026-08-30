@@ -13,7 +13,6 @@
     questions: [],
     index: 0,
     answers: [],
-    grade: api.getGrade(),
     sessionId: api.getSessionId(),
     clock: null
   };
@@ -176,13 +175,13 @@
     show('transition');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     window.setTimeout(() => {
-      location.href = `reading.html?grade=${state.grade}&session=${encodeURIComponent(state.sessionId)}`;
+      location.href = `reading.html?session=${encodeURIComponent(state.sessionId)}`;
     }, 850);
   }
 
   async function initialize() {
     const session = api.validSession(state.sessionId);
-    if (!state.grade || !session || session.grade !== state.grade) {
+    if (!session) {
       location.replace('index.html');
       return;
     }

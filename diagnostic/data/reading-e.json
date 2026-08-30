@@ -4,39 +4,63 @@
     "level": "E",
     "domain": "citizen climate science",
     "title": "A Street-by-Street Heat Map",
-    "text": "Official weather stations provide accurate information, but they are often too far apart to show how temperature varies within a single neighborhood. To examine these local differences, the city of Westbridge invited residents to help create a street-by-street heat map. More than one hundred volunteers received identical digital thermometers and a short training session.\n\nThe volunteers followed fixed routes at three specific times on the same hot day. They held the thermometers away from their bodies and waited thirty seconds at each marked location. These rules mattered: without a shared method, a reading taken in direct sunlight could not be compared fairly with one taken under a roof.\n\nThe final map showed differences of up to seven degrees Celsius between locations only two kilometers apart. Streets with mature trees were generally cooler, while large parking areas remained hot even after sunset. The results persuaded the council to place temporary shade structures near two crowded bus stops and to examine where additional trees could survive.\n\nHowever, the project leaders warned against treating one day’s measurements as a complete climate study. Weather conditions vary, and volunteer errors are possible. They described the map as a tool for identifying questions, not as final proof. A second measurement day is therefore planned for next summer. By repeating the same routes and methods, the team hopes to discover which temperature patterns are consistent rather than accidental.",
+    "text": "Official weather stations provide accurate information, but they are often too far apart to show how temperature varies within a single neighborhood. To examine these local differences, the city of Westbridge invited residents to help create a street-by-street heat map. More than one hundred volunteers received identical digital thermometers and a short training session. The volunteers followed fixed routes at three specific times on the same hot day. They held the thermometers away from their bodies and waited thirty seconds at each marked location. These rules mattered: without a shared method, a reading taken in direct sunlight could not be compared fairly with one taken under a roof.\n\nThe final map showed differences of up to seven degrees Celsius between locations only two kilometers apart. Streets with mature trees were generally cooler, while large parking areas remained hot even after sunset. The results persuaded the council to place temporary shade structures near two crowded bus stops and to examine where additional trees could survive.\n\nHowever, the project leaders warned against treating one day’s measurements as a complete climate study. Weather conditions vary, and volunteer errors are possible. They described the map as a tool for identifying questions, not as final proof. A second measurement day is therefore planned for next summer. By repeating the same routes and methods, the team hopes to discover which temperature patterns are consistent rather than accidental.",
     "questions": [
       {
         "id": "E-01-Q1",
         "group": "A",
         "trap": "Cause–Effect Confusion",
         "question": "Why were volunteers required to follow the same measurement method?",
-        "options": ["To make readings from different locations comparable", "To ensure that every street had the same temperature", "To replace the city’s official weather stations", "To prevent volunteers from walking near parking areas"],
-        "answer": 0
-      },
-      {
-        "id": "E-01-Q2",
-        "group": "B",
-        "trap": "Absolute Language",
-        "question": "How do the project leaders describe the first heat map?",
-        "options": ["As final proof of the city’s climate", "As a useless collection of volunteer errors", "As a starting point for identifying patterns and questions", "As evidence that trees always reduce temperatures by seven degrees"],
-        "answer": 2
+        "options": [
+          "To make readings from different locations comparable",
+          "To ensure that every street had the same temperature",
+          "To replace the city’s official weather stations",
+          "To prevent volunteers from walking near parking areas"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "E-01-Q3",
         "group": "C",
         "trap": "Scope",
         "question": "Which action did the council take directly in response to the findings?",
-        "options": ["It closed every large parking area", "It added temporary shade near two bus stops", "It moved the official weather stations", "It required every resident to plant a tree"],
-        "answer": 1
+        "options": [
+          "It closed every large parking area",
+          "It added temporary shade near two bus stops",
+          "It moved the official weather stations",
+          "It required every resident to plant a tree"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "E-01-Q4",
         "group": "D",
         "trap": "Completion vs. Interpretation",
         "question": "Repeating the project next summer is intended to show whether —",
-        "options": ["volunteers can walk faster", "all neighborhoods can become equally cool", "the observed temperature patterns appear consistently", "digital thermometers work only in summer"],
-        "answer": 2
+        "options": [
+          "volunteers can walk faster",
+          "all neighborhoods can become equally cool",
+          "the observed temperature patterns appear consistently",
+          "digital thermometers work only in summer"
+        ],
+        "answer": 2,
+        "scope": "paragraph"
+      },
+      {
+        "id": "E-01-Q2",
+        "group": "B",
+        "trap": "Absolute Language",
+        "question": "Which statement best describes what the project established?",
+        "options": [
+          "One day produced final proof of the city’s climate",
+          "The map revealed useful local differences, but more measurements are needed before treating the patterns as certain",
+          "Volunteer readings were too unreliable to be useful",
+          "Every mature tree always lowers the temperature by seven degrees"
+        ],
+        "answer": 1,
+        "scope": "whole-text"
       }
     ]
   },
@@ -45,39 +69,63 @@
     "level": "E",
     "domain": "shared consumer goods",
     "title": "Borrowing More Than Books",
-    "text": "The public library in Ashton recently began lending objects such as drills, sewing machines, projectors, and camping equipment. This “Library of Things” was created after a survey showed that many residents owned expensive objects that they used only once or twice a year. The organizers argued that shared access could save money and reduce the number of products eventually discarded.\n\nThe program quickly attracted members, but its first months revealed an unexpected problem. Popular objects were often reserved weeks in advance, while unfamiliar ones remained untouched. In response, the library stopped measuring success simply by counting loans. It began examining whether each object met a real local need and whether borrowers returned it in usable condition. Staff also introduced short safety demonstrations for equipment that could cause injury.\n\nSome local shop owners initially feared that free borrowing would reduce their sales. The library therefore met with them and changed part of the program. Objects needed regularly by professionals were removed, while items for occasional household projects remained. Several shops now repair damaged equipment for the library, and one offers discounts on materials that borrowers may need, such as drill bits and sewing thread.\n\nThe program’s director says this cooperation is not evidence that every conflict has disappeared. Rather, it shows that a sharing service can be adjusted when its wider effects become clear. The library plans to publish its borrowing and repair data so that other towns can judge whether a similar program would suit their own circumstances.",
+    "text": "The public library in Ashton recently began lending objects such as drills, sewing machines, projectors, and camping equipment. This “Library of Things” was created after a survey showed that many residents owned expensive objects that they used only once or twice a year. The organizers argued that shared access could save money and reduce the number of products eventually discarded.\n\nThe program quickly attracted members, but its first months revealed an unexpected problem. Popular objects were often reserved weeks in advance, while unfamiliar ones remained untouched. In response, the library stopped measuring success simply by counting loans. It began examining whether each object met a real local need and whether borrowers returned it in usable condition. Staff also introduced short safety demonstrations for equipment that could cause injury.\n\nSome local shop owners initially feared that free borrowing would reduce their sales. The library therefore met with them and changed part of the program. Objects needed regularly by professionals were removed, while items for occasional household projects remained. Several shops now repair damaged equipment for the library, and one offers discounts on materials that borrowers may need, such as drill bits and sewing thread. The program’s director says this cooperation is not evidence that every conflict has disappeared. Rather, it shows that a sharing service can be adjusted when its wider effects become clear. The library plans to publish its borrowing and repair data so that other towns can judge whether a similar program would suit their own circumstances.",
     "questions": [
       {
         "id": "E-02-Q1",
         "group": "A",
         "trap": "Topic vs. Detail",
-        "question": "What is the central idea of the text?",
-        "options": ["A lending program evolved as the library learned about demand, safety, and local businesses", "Libraries should stop lending books and lend only tools", "Local shops refused to cooperate with a free service", "Professional equipment is cheaper than household equipment"],
-        "answer": 0
+        "question": "Why was the “Library of Things” created?",
+        "options": [
+          "To share objects that residents need only occasionally, saving money and reducing waste",
+          "To replace every book with professional equipment",
+          "To prevent local shops from repairing products",
+          "To lend only objects that are used every day"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "E-02-Q2",
         "group": "B",
         "trap": "Synonym Distortion",
         "question": "Why did the library stop judging success only by the number of loans?",
-        "options": ["Loan numbers revealed nothing about use, need, or condition", "It wanted to prevent all popular objects from being borrowed", "It discovered that a high loan count did not provide a complete measure of value", "Staff members were unable to count reservations"],
-        "answer": 2
+        "options": [
+          "Loan numbers revealed nothing about use, need, or condition",
+          "It wanted to prevent all popular objects from being borrowed",
+          "It discovered that a high loan count did not provide a complete measure of value",
+          "Staff members were unable to count reservations"
+        ],
+        "answer": 2,
+        "scope": "paragraph"
       },
       {
         "id": "E-02-Q3",
         "group": "C",
         "trap": "Wrong Question",
         "question": "How did the library respond to shop owners’ concerns?",
-        "options": ["It ended the program immediately", "It removed some professional items and developed cooperation with shops", "It required shops to lend their own equipment", "It stopped offering safety demonstrations"],
-        "answer": 1
+        "options": [
+          "It ended the program immediately",
+          "It removed some professional items and developed cooperation with shops",
+          "It required shops to lend their own equipment",
+          "It stopped offering safety demonstrations"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "E-02-Q4",
         "group": "D",
         "trap": "Negative Question",
         "question": "Which conclusion is NOT supported by the text?",
-        "options": ["A sharing program may need adjustment after it begins", "Publishing data may help other towns make decisions", "Cooperation has removed every possible conflict", "Objects used only occasionally can be suitable for shared access"],
-        "answer": 2
+        "options": [
+          "A sharing program may need adjustment after it begins",
+          "Publishing data may help other towns make decisions",
+          "Cooperation has removed every possible conflict",
+          "Objects used only occasionally can be suitable for shared access"
+        ],
+        "answer": 2,
+        "scope": "whole-text"
       }
     ]
   },
@@ -86,39 +134,63 @@
     "level": "E",
     "domain": "museum interpretation",
     "title": "Who Gets to Write the Label?",
-    "text": "Museum labels usually speak with an institutional voice: they identify an object, provide a date, and explain why experts consider it important. At the Harbor Museum, however, one gallery now displays two labels beside selected objects. The first is written by a curator, while the second comes from a visitor with a personal connection to the object’s history.\n\nThe experiment began with a factory lunch box. The curator’s label described its materials and manufacturer. A former factory worker wrote the second label, recalling how employees used identical boxes as seats during crowded lunch breaks. Neither label contradicted the other, yet together they created a richer picture of the object’s role.\n\nNot every contribution is accepted. Museum staff check factual claims and avoid accounts that identify private individuals without permission. They also edit for length, although contributors approve the final version. Critics argue that personal memories may be inaccurate and could be mistaken for verified history. The museum responds by clearly marking the source of each label rather than presenting every statement as equally certain.\n\nA visitor survey found that people spent longer examining objects with two labels, but the museum is cautious about interpreting this result. Longer viewing does not necessarily mean deeper understanding; visitors might simply need more time to read. The next stage will therefore include interviews designed to discover what information visitors remember and how the two perspectives influence their conclusions.",
+    "text": "Museum labels usually speak with an institutional voice: they identify an object, provide a date, and explain why experts consider it important. At the Harbor Museum, however, one gallery now displays two labels beside selected objects. The first is written by a curator, while the second comes from a visitor with a personal connection to the object’s history. The experiment began with a factory lunch box. The curator’s label described its materials and manufacturer. A former factory worker wrote the second label, recalling how employees used identical boxes as seats during crowded lunch breaks. Neither label contradicted the other, yet together they created a richer picture of the object’s role.\n\nNot every contribution is accepted. Museum staff check factual claims and avoid accounts that identify private individuals without permission. They also edit for length, although contributors approve the final version. Critics argue that personal memories may be inaccurate and could be mistaken for verified history. The museum responds by clearly marking the source of each label rather than presenting every statement as equally certain.\n\nA visitor survey found that people spent longer examining objects with two labels, but the museum is cautious about interpreting this result. Longer viewing does not necessarily mean deeper understanding; visitors might simply need more time to read. The next stage will therefore include interviews designed to discover what information visitors remember and how the two perspectives influence their conclusions.",
     "questions": [
       {
         "id": "E-03-Q1",
         "group": "A",
         "trap": "World Knowledge",
         "question": "What does the factory lunch box example demonstrate?",
-        "options": ["Personal experience can add a different kind of information to an expert description", "Former factory workers always remember events accurately", "Museum objects are valuable only when they were used as seats", "Curators cannot identify an object’s materials"],
-        "answer": 0
+        "options": [
+          "Personal experience can add a different kind of information to an expert description",
+          "Former factory workers always remember events accurately",
+          "Museum objects are valuable only when they were used as seats",
+          "Curators cannot identify an object’s materials"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "E-03-Q2",
         "group": "B",
         "trap": "Small-Word Precision",
         "question": "How does the museum deal with different levels of certainty?",
-        "options": ["It presents every label as proven fact", "It clearly identifies who provided each account", "It accepts only memories that agree with curators", "It removes all personal names from historical records"],
-        "answer": 1
+        "options": [
+          "It presents every label as proven fact",
+          "It clearly identifies who provided each account",
+          "It accepts only memories that agree with curators",
+          "It removes all personal names from historical records"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "E-03-Q3",
         "group": "C",
         "trap": "Question Control",
         "question": "Why will the museum conduct interviews in the next stage?",
-        "options": ["To find more objects made by factories", "To measure what visitors understood and remembered", "To replace the visitor survey with shorter labels", "To decide whether former workers may enter the gallery"],
-        "answer": 1
+        "options": [
+          "To find more objects made by factories",
+          "To measure what visitors understood and remembered",
+          "To replace the visitor survey with shorter labels",
+          "To decide whether former workers may enter the gallery"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "E-03-Q4",
         "group": "D",
         "trap": "Completion vs. Interpretation",
         "question": "The survey result cannot by itself prove deeper understanding because —",
-        "options": ["the objects have no historical value", "visitors may have stayed longer simply to read more text", "curators refused to answer questions", "the personal labels were shorter than the expert labels"],
-        "answer": 1
+        "options": [
+          "the objects have no historical value",
+          "visitors may have stayed longer simply to read more text",
+          "curators refused to answer questions",
+          "the personal labels were shorter than the expert labels"
+        ],
+        "answer": 1,
+        "scope": "whole-text"
       }
     ]
   },
@@ -127,39 +199,63 @@
     "level": "E",
     "domain": "ecological restoration",
     "title": "Bringing Back a Controlled Flood",
-    "text": "For decades, the Lower Narin River was kept within high concrete banks. The walls protected nearby farmland from seasonal flooding, but they also prevented water from reaching a wetland where fish once reproduced and migrating birds rested. As the wetland dried, several species became rare in the area.\n\nEngineers have now opened two controlled channels in the riverbank. During periods of high water, the channels allow a limited amount of water to enter selected fields that the government purchased for restoration. Sensors measure water depth, and gates can be closed if levels rise too quickly. The project is sometimes described as “returning the river to nature,” but this phrase is misleading. The water’s movement is carefully managed, and the original landscape cannot be recreated exactly.\n\nEarly results are promising. Native plants have returned to the wettest areas, and young fish have been recorded in shallow pools. Yet farmers outside the project remain concerned that the new channels could increase flooding on their land. So far, monitoring has not shown such an increase, but only three high-water seasons have occurred since the gates opened.\n\nProject scientists therefore avoid declaring success. Ecological recovery may take years, and a rare storm could expose weaknesses that ordinary seasons do not. The team has recommended continued monitoring alongside an emergency fund that would compensate farmers if the project causes measurable damage.",
+    "text": "For decades, the Lower Narin River was kept within high concrete banks. The walls protected nearby farmland from seasonal flooding, but they also prevented water from reaching a wetland where fish once reproduced and migrating birds rested. As the wetland dried, several species became rare in the area. Engineers have now opened two controlled channels in the riverbank. During periods of high water, the channels allow a limited amount of water to enter selected fields that the government purchased for restoration. Sensors measure water depth, and gates can be closed if levels rise too quickly. The project is sometimes described as “returning the river to nature,” but this phrase is misleading. The water’s movement is carefully managed, and the original landscape cannot be recreated exactly.\n\nEarly results are promising. Native plants have returned to the wettest areas, and young fish have been recorded in shallow pools. Yet farmers outside the project remain concerned that the new channels could increase flooding on their land. So far, monitoring has not shown such an increase, but only three high-water seasons have occurred since the gates opened.\n\nProject scientists therefore avoid declaring success. Ecological recovery may take years, and a rare storm could expose weaknesses that ordinary seasons do not. The team has recommended continued monitoring alongside an emergency fund that would compensate farmers if the project causes measurable damage.",
     "questions": [
       {
         "id": "E-04-Q1",
         "group": "A",
         "trap": "Logical Guess",
         "question": "Why were the controlled channels created?",
-        "options": ["To restore some wetland conditions without allowing uncontrolled flooding", "To direct all river water onto private farms", "To rebuild the original landscape exactly", "To prevent fish from entering shallow pools"],
-        "answer": 0
-      },
-      {
-        "id": "E-04-Q2",
-        "group": "B",
-        "trap": "Synonym Distortion",
-        "question": "Why is the phrase “returning the river to nature” described as misleading?",
-        "options": ["No native plants have returned", "The restored area is managed rather than completely natural", "The river has been replaced by concrete", "Scientists do not know where the river is"],
-        "answer": 1
+        "options": [
+          "To restore some wetland conditions without allowing uncontrolled flooding",
+          "To direct all river water onto private farms",
+          "To rebuild the original landscape exactly",
+          "To prevent fish from entering shallow pools"
+        ],
+        "answer": 0,
+        "scope": "paragraph"
       },
       {
         "id": "E-04-Q3",
         "group": "C",
         "trap": "Time Reference",
         "question": "Why is the evidence about flooding on nearby farms still limited?",
-        "options": ["Farmers have refused all monitoring", "Only three high-water seasons have been observed", "The channels have not been opened", "No sensors were placed in the project"],
-        "answer": 1
+        "options": [
+          "Farmers have refused all monitoring",
+          "Only three high-water seasons have been observed",
+          "The channels have not been opened",
+          "No sensors were placed in the project"
+        ],
+        "answer": 1,
+        "scope": "paragraph"
       },
       {
         "id": "E-04-Q4",
         "group": "D",
         "trap": "Negative Question",
         "question": "Which statement is NOT presented as a reason for continued caution?",
-        "options": ["Recovery may require a long period", "A rare storm may reveal new problems", "The project has already recreated the original landscape exactly", "Nearby farmers remain concerned about possible damage"],
-        "answer": 2
+        "options": [
+          "Recovery may require a long period",
+          "A rare storm may reveal new problems",
+          "The project has already recreated the original landscape exactly",
+          "Nearby farmers remain concerned about possible damage"
+        ],
+        "answer": 2,
+        "scope": "paragraph"
+      },
+      {
+        "id": "E-04-Q2",
+        "group": "B",
+        "trap": "Synonym Distortion",
+        "question": "Which statement best describes the restoration project?",
+        "options": [
+          "It is a carefully managed attempt to restore some wetland conditions, not an exact return to the original landscape",
+          "It allows the river to flood every nearby farm without control",
+          "It has already removed every ecological and financial risk",
+          "It keeps all river water inside the concrete banks"
+        ],
+        "answer": 0,
+        "scope": "whole-text"
       }
     ]
   }

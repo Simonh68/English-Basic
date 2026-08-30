@@ -2,10 +2,15 @@
   'use strict';
 
   const STORAGE_PREFIX = 'efn-diagnostic-v2';
-  const TARGET_MS = 8000;
+  const TARGET_MS = 10000;
+  const READING_TARGET_MS = 20000;
   const BASE_POINTS = 4;
   const letters = ['A', 'B', 'C', 'D'];
   const levelValues = { A: 25, C: 50, E: 75, G: 100 };
+  const CORE_I_PROGRESS_KEY = 'efn.band2.core1.progress.v1';
+  const BAND_II_BASE = 'https://simonh68.github.io/E-Vocab-Band-II/';
+  const BAND_III_BASE = 'https://simonh68.github.io/module-e-vocab/';
+  const READ_ALONG_BASE = `${BAND_II_BASE}Read-Along/reader.html?id=`;
 
   function readStorage(key, fallback) {
     try {
@@ -24,30 +29,14 @@
     try { localStorage.removeItem(`${STORAGE_PREFIX}:${key}`); } catch {}
   }
 
-  function getGrade() {
-    const params = new URLSearchParams(location.search);
-    const queryGrade = Number(params.get('grade'));
-    if (queryGrade >= 7 && queryGrade <= 12) {
-      writeStorage('grade', queryGrade);
-      return queryGrade;
-    }
-    const stored = Number(readStorage('grade', 0));
-    return stored >= 7 && stored <= 12 ? stored : null;
-  }
-
-  function setGrade(grade) {
-    const value = Number(grade);
-    if (value >= 7 && value <= 12) writeStorage('grade', value);
-  }
-
   function getSessionId() {
     return new URLSearchParams(location.search).get('session') || '';
   }
 
-  function createSession(grade) {
+  function createSession() {
     const random = crypto.getRandomValues(new Uint32Array(2));
     const id = `${Date.now().toString(36)}-${random[0].toString(36)}${random[1].toString(36)}`;
-    const session = { id, grade: Number(grade), startedAt: new Date().toISOString() };
+    const session = { id, startedAt: new Date().toISOString() };
     writeStorage('active-session', session);
     removeStorage('active-vocabulary');
     return session;
@@ -56,10 +45,6 @@
   function validSession(sessionId) {
     const session = readStorage('active-session', null);
     return Boolean(sessionId && session?.id === sessionId) ? session : null;
-  }
-
-  function gradeLabel(grade) {
-    return ({ 7: 'ז׳', 8: 'ח׳', 9: 'ט׳', 10: 'י׳', 11: 'י״א', 12: 'י״ב' })[grade] || 'לא צוינה';
   }
 
   async function loadJson(path) {
@@ -103,7 +88,7 @@
       .replaceAll("'", '&#039;');
   }
 
-  function startQuestionClock(valueElement, trackElement, wrapperElement) {
+  function startQuestionClock(valueElement, trackElement, wrapperElement, targetMs = TARGET_MS) {
     const startedAt = performance.now();
     let frame = 0;
     let stopped = false;
@@ -111,15 +96,15 @@
     function paint() {
       if (stopped) return;
       const elapsed = performance.now() - startedAt;
-      const remaining = Math.max(0, TARGET_MS - elapsed);
-      const overtime = elapsed > TARGET_MS;
+      const remaining = Math.max(0, targetMs - elapsed);
+      const overtime = elapsed > targetMs;
       wrapperElement?.classList.toggle('is-overtime', overtime);
       if (valueElement) {
         valueElement.textContent = overtime
-          ? `+${((elapsed - TARGET_MS) / 1000).toFixed(1)}`
+          ? `+${((elapsed - targetMs) / 1000).toFixed(1)}`
           : (remaining / 1000).toFixed(1);
       }
-      if (trackElement) trackElement.style.width = `${Math.max(0, (remaining / TARGET_MS) * 100)}%`;
+      if (trackElement) trackElement.style.width = `${Math.max(0, (remaining / targetMs) * 100)}%`;
       frame = requestAnimationFrame(paint);
     }
 
@@ -135,12 +120,12 @@
     };
   }
 
-  function scoreTimedAnswer(correct, elapsedMs) {
+  function scoreTimedAnswer(correct, elapsedMs, targetMs = TARGET_MS) {
     if (!correct) return 0;
-    if (elapsedMs <= 4000) return 5;
-    if (elapsedMs <= TARGET_MS) return BASE_POINTS;
-    if (elapsedMs <= 12000) return 3;
-    if (elapsedMs <= 16000) return 2;
+    if (elapsedMs <= targetMs / 2) return 5;
+    if (elapsedMs <= targetMs) return BASE_POINTS;
+    if (elapsedMs <= targetMs * 1.5) return 3;
+    if (elapsedMs <= targetMs * 2) return 2;
     return 1;
   }
 
@@ -150,14 +135,21 @@
     return Math.min(1, points / (answers.length * BASE_POINTS));
   }
 
+  function visibleReadingParagraphs(paragraphs, questionIndex, scope) {
+    const list = Array.isArray(paragraphs) ? paragraphs : [];
+    if (scope === 'whole-text') return [...list];
+    const paragraph = list[Number(questionIndex)];
+    return typeof paragraph === 'string' ? [paragraph] : [];
+  }
+
   function vocabularyLevel(summary) {
     const first = summary['Core I'];
     const second = summary['Core II'];
     const third = summary['Band III'];
     if (!first || first.correct < 2 || first.ratio < 0.55) return 'A';
-    if (!second || second.correct < 2 || second.ratio < 0.60) return 'C';
-    if (!third || third.correct < 3 || third.ratio < 0.65) return 'E';
-    return 'G';
+    if (!second || second.correct < 2 || second.ratio < 0.60) return 'A';
+    if (!third || third.correct < 3 || third.ratio < 0.65) return 'C';
+    return 'E';
   }
 
   function combineLevels(firstLevel, secondLevel, foundationalPassed) {
@@ -174,54 +166,73 @@
     return { level, weightedScore };
   }
 
-  function placementCopy(level, grade) {
-    if (level === 'A') return 'המסלול המתאים כרגע הוא הכנה לשאלון A — <strong>3 יחידות</strong>.';
-    if (level === 'C') {
-      if (grade === 9) return 'בכיתה ט׳, הרמה מתאימה לכיוון של <strong>4–5 יחידות</strong>.';
-      if (grade === 10) return 'בכיתה י׳, הרמה מתאימה למסלול של <strong>4 יחידות</strong>.';
-      if (grade === 11) return 'בכיתה י״א, הרמה מתאימה למסלול של <strong>3–4 יחידות</strong>.';
-      return `הרמה מתאימה להכנה לשאלון C. את מסלול היחידות לכיתה ${gradeLabel(grade)} יקבע המורה.`;
-    }
-    if (level === 'E') {
-      if (grade <= 9) return `בכיתה ${gradeLabel(grade)}, הרמה מתאימה למסלול <strong>5 יחידות מואץ</strong>.`;
-      if (grade === 10) return 'בכיתה י׳, הרמה מתאימה למסלול של <strong>5 יחידות</strong>.';
-      if (grade === 11) return 'בכיתה י״א, הרמה מתאימה למסלול של <strong>4–5 יחידות</strong>.';
-      return `הרמה מתאימה להכנה לשאלון E. את מסלול היחידות לכיתה ${gradeLabel(grade)} יקבע המורה.`;
-    }
-    return grade <= 10
-      ? `בכיתה ${gradeLabel(grade)}, הרמה מתאימה למסלול <strong>5 יחידות מואץ</strong>.`
-      : 'הרמה מתאימה למסלול של <strong>5 יחידות</strong>.';
-  }
-
   function recommendation(icon, title, detail, href) {
     return { icon, title, detail, href };
   }
 
-  function combinedRecommendations(level, foundationalPassed) {
+  function nextCoreIGroup() {
+    try {
+      const progress = JSON.parse(localStorage.getItem(CORE_I_PROGRESS_KEY) || 'null');
+      if (!progress || progress.version !== 1 || !progress.groups) return 1;
+      for (let group = 1; group <= 20; group += 1) {
+        const key = String(group).padStart(2, '0');
+        if (!progress.groups[key]?.completedAt) return group;
+      }
+      return 21;
+    } catch {
+      return 1;
+    }
+  }
+
+  function groupHref(group) {
+    return `${BAND_II_BASE}groups/group-${String(group).padStart(2, '0')}.html`;
+  }
+
+  function vocabularyRecommendation(vocabularyLevel, foundationalPassed) {
     if (!foundationalPassed) {
-      return [
-        recommendation('Aa', 'חיזוק קריאה בסיסית', 'תרגול הבחנה בין מילים דומות לפני המשך ההכנה.', '../index.html'),
-        recommendation('▶', 'Word Forge', 'תרגול מהיר של זיהוי מילים ודיוק בקריאה.', '../word-forge/'),
-        recommendation('R', 'Read Along', 'התחלה מסיפורים קצרים ברמות הנמוכות.', 'https://simonh68.github.io/E-Vocab-Band-II/Read-Along/')
-      ];
+      return recommendation(
+        'Aa',
+        'אוצר מילים בסיסי',
+        'Band I · קבוצה 01',
+        '../lesson.html?level=1&lesson=1&mode=cards'
+      );
     }
-    if (level === 'A') {
-      return [
-        recommendation('EB', 'English Basic', 'חיזוק הדרגתי של יסודות הקריאה.', '../index.html'),
-        recommendation('▶', 'Word Forge', 'תרגול מהיר של זיהוי מילים ודיוק בקריאה.', '../word-forge/'),
-        recommendation('R', 'Read Along', 'סיפורים קצרים ברמות הנמוכות.', 'https://simonh68.github.io/E-Vocab-Band-II/Read-Along/')
-      ];
+    if (vocabularyLevel === 'A') {
+      const group = nextCoreIGroup();
+      const core = group <= 20 ? 'Core I' : 'Core II';
+      const displayedGroup = group <= 20 ? group : group - 20;
+      return recommendation(
+        'Aa',
+        'קבוצת אוצר המילים הבאה',
+        `${core} · קבוצה ${String(displayedGroup).padStart(2, '0')}`,
+        groupHref(group)
+      );
     }
-    if (level === 'C') {
-      return [
-        recommendation('R', 'Read Along', 'קריאה מדורגת ברמות הביניים.', 'https://simonh68.github.io/E-Vocab-Band-II/Read-Along/'),
-        recommendation('Aa', 'תרגול אוצר מילים', 'חיזוק המילים התומכות בקריאה ברמה הזאת.', 'https://simonh68.github.io/E-Vocab-Band-II/')
-      ];
+    if (vocabularyLevel === 'C') {
+      return recommendation('Aa', 'קבוצת אוצר המילים הבאה', 'Core II · קבוצה 01', groupHref(21));
     }
-    return [
-      recommendation('R', 'Read Along', level === 'G' ? 'בחירת הסיפורים המתקדמים ביותר במאגר.' : 'בחירת סיפורים מתקדמים המתאימים לרמה.', 'https://simonh68.github.io/E-Vocab-Band-II/Read-Along/'),
-      recommendation('Aa', 'אוצר מילים לבגרות', 'תרגול מתקדם של מילים והבנתן מתוך הקשר.', 'https://simonh68.github.io/module-e-vocab/')
-    ];
+    return recommendation('Aa', 'קבוצת אוצר המילים הבאה', 'Band III · קבוצה A1', `${BAND_III_BASE}A1.html`);
+  }
+
+  function storyRecommendation(level, foundationalPassed) {
+    const storyId = !foundationalPassed || level === 'A'
+      ? 'l1-a1-new-student'
+      : level === 'C'
+        ? 'l2-a1-wallet'
+        : level === 'G'
+          ? 'l3-a2-anonymous-account'
+          : 'l3-a1-final-place';
+    return recommendation('R', 'סיפור קריאה מתאים', 'פתיחת סיפור ישירות ברמת הקריאה המתאימה.', `${READ_ALONG_BASE}${storyId}`);
+  }
+
+  function combinedRecommendations(level, foundationalPassed, vocabularyLevel = level) {
+    const items = [];
+    if (!foundationalPassed) {
+      items.push(recommendation('▶', 'משחק יסודות הקריאה', 'תרגול זיהוי אותיות, מילים ודיוק בקריאה.', '../word-forge/?level=1&lesson=1'));
+    }
+    items.push(vocabularyRecommendation(vocabularyLevel, foundationalPassed));
+    items.push(storyRecommendation(level, foundationalPassed));
+    return items;
   }
 
   function renderRecommendations(container, items) {
@@ -234,17 +245,15 @@
 
   window.EFN_DIAGNOSTIC = {
     TARGET_MS,
+    READING_TARGET_MS,
     BASE_POINTS,
     letters,
     readStorage,
     writeStorage,
     removeStorage,
-    getGrade,
-    setGrade,
     getSessionId,
     createSession,
     validSession,
-    gradeLabel,
     loadJson,
     loadManifest,
     shuffle,
@@ -253,9 +262,10 @@
     startQuestionClock,
     scoreTimedAnswer,
     scoreRatio,
+    visibleReadingParagraphs,
     vocabularyLevel,
     combineLevels,
-    placementCopy,
+    nextCoreIGroup,
     combinedRecommendations,
     renderRecommendations
   };

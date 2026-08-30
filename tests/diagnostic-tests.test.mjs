@@ -7,8 +7,8 @@ import vm from 'node:vm';
 const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 const json = async path => JSON.parse(await read(path));
 
-async function loadCommonApi() {
-  const storage = new Map();
+async function loadCommonApi(initialStorage = {}) {
+  const storage = new Map(Object.entries(initialStorage));
   const context = {
     window: {},
     localStorage: {
@@ -45,6 +45,7 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.match(landing, /<h1 id="pageTitle">מבחן<\/h1>/);
   assert.match(landing, /נתחיל באוצר מילים, ואחר כך נעבור להבנת הנקרא/);
   assert.match(landing, /id="startTest"/);
+  assert.doesNotMatch(landing, /באיזו כיתה|בחרו כיתה|gradeSelect|gradeError/);
   assert.doesNotMatch(landing, /Core I|Core II|Band III|A · C · E · G|גרסת המאגר|כיסוי/);
   assert.doesNotMatch(vocabulary, /המשימות המומלצות שלך|פרופיל אוצר המילים|Core I|Core II|Band III/);
   assert.match(reading, /המשימות המומלצות שלך/);
@@ -131,7 +132,9 @@ test('every reading level has parallel forms with balanced trap groups', async (
       assert.equal(passage.level, level);
       assert.ok(!passageIds.has(passage.id));
       passageIds.add(passage.id);
+      assert.equal(passage.text.split(/\n\s*\n/).length, 3, `${passage.id} has three staged paragraphs`);
       assert.equal(passage.questions.length, 4);
+      assert.deepEqual(passage.questions.map(question => question.scope), ['paragraph', 'paragraph', 'paragraph', 'whole-text']);
       assert.deepEqual([...passage.questions.map(question => question.group)].sort(), ['A', 'B', 'C', 'D']);
       assert.equal(new Set(passage.questions.map(question => question.trap)).size, 4);
       for (const question of passage.questions) {
@@ -149,26 +152,42 @@ test('every reading level has parallel forms with balanced trap groups', async (
   assert.ok(averages.E < averages.G);
 });
 
-test('every answered question uses the eight-second, four-point scoring scale', async () => {
+test('vocabulary uses ten seconds and staged reading questions use twenty seconds', async () => {
   const api = await loadCommonApi();
-  assert.equal(api.TARGET_MS, 8000);
+  assert.equal(api.TARGET_MS, 10000);
+  assert.equal(api.READING_TARGET_MS, 20000);
   assert.equal(api.BASE_POINTS, 4);
-  assert.equal(api.scoreTimedAnswer(true, 3500), 5);
-  assert.equal(api.scoreTimedAnswer(true, 8000), 4);
-  assert.equal(api.scoreTimedAnswer(true, 9000), 3);
-  assert.equal(api.scoreTimedAnswer(true, 13000), 2);
-  assert.equal(api.scoreTimedAnswer(true, 17000), 1);
+  assert.equal(api.scoreTimedAnswer(true, 4500), 5);
+  assert.equal(api.scoreTimedAnswer(true, 10000), 4);
+  assert.equal(api.scoreTimedAnswer(true, 11000), 3);
+  assert.equal(api.scoreTimedAnswer(true, 16000), 2);
+  assert.equal(api.scoreTimedAnswer(true, 21000), 1);
   assert.equal(api.scoreTimedAnswer(false, 2000), 0);
+  assert.equal(api.scoreTimedAnswer(true, 9000, api.READING_TARGET_MS), 5);
+  assert.equal(api.scoreTimedAnswer(true, 20000, api.READING_TARGET_MS), 4);
+  assert.equal(api.scoreTimedAnswer(true, 25000, api.READING_TARGET_MS), 3);
+  assert.equal(api.scoreTimedAnswer(true, 35000, api.READING_TARGET_MS), 2);
+  assert.equal(api.scoreTimedAnswer(true, 45000, api.READING_TARGET_MS), 1);
+  const paragraphs = ['Paragraph one', 'Paragraph two', 'Paragraph three'];
+  assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 0, 'paragraph')], ['Paragraph one']);
+  assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 1, 'paragraph')], ['Paragraph two']);
+  assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 2, 'paragraph')], ['Paragraph three']);
+  assert.deepEqual([...api.visibleReadingParagraphs(paragraphs, 3, 'whole-text')], paragraphs);
 
-  const [vocabulary, reading] = await Promise.all([
+  const [vocabulary, reading, vocabularyHtml, readingHtml] = await Promise.all([
     read('diagnostic/vocabulary.js'),
-    read('diagnostic/reading.js')
+    read('diagnostic/reading.js'),
+    read('diagnostic/vocabulary.html'),
+    read('diagnostic/reading.html')
   ]);
   for (const source of [vocabulary, reading]) {
     assert.match(source, /startQuestionClock/);
     assert.match(source, /scoreTimedAnswer/);
     assert.match(source, /elapsedMs/);
   }
+  assert.match(vocabularyHtml, />10\.0<\/strong>/);
+  assert.match(readingHtml, />20\.0<\/strong>/);
+  assert.match(reading, /scoreTimedAnswer\(correct, elapsedMs, api\.READING_TARGET_MS\)/);
 });
 
 test('the final placement weights the lower level 70 percent and the higher level 30 percent', async () => {
@@ -188,23 +207,84 @@ test('the final placement weights the lower level 70 percent and the higher leve
   assert.equal(api.combineLevels('G', 'G', false).level, 'A');
 });
 
+test('vocabulary coverage selects the correlated reading start level', async () => {
+  const api = await loadCommonApi();
+  const score = (correct, ratio) => ({ correct, ratio });
+
+  assert.equal(api.vocabularyLevel({
+    'Core I': score(1, 0.5),
+    'Core II': score(4, 1),
+    'Band III': score(4, 1)
+  }), 'A');
+  assert.equal(api.vocabularyLevel({
+    'Core I': score(4, 1),
+    'Core II': score(1, 0.5),
+    'Band III': score(4, 1)
+  }), 'A');
+  assert.equal(api.vocabularyLevel({
+    'Core I': score(4, 1),
+    'Core II': score(4, 1),
+    'Band III': score(2, 0.6)
+  }), 'C');
+  assert.equal(api.vocabularyLevel({
+    'Core I': score(4, 1),
+    'Core II': score(4, 1),
+    'Band III': score(3, 0.75)
+  }), 'E');
+});
+
+test('recommendations resume the next saved vocabulary group and link directly to one story', async () => {
+  const completed = group => [String(group).padStart(2, '0'), { completedAt: '2026-08-29T00:00:00.000Z' }];
+  const progress = JSON.stringify({ version: 1, groups: Object.fromEntries([completed(1), completed(2), completed(3)]) });
+  const api = await loadCommonApi({ 'efn.band2.core1.progress.v1': progress });
+
+  assert.equal(api.nextCoreIGroup(), 4);
+  const lowest = api.combinedRecommendations('A', false, 'A');
+  assert.equal(lowest.length, 3);
+  assert.match(lowest[0].href, /word-forge\/\?level=1&lesson=1$/);
+  assert.match(lowest[1].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
+  assert.match(lowest[2].href, /Read-Along\/reader\.html\?id=l1-a1-new-student$/);
+
+  const coreOne = api.combinedRecommendations('A', true, 'A');
+  assert.match(coreOne[0].href, /groups\/group-04\.html$/);
+
+  const coreTwo = api.combinedRecommendations('C', true, 'C');
+  assert.match(coreTwo[0].href, /groups\/group-21\.html$/);
+  assert.match(coreTwo[1].href, /reader\.html\?id=l2-a1-wallet$/);
+
+  const bandThree = api.combinedRecommendations('E', true, 'E');
+  assert.match(bandThree[0].href, /module-e-vocab\/A1\.html$/);
+  assert.match(bandThree[1].href, /reader\.html\?id=l3-a1-final-place$/);
+});
+
 test('scripts compile, avoid interim feedback, and continue automatically from vocabulary to reading', async () => {
   const files = ['diagnostic/common.js', 'diagnostic/landing.js', 'diagnostic/vocabulary.js', 'diagnostic/reading.js'];
   for (const file of files) {
     const source = await read(file);
     assert.doesNotThrow(() => new Function(source), file);
   }
-  const [common, vocabulary, reading, vocabularyHtml] = await Promise.all([
+  const [common, landing, vocabulary, reading, vocabularyHtml, readingHtml] = await Promise.all([
     read('diagnostic/common.js'),
+    read('diagnostic/landing.js'),
     read('diagnostic/vocabulary.js'),
     read('diagnostic/reading.js'),
-    read('diagnostic/vocabulary.html')
+    read('diagnostic/vocabulary.html'),
+    read('diagnostic/reading.html')
   ]);
   assert.match(common, /function selectFresh/);
+  assert.doesNotMatch(landing, /getGrade|setGrade|grade=/);
   assert.match(vocabulary, /selectFresh\(/);
   assert.match(vocabulary, /location\.href = `reading\.html/);
+  assert.doesNotMatch(vocabulary, /getGrade|grade=/);
   assert.match(reading, /active-vocabulary/);
-  assert.match(reading, /startPassage\('C'\)/);
-  assert.match(reading, /last\.ratio >= 0\.68/);
+  assert.match(reading, /api\.vocabularyLevel\(state\.vocabularyResult\.summary \|\| \{\}\)/);
+  assert.match(reading, /startPassage\(state\.startLevel\)/);
+  assert.match(reading, /question\.scope === 'whole-text'/);
+  assert.match(reading, /api\.visibleReadingParagraphs\(state\.paragraphs, state\.questionIndex, question\.scope\)/);
+  assert.match(reading, /replaceChildren\(\.\.\.paragraphNodes\)/);
+  assert.doesNotMatch(reading, /state\.paragraphs\.slice\(0, state\.questionIndex \+ 1\)/);
+  assert.match(reading, /attempt\.correct >= 3 && attempt\.ratio >= 0\.68/);
+  assert.doesNotMatch(reading, /shuffle\(selected\.questions\)/);
+  assert.doesNotMatch(`${common}\n${reading}\n${readingHtml}`, /יחידות|placementCopy|classComparison/);
   assert.doesNotMatch(vocabularyHtml, /נכון|שגוי|Correct|Incorrect|הסבר/);
 });

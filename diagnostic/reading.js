@@ -9,14 +9,15 @@
   const state = {
     manifest: null,
     banks: {},
-    grade: api.getGrade(),
     sessionId: api.getSessionId(),
     vocabularyResult: null,
     passage: null,
+    paragraphs: [],
     questionIndex: 0,
     passageAnswers: [],
     attempts: [],
     usedDomains: new Set(),
+    startLevel: null,
     readingLevel: null,
     clock: null
   };
@@ -31,7 +32,7 @@
     const pool = distinctDomains.length ? distinctDomains : all;
     const [selected] = api.selectFresh(pool, 1, `reading:${level}`, state.manifest.version);
     state.usedDomains.add(selected.domain);
-    const questions = api.shuffle(selected.questions).map(question => {
+    const questions = selected.questions.map(question => {
       const options = api.shuffle(question.options.map((text, index) => ({ text, correct: index === question.answer })));
       return { ...question, options: options.map(option => option.text), answer: options.findIndex(option => option.correct) };
     });
@@ -41,30 +42,38 @@
   function startPassage(level) {
     state.clock?.stop();
     state.passage = choosePassage(level);
+    state.paragraphs = state.passage.text.split(/\n\s*\n/);
     state.questionIndex = 0;
     state.passageAnswers = [];
     const passageNumber = state.attempts.length + 1;
-    document.querySelector('#levelProgress').textContent = `קטע ${passageNumber}`;
+    document.querySelector('#levelProgress').textContent = `קטע ${passageNumber} · פסקה 1`;
     document.querySelector('#questionCounter').textContent = 'הבנת הנקרא';
     document.querySelector('#progressBar').style.width = '0%';
     document.querySelector('.exam-progress').setAttribute('aria-valuenow', '0');
     document.querySelector('#passageTitle').textContent = state.passage.title;
-    document.querySelector('#passageText').textContent = state.passage.text;
-    document.querySelector('#passageReady').hidden = false;
-    document.querySelector('#readingQuestion').hidden = true;
+    document.querySelector('#passageText').replaceChildren();
     show('question');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function beginQuestions() {
-    document.querySelector('#passageReady').hidden = true;
-    document.querySelector('#readingQuestion').hidden = false;
     renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderQuestion() {
     const question = state.passage.questions[state.questionIndex];
-    document.querySelector('#questionCounter').textContent = `שאלה ${state.questionIndex + 1} מתוך ${state.passage.questions.length}`;
+    const isSummary = question.scope === 'whole-text';
+    const visible = api.visibleReadingParagraphs(state.paragraphs, state.questionIndex, question.scope);
+    const paragraphNodes = visible.map(paragraph => {
+      const node = document.createElement('p');
+      node.className = 'is-new';
+      node.textContent = paragraph;
+      return node;
+    });
+    document.querySelector('#passageText').replaceChildren(...paragraphNodes);
+    document.querySelector('#levelProgress').textContent = isSummary
+      ? `קטע ${state.attempts.length + 1} · שאלה מסכמת`
+      : `קטע ${state.attempts.length + 1} · פסקה ${state.questionIndex + 1}`;
+    document.querySelector('#questionCounter').textContent = isSummary
+      ? 'שאלה כללית על הטקסט'
+      : `שאלה ${state.questionIndex + 1} מתוך ${state.passage.questions.length}`;
     document.querySelector('#questionText').textContent = question.question;
     document.querySelector('#progressBar').style.width = `${Math.round(((state.questionIndex + 1) / state.passage.questions.length) * 100)}%`;
     document.querySelector('.exam-progress').setAttribute('aria-valuenow', String(state.questionIndex + 1));
@@ -78,7 +87,8 @@
     state.clock = api.startQuestionClock(
       document.querySelector('#timerValue'),
       document.querySelector('#timerTrack'),
-      timer
+      timer,
+      api.READING_TARGET_MS
     );
     requestAnimationFrame(() => answerGrid.querySelector('button')?.focus());
   }
@@ -95,7 +105,7 @@
       correct,
       skipped,
       elapsedMs: Math.round(elapsedMs),
-      points: api.scoreTimedAnswer(correct, elapsedMs)
+      points: api.scoreTimedAnswer(correct, elapsedMs, api.READING_TARGET_MS)
     });
     state.questionIndex += 1;
     if (state.questionIndex < state.passage.questions.length) {
@@ -125,23 +135,38 @@
 
   function routeNext() {
     const last = state.attempts.at(-1);
+    const first = state.attempts[0];
+    const passed = attempt => attempt.correct >= 3 && attempt.ratio >= 0.68;
+    const clearlyFailed = attempt => attempt.correct <= 1 || attempt.ratio < 0.45;
+
+    if (state.attempts.length === 1 && first.level === 'A') {
+      return passed(first) ? startPassage('C') : finishReading('A');
+    }
     if (state.attempts.length === 1 && last.level === 'C') {
-      if (last.correct <= 1 || last.ratio < 0.45) return startPassage('A');
+      if (clearlyFailed(last)) return startPassage('A');
       if (last.correct === 2 || last.ratio < 0.68) return startPassage('C');
+      return startPassage('E');
+    }
+    if (state.attempts.length === 1 && first.level === 'E') {
+      if (passed(first)) return startPassage('G');
+      if (clearlyFailed(first)) return startPassage('C');
       return startPassage('E');
     }
     if (last.level === 'A') return finishReading('A');
     if (last.level === 'C') {
+      if (first.level === 'A') return finishReading(passed(last) ? 'C' : 'A');
+      if (first.level === 'E') return finishReading(passed(last) ? 'C' : 'A');
       const attempts = state.attempts.filter(item => item.level === 'C');
       const answers = attempts.flatMap(item => item.answers);
       const correct = answers.filter(answer => answer.correct).length;
       return finishReading(correct >= 5 && api.scoreRatio(answers) >= 0.62 ? 'C' : 'A');
     }
     if (last.level === 'E') {
-      return last.correct >= 3 && last.ratio >= 0.68 ? startPassage('G') : finishReading('C');
+      if (first.level === 'E') return finishReading(passed(last) ? 'E' : 'C');
+      return passed(last) ? startPassage('G') : finishReading('C');
     }
     if (last.level === 'G') {
-      return finishReading(last.correct >= 3 && last.ratio >= 0.68 ? 'G' : 'E');
+      return finishReading(passed(last) ? 'G' : 'E');
     }
     return finishReading('A');
   }
@@ -154,27 +179,23 @@
       foundationalPassed
     );
     const level = combined.level;
-    const title = foundationalPassed
-      ? `רמת ההכנה המתאימה: ${level}`
-      : 'השלב המתאים עכשיו: חיזוק קריאה בסיסית';
+    const title = `השאלון המתאים לך: ${level}`;
     const detail = foundationalPassed
       ? 'התוצאה משלבת את אוצר המילים ואת הבנת הנקרא.'
-      : 'כדאי לחזק תחילה הבחנה בין מילים דומות וקריאה מדויקת.';
+      : 'מומלץ לחזק במקביל את יסודות הקריאה ואת אוצר המילים הבסיסי.';
 
     document.querySelector('#readingResult').innerHTML = `<div class="reading-level">
       <span class="level-badge" aria-hidden="true">${level}</span>
       <div><h2>${api.escapeHtml(title)}</h2><p>${api.escapeHtml(detail)}</p></div>
     </div>`;
-    document.querySelector('#classComparison').innerHTML = api.placementCopy(level, state.grade);
     api.renderRecommendations(
       document.querySelector('#recommendationList'),
-      api.combinedRecommendations(level, foundationalPassed)
+      api.combinedRecommendations(level, foundationalPassed, state.vocabularyResult.level)
     );
 
     const result = existingResult || {
       sessionId: state.sessionId,
       version: state.manifest.version,
-      grade: state.grade,
       vocabularyLevel: state.vocabularyResult.level,
       readingLevel: state.readingLevel,
       foundational: state.vocabularyResult.foundational,
@@ -191,9 +212,7 @@
     const session = api.validSession(state.sessionId);
     state.vocabularyResult = api.readStorage('active-vocabulary', null);
     if (
-      !state.grade
-      || !session
-      || session.grade !== state.grade
+      !session
       || state.vocabularyResult?.sessionId !== state.sessionId
     ) {
       location.replace('index.html');
@@ -215,9 +234,10 @@
         return [level, await api.loadJson(`${file}?v=${encodeURIComponent(state.manifest.version)}`)];
       }));
       state.banks = Object.fromEntries(entries);
-      document.querySelector('#beginQuestions').addEventListener('click', beginQuestions);
       document.querySelector('#skipButton').addEventListener('click', () => submit(-1, true));
-      startPassage('C');
+      state.startLevel = api.vocabularyLevel(state.vocabularyResult.summary || {});
+      state.vocabularyResult.level = state.startLevel;
+      startPassage(state.startLevel);
     } catch {
       views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את המבחן.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
     }
