@@ -113,26 +113,6 @@
     .brand-copy strong { font-size: .94rem; letter-spacing: .08em; }
     .brand-copy small { color: var(--muted); font-size: .72rem; }
 
-    .ownership-mark {
-      width: min(1180px, calc(100% - 28px));
-      margin: 0 auto 16px;
-      padding: 10px 14px;
-      border: 1px solid #284263;
-      border-radius: 12px;
-      background: #091628;
-      color: var(--muted);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px 12px;
-      text-align: center;
-      font-size: .72rem;
-      line-height: 1.5;
-    }
-
-    .ownership-mark strong { color: var(--text); }
-    .ownership-mark a { color: var(--gold); text-underline-offset: 3px; }
-
     .lab-chip {
       padding: 7px 11px;
       display: inline-flex;
@@ -1094,7 +1074,125 @@
     .word-panel.success-flash { animation: panel-success .8s ease; }
     .word-panel.retry-flash { animation: panel-retry .48s ease; }
 
-    .finish-stage { width: min(660px, 100%); }
+    .finish-stage {
+      position: relative;
+      width: min(700px, 100%);
+      padding: clamp(18px, 4vw, 30px);
+      overflow: hidden;
+      isolation: isolate;
+      border: 4px solid #f2b832;
+      border-radius: 12px;
+      background:
+        linear-gradient(90deg, #ffffff09 50%, transparent 50%) 0 0 / 26px 26px,
+        linear-gradient(#ffffff08 50%, transparent 50%) 0 0 / 26px 26px,
+        linear-gradient(145deg, #5a3217, #24170f 55%, #101927);
+      box-shadow:
+        inset 0 0 0 4px #6e3f19,
+        inset 0 0 0 8px #df8e23,
+        0 24px 70px #02050bd1,
+        0 0 42px #ffd54a4a;
+    }
+
+    .finish-stage::before,
+    .finish-stage::after {
+      position: absolute;
+      z-index: -2;
+      content: "";
+      pointer-events: none;
+    }
+
+    .finish-stage::before {
+      inset: -75%;
+      background: repeating-conic-gradient(from 4deg, #ffe89459 0 5deg, transparent 5deg 16deg);
+      animation: checkpoint-rays 12s linear infinite;
+    }
+
+    .finish-stage::after {
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 28%, #ffef9b4f 0 8%, transparent 49%);
+    }
+
+    .checkpoint-buzzer {
+      width: fit-content;
+      margin: 0 auto 14px;
+      padding: 8px 15px 7px;
+      border: 4px solid #5a3100;
+      border-radius: 7px;
+      background: linear-gradient(#fff29b 0 12%, #ffd443 12% 52%, #ef9914 52% 100%);
+      color: #3a2100;
+      box-shadow: 0 7px 0 #6f3b00, 0 0 36px #ffe76c;
+      font: 1000 clamp(.78rem, 2.5vw, 1.05rem)/1.05 ui-monospace, monospace;
+      letter-spacing: .08em;
+      text-shadow: 1px 1px #fff5a8;
+      transform: rotate(-1deg);
+    }
+
+    .checkpoint-scene {
+      position: relative;
+      min-height: 156px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 4px solid #15100b;
+      border-radius: 8px;
+      background:
+        linear-gradient(#7bd7ff 0 54%, #71b94f 54% 66%, #624025 66% 100%);
+      box-shadow: inset 0 0 0 3px #ffffff38, 0 12px 0 #0b0d12;
+    }
+
+    .checkpoint-scene::before {
+      position: absolute;
+      inset: auto 0 0;
+      height: 46%;
+      content: "";
+      background:
+        linear-gradient(90deg, #ffffff13 50%, transparent 50%) 0 0 / 24px 24px,
+        linear-gradient(#ffffff0d 50%, transparent 50%) 0 0 / 24px 24px;
+      opacity: .8;
+    }
+
+    .checkpoint-scene.reward-castle { background: linear-gradient(#869cff 0 50%, #7c6f68 50% 65%, #403a38 65% 100%); }
+    .checkpoint-scene.reward-mine { background: linear-gradient(145deg, #20324b, #101726 55%, #060a12); }
+    .checkpoint-scene.reward-vault { background: linear-gradient(#ef9d43 0 48%, #9f5f27 48% 63%, #4b2f1d 63% 100%); }
+
+    .checkpoint-object {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      font-size: clamp(4.5rem, 15vw, 7rem);
+      line-height: 1;
+      filter: drop-shadow(0 12px 0 #2410008c) drop-shadow(0 0 22px #fff0a8a8);
+      animation: checkpoint-object-in .75s cubic-bezier(.18,.85,.22,1.18) both;
+    }
+
+    .checkpoint-coins {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .checkpoint-coins i {
+      position: absolute;
+      bottom: -22px;
+      width: 18px;
+      height: 18px;
+      border: 3px solid #8a5200;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff7b2 0 13%, #ffd237 16% 58%, #d88708 62%);
+      box-shadow: 0 0 15px #ffe062;
+      animation: checkpoint-coin 1.55s ease-out var(--coin-delay) both;
+    }
+
+    .checkpoint-kicker {
+      margin-top: 23px !important;
+      color: #ffe484 !important;
+      font: 1000 .78rem/1.2 ui-monospace, monospace;
+      letter-spacing: .12em;
+    }
     .finish-mark {
       width: 94px;
       height: 94px;
@@ -1109,8 +1207,9 @@
       box-shadow: 0 0 50px #ffd97826;
     }
 
-    .finish-stage h2 { margin: 23px 0 0; font-size: clamp(2rem, 6vw, 3.6rem); }
-    .finish-stage > p { margin: 12px auto 0; color: #c7d2e5; line-height: 1.65; }
+    .finish-stage h2 { margin: 10px 0 0; color: #fff2bd; font-size: clamp(2rem, 6vw, 3.6rem); text-shadow: 0 4px 0 #5b3100, 0 0 26px #ffc83e52; }
+    .finish-stage > p { margin: 12px auto 0; color: #f2eadc; line-height: 1.65; }
+    .checkpoint-question { font-size: clamp(1.08rem, 3vw, 1.35rem); font-weight: 1000; }
 
     .summary-grid {
       margin-top: 25px;
@@ -1123,9 +1222,11 @@
     .summary-grid strong { color: var(--gold); font-size: 1.5rem; }
     .summary-grid span { color: var(--muted); font-size: .7rem; font-weight: 900; }
 
-    .finish-actions { margin-top: 24px; display: flex; justify-content: center; gap: 10px; }
+    .finish-actions { margin-top: 24px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
     .finish-actions .primary { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
     .next-stage { min-width: 190px; }
+    .checkpoint-continue { background: linear-gradient(145deg, #ffe46f, #f2a51e); color: #2e1900; box-shadow: 0 7px 0 #7b4200, 0 0 28px #ffd54c55; }
+    .checkpoint-stop { border-color: #ffffff4a; background: #0b101cbd; }
 
     .auto-level {
       min-width: min(100%, 330px);
@@ -1152,6 +1253,19 @@
 
     .auto-level small { font-size: .56rem; letter-spacing: .1em; }
     .certificate-action { background: linear-gradient(135deg, #ffd978, #fff2b0); color: #281800; }
+
+    @keyframes checkpoint-rays { to { transform: rotate(360deg); } }
+    @keyframes checkpoint-object-in {
+      0% { opacity: 0; transform: translateY(32px) scale(.45) rotate(-7deg); }
+      65% { opacity: 1; transform: translateY(-8px) scale(1.12) rotate(3deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+    }
+    @keyframes checkpoint-coin {
+      0% { opacity: 0; transform: translateY(0) rotate(0) scale(.55); }
+      24% { opacity: 1; }
+      72% { opacity: 1; transform: translateY(-145px) rotate(330deg) scale(1.08); }
+      100% { opacity: 0; transform: translateY(-188px) rotate(500deg) scale(.8); }
+    }
 
     .stage-map {
       width: 100%;
@@ -1578,6 +1692,9 @@
       .summary-grid { grid-template-columns: 1fr; }
       .summary-grid div { min-height: 63px; grid-template-columns: auto auto; place-content: center; gap: 9px; align-items: center; }
       .finish-actions { display: grid; }
+      .finish-stage { padding: 14px; border-width: 3px; }
+      .checkpoint-scene { min-height: 126px; }
+      .checkpoint-object { font-size: 4.7rem; }
       .stage-map { padding: 9px; }
       .stage-map-card { max-height: calc(100svh - 18px); padding: 22px 13px 16px; border-radius: 22px; }
       .map-stats { margin-top: 9px; }
@@ -1627,7 +1744,7 @@
     }
 
     @media (forced-colors: active) {
-      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.summary-grid div,.primary,.secondary,.sound-toggle,.timer-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.speed-bonus,.pattern-bonus,.feedback-advance-track,.resolved-chunk,.name-card,.certificate-card { border: 1px solid CanvasText; }
+      .route-card,.mission-bar,.forge-panel,.word-panel,.choice,.feedback,.finish-stage,.checkpoint-buzzer,.checkpoint-scene,.summary-grid div,.primary,.secondary,.sound-toggle,.timer-toggle,.stage-map-card,.stage-link,.stage-map-close,.stage-value,.coin-metric,.challenge-timer,.speed-bonus,.pattern-bonus,.feedback-advance-track,.resolved-chunk,.name-card,.certificate-card { border: 1px solid CanvasText; }
       .progress-fill,.segment.lit,.reactor-core { background: Highlight; color: HighlightText; }
       .feedback-advance-fill { background: Highlight; }
       .choice.correct { outline: 3px solid Highlight; }
@@ -1639,7 +1756,7 @@
   <a class="skip-link" href="#main">דלגו לפעילות</a>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" id="lessonBackLink" href="https://simonh68.github.io/English-Basic/lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basics">
+      <a class="brand" id="lessonBackLink" href="../lesson.html?level=1&amp;lesson=1&amp;mode=cards" aria-label="יציאה ל-English Basics">
         <div class="brand-mark" aria-hidden="true">W</div>
         <div class="brand-copy">
           <strong lang="en">ENGLISH BASICS · MAAYAN</strong>
@@ -1729,12 +1846,6 @@
     </main>
   </div>
 
-  <section class="ownership-mark" data-efn-ownership="true" role="contentinfo" aria-label="בעלות וזכויות יוצרים">
-    <strong>© 2026 שמעון הרצל הלוי גובני · כל הזכויות שמורות</strong>
-    <span>MAAYAN</span>
-    <a href="../copyright.html">הצהרת הזכויות המלאה</a>
-  </section>
-
   <dialog class="stage-map" id="stageMap" aria-labelledby="stageMapTitle">
     <div class="stage-map-card">
       <button class="stage-map-close" id="stageMapClose" type="button" aria-label="סגירת בחירת השלבים">×</button>
@@ -1784,8 +1895,8 @@
     </div>
   </dialog>
 
-  <script src="./curriculum-data.js?v=2"></script>
-  <script src="./progress.js?v=3"></script>
+  <script src="../curriculum-data.js?v=2"></script>
+  <script src="../progress.js?v=3"></script>
   <script>
     (() => {
       const params = new URLSearchParams(location.search);
@@ -1796,7 +1907,7 @@
       const targetWords = lessonData.words.map(([word, translation]) => ({ word, translation, kind: 'target' }));
       const transferWords = lessonData.transfer.map(([word, translation]) => ({ word, translation, kind: 'transfer' }));
       const words = [...targetWords, ...transferWords];
-      const lessonHref = `https://simonh68.github.io/English-Basic/lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
+      const lessonHref = `../lesson.html?level=${courseLevel}&lesson=${courseLesson}&mode=cards`;
       const stageCoinValues = [5, 7, 12, 14, 16, 18, 20, 22, 24, 25];
       const coinsPerSuccess = stageCoinValues[courseLesson - 1];
       const stageThemes = [
@@ -1932,6 +2043,12 @@
         city: { label: '🏙️ עיר', symbol: '🏙️', finish: 'העיר מוארת!' },
         studio: { label: '🎛️ מוזיקה', symbol: '🎛️', finish: 'האולפן מוכן!' }
       };
+      const checkpointRewards = [
+        { key: 'chest', icon: '🧰', title: 'תיבת האוצר נפתחה!', label: 'תיבת אוצר מלאה במטבעות' },
+        { key: 'castle', icon: '🏰', title: 'הטירה שלך גדלה!', label: 'טירת בלוקים מוזהבת' },
+        { key: 'mine', icon: '💎', title: 'מכרה היהלומים נמצא!', label: 'מכרה בלוקים עם יהלום' },
+        { key: 'vault', icon: '🪙', title: 'כספת המטבעות התמלאה!', label: 'כספת בלוקים מלאה במטבעות' }
+      ];
 
       const intro = document.querySelector('#intro');
       const game = document.querySelector('#game');
@@ -3206,6 +3323,13 @@
         const completedStageKeys = new Set(completionProfile.wordForgeCompletedStages || []);
         const completedStageCount = completedStageKeys.size;
         const allStagesComplete = completedStageCount >= totalStageCount;
+        const stageOrdinal = ((courseLevel - 1) * 10) + courseLesson;
+        const checkpointReward = checkpointRewards[(stageOrdinal - 1) % checkpointRewards.length];
+        const checkpointCoins = Array.from({ length: 18 }, (_, coinIndex) => {
+          const coinLeft = 6 + ((coinIndex * 5.2) % 88);
+          const coinDelay = (coinIndex % 6) * 80;
+          return `<i style="left:${coinLeft}%;--coin-delay:${coinDelay}ms"></i>`;
+        }).join('');
         const currentLevelComplete = Array.from({ length: stageCountForLevel(courseLevel) }, (_, stageIndex) => completedStageKeys.has(`${courseLevel}-${stageIndex + 1}`)).every(Boolean);
         const firstMissingStage = Array.from({ length: stageCountForLevel(courseLevel) }, (_, stageIndex) => stageIndex + 1).find(stage => !completedStageKeys.has(`${courseLevel}-${stage}`));
         const levelAdvanceReady = Boolean(autoLevelHref && currentLevelComplete);
@@ -3213,28 +3337,33 @@
         if (allStagesComplete) {
           nextAction = '<button class="primary next-stage certificate-action" id="certificateButton" type="button" aria-label="קבלת תעודת הסיום">🏅 תעודת סיום</button>';
         } else if (levelAdvanceReady) {
-          nextAction = `<a class="primary auto-level" id="nextStageLink" href="${autoLevelHref}" aria-label="מעבר אוטומטי מ-Level ${courseLevel} ל-Level ${courseLevel + 1}"><strong>LEVEL ${courseLevel} ✓</strong><span aria-hidden="true">→</span><strong>LEVEL ${courseLevel + 1}</strong><span class="auto-countdown" id="autoCountdown">3</span><small>AUTO</small></a>`;
+          nextAction = `<a class="primary next-stage checkpoint-continue" id="nextStageLink" href="${autoLevelHref}" aria-label="ממשיכים מ-Level ${courseLevel} ל-Level ${courseLevel + 1}">ממשיכים ל־LEVEL ${courseLevel + 1} <span aria-hidden="true">←</span></a>`;
         } else if (isLevelBoundary && firstMissingStage) {
-          nextAction = `<a class="primary next-stage" id="nextStageLink" href="./?level=${courseLevel}&lesson=${firstMissingStage}" aria-label="השלמת שלב ${firstMissingStage}">◆ ${firstMissingStage}</a>`;
+          nextAction = `<a class="primary next-stage checkpoint-continue" id="nextStageLink" href="./?level=${courseLevel}&lesson=${firstMissingStage}" aria-label="ממשיכים להשלמת שלב ${firstMissingStage}">ממשיכים לשלב ${firstMissingStage} <span aria-hidden="true">←</span></a>`;
         } else if (nextStageHref) {
-          nextAction = `<a class="primary next-stage" id="nextStageLink" href="${nextStageHref}">השלב הבא <span aria-hidden="true">←</span></a>`;
+          nextAction = `<a class="primary next-stage checkpoint-continue" id="nextStageLink" href="${nextStageHref}">ממשיכים לשלב הבא <span aria-hidden="true">←</span></a>`;
         } else {
           nextAction = '<button class="primary next-stage" type="button" id="finalStageMapButton">שלבים</button>';
         }
-        const autoPauseAction = levelAdvanceReady && !allStagesComplete ? '<button class="secondary" type="button" id="cancelAutoButton" aria-label="עצירת המעבר האוטומטי">Ⅱ</button>' : '';
         const stageMapAction = !nextStageHref && !allStagesComplete ? '' : '<button class="secondary" type="button" id="finishStageMapButton">שלבים</button>';
         finishStage.innerHTML = `
-          <div class="finish-mark" aria-hidden="true">${model.symbol}</div>
-          <h2>${model.finish}</h2>
-          <p aria-label="שלב ${courseLesson} הושלם">STAGE ${courseLesson} COMPLETE</p>
+          <div class="checkpoint-buzzer" aria-hidden="true">GOLDEN BUZZER</div>
+          <div class="checkpoint-scene reward-${checkpointReward.key}" role="img" aria-label="${checkpointReward.label}">
+            <span class="checkpoint-object" aria-hidden="true">${checkpointReward.icon}</span>
+            <span class="checkpoint-coins" aria-hidden="true">${checkpointCoins}</span>
+          </div>
+          <p class="checkpoint-kicker" aria-label="חמש עשרה שאלות הושלמו">CHECKPOINT · 15 / 15</p>
+          <h2>${checkpointReward.title}</h2>
+          <p>${model.finish}</p>
           <div class="summary-grid" aria-label="סיכום השלב">
             <div><strong>◉ +${runCoins}</strong><span>בשלב</span></div>
             <div><strong>◉ ${formatCoins(totalCoins)}</strong><span>מצטבר</span></div>
             <div><strong>${accuracy}%</strong><span>דיוק ראשון</span></div>
           </div>
+          <p class="checkpoint-question">האם להמשיך?</p>
           <div class="finish-actions">
             ${nextAction}
-            ${autoPauseAction}
+            <a class="secondary checkpoint-stop" href="../index.html">עוצרים כאן</a>
             <button class="secondary" type="button" id="restartButton">לשחק שוב</button>
             ${stageMapAction}
           </div>`;
@@ -3248,33 +3377,27 @@
         });
         const finishStageMapButton = finishStage.querySelector('#finishStageMapButton, #finalStageMapButton');
         finishStageMapButton?.addEventListener('click', () => openStageMap(finishStageMapButton));
-        finishStage.querySelector('#cancelAutoButton')?.addEventListener('click', event => {
-          clearAutoAdvance();
-          event.currentTarget.disabled = true;
-          event.currentTarget.textContent = '✓';
-          liveStatus.textContent = 'המעבר האוטומטי נעצר';
-        });
         finishStage.querySelector('#certificateButton')?.addEventListener('click', openCertificateNameDialog);
         finishStage.querySelector('#nextStageLink, #certificateButton, #finalStageMapButton')?.focus();
         liveStatus.textContent = `${model.finish}. שלב ${courseLesson} הושלם. נוספו ${runCoins} מטבעות וסך הכול ${totalCoins} מטבעות. ${completedStageCount} מתוך ${totalStageCount} שלבים הושלמו.`;
         feedbackAnimation('success');
-        if (currentLevelComplete || allStagesComplete) triggerCoinBurst(true);
+        triggerCoinBurst(true);
         playTones([
-          { frequency: 392, duration: .07, gap: .025, type: 'square', gain: .17 },
-          { frequency: 523, duration: .07, gap: .025, type: 'square', gain: .19 },
-          { frequency: 659, duration: .08, gap: .025, type: 'square', gain: .21 },
-          { frequency: 784, duration: .09, gap: .025, type: 'square', gain: .23 },
-          { frequency: 1047, duration: .2, gap: .02, type: 'triangle', gain: .3 }
+          { frequency: 262, duration: .08, gap: .018, type: 'square', gain: .18 },
+          { frequency: 330, duration: .08, gap: .018, type: 'square', gain: .2 },
+          { frequency: 392, duration: .09, gap: .018, type: 'square', gain: .22 },
+          { frequency: 523, duration: .1, gap: .018, type: 'square', gain: .24 },
+          { frequency: 659, duration: .1, gap: .018, type: 'square', gain: .25 },
+          { frequency: 784, duration: .11, gap: .018, type: 'square', gain: .26 },
+          { frequency: 1047, duration: .22, gap: .035, type: 'triangle', gain: .3 },
+          { frequency: 784, duration: .07, gap: .014, type: 'square', gain: .23 },
+          { frequency: 988, duration: .08, gap: .014, type: 'square', gain: .25 },
+          { frequency: 1175, duration: .24, gap: .02, type: 'triangle', gain: .3 }
         ], runId);
-        if (levelAdvanceReady && !allStagesComplete) startAutoAdvance(autoLevelHref);
-        if (allStagesComplete) setTimeout(() => {
-          if (!certificateNameDialog.open && !certificateDialog.open) openCertificateNameDialog();
-        }, 1100);
       }
 
       if ('speechSynthesis' in window) speechSynthesis.getVoices();
     })();
   </script>
-  <script src="./analytics-v2.js"></script>
 </body>
 </html>
