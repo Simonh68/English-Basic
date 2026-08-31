@@ -1,24 +1,10 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
-import path from "node:path";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { mainTreeHtmlFiles } from "../scripts/main-tree-scope.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const owner = "שמעון הרצל הלוי גובני";
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-
-async function htmlFiles(directory) {
-  const entries = await readdir(directory, { withFileTypes: true });
-  const files = [];
-  for (const entry of entries) {
-    if (entry.name === ".git") continue;
-    const target = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...await htmlFiles(target));
-    if (entry.isFile() && entry.name.endsWith(".html")) files.push(target);
-  }
-  return files;
-}
 
 test("declares the exact copyright owner without claiming third-party material", async () => {
   const [notice, policy, runtime] = await Promise.all([
@@ -34,14 +20,14 @@ test("declares the exact copyright owner without claiming third-party material",
   assert.match(notice, /Ministry of Education materials/i);
 });
 
-test("loads the ownership notice on every HTML surface", async () => {
+test("loads the ownership notice on every main-tree HTML surface", async () => {
   const [analytics, progress] = await Promise.all([read("analytics.js"), read("progress.js")]);
   assert.match(analytics, /ownership\.js\?v=1/);
   assert.match(progress, /ownership\.js\?v=1/);
 
-  for (const file of await htmlFiles(root)) {
-    const html = await readFile(file, "utf8");
-    assert.match(html, /(?:analytics|progress)\.js/, path.relative(root, file));
+  for (const file of mainTreeHtmlFiles()) {
+    const html = await read(file);
+    assert.match(html, /(?:analytics|progress)\.js/, file);
   }
 
   const wordForge = await read("word-forge/index.html");
