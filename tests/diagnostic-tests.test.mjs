@@ -52,7 +52,8 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.equal((reading.match(/class="paragraph-cube/g) || []).length, 4);
   assert.match(vocabulary, /id="foundationStopView"/);
   assert.match(vocabulary, /word-forge\/\?level=1&amp;lesson=1/);
-  assert.match(vocabulary, /id="transitionTitle">אוצר מילים/);
+  assert.match(vocabulary, /id="transitionTitle">יכולת קריאה בסיסית/);
+  assert.match(vocabulary, /id="transitionMark"[^>]*>01/);
   assert.doesNotMatch(landing, /באיזו כיתה|בחרו כיתה|gradeSelect|gradeError/);
   assert.doesNotMatch(landing, /Core I|Core II|Band III|A · C · E · G|גרסת המאגר|כיסוי/);
   assert.doesNotMatch(vocabulary, /המשימות המומלצות שלך|פרופיל אוצר המילים|Core I|Core II|Band III/);
@@ -365,8 +366,13 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
   assert.match(vocabulary, /filter\(item => item\.anchor\)/);
   assert.match(vocabulary, /correct >= 5/);
   assert.match(vocabulary, /show\('foundationStop'\)/);
-  assert.match(vocabulary, /showTransition\('אוצר מילים'/);
-  assert.match(vocabulary, /showTransition\('הבנת הנקרא'/);
+  const basicTransition = vocabulary.indexOf("showTransition(1, 'יכולת קריאה בסיסית'");
+  const vocabularyTransition = vocabulary.indexOf("showTransition(2, 'שליטה באוצר מילים'");
+  const readingTransition = vocabulary.indexOf("showTransition(3, 'יכולת הבנת הנקרא'");
+  assert.ok(basicTransition >= 0);
+  assert.ok(vocabularyTransition >= 0);
+  assert.ok(readingTransition >= 0);
+  assert.ok(vocabularyTransition < readingTransition);
   assert.match(vocabulary, /location\.href = `reading\.html/);
   assert.doesNotMatch(vocabulary, /getGrade|grade=/);
   assert.match(reading, /active-vocabulary/);

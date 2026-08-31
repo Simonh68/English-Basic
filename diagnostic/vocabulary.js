@@ -90,14 +90,15 @@
     return questions;
   }
 
-  function showTransition(title, text, next) {
+  function showTransition(step, title, next) {
     state.clock?.stop();
     state.acceptingAnswer = false;
+    document.querySelector('#transitionMark').textContent = `0${step}`;
     document.querySelector('#transitionTitle').textContent = title;
-    document.querySelector('#transitionText').textContent = text;
+    document.querySelector('#transitionText').textContent = `שלב ${step} מתוך 3`;
     show('transition');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    window.setTimeout(next, 850);
+    window.setTimeout(next, 1200);
   }
 
   function renderQuestion() {
@@ -212,7 +213,7 @@
     state.stage = 'vocabulary';
     state.questions = prepareVocabularyQuestions();
     state.index = 0;
-    showTransition('אוצר מילים', 'עוברים לשלב הבא', () => {
+    showTransition(2, 'שליטה באוצר מילים', () => {
       show('question');
       renderQuestion();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -234,7 +235,7 @@
       answers: state.answers,
       completedAt: new Date().toISOString()
     });
-    showTransition('הבנת הנקרא', 'עוברים לשלב האחרון', () => {
+    showTransition(3, 'יכולת הבנת הנקרא', () => {
       location.href = `reading.html?session=${encodeURIComponent(state.sessionId)}`;
     });
   }
@@ -258,8 +259,11 @@
       state.foundationalBank = foundationalBank;
       state.questions = prepareFoundationQuestions();
       document.querySelector('#unknownButton').addEventListener('click', () => submit(-1, true));
-      show('question');
-      renderQuestion();
+      showTransition(1, 'יכולת קריאה בסיסית', () => {
+        show('question');
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     } catch {
       views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את בדיקת הרמה האישית.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';
     }

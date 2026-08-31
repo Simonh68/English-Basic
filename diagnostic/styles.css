@@ -93,7 +93,7 @@
 .english-options .answer-letter{right:auto;left:13px}
 .unknown-button{display:block;margin:17px auto 0;padding:10px 15px;border:0;background:transparent;color:#68758d;text-decoration:underline;text-underline-offset:4px;font-weight:800;cursor:pointer}
 .answer-option:disabled,.unknown-button:disabled{cursor:default;opacity:.65}
-.transition-mark{width:72px;height:72px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--diag-lime),var(--diag-cyan));color:#0d3e39;font-size:2rem;font-weight:900;box-shadow:0 14px 30px #2e9f8933}
+.transition-mark{width:72px;height:72px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--diag-lime),var(--diag-cyan));color:#0d3e39;font:900 1.28rem Andika,sans-serif;letter-spacing:.05em;direction:ltr;box-shadow:0 14px 30px #2e9f8933}
 .foundation-stop-panel{text-align:center}.foundation-stop-panel .result-lead{max-width:650px;margin:0 auto}.foundation-word-forge{max-width:620px;margin:28px auto 0;text-align:right}.foundation-stop-actions{justify-content:center}
 
 .result-panel h1{margin:6px 0 8px;font-size:clamp(2.15rem,6vw,3.5rem);letter-spacing:-.035em}
