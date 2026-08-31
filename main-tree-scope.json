@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "policy": "default-main-navigation-tree-only",
+  "navigationRoot": "https://englishfornoar.co.il/",
+  "repositoryBaseUrl": "https://simonh68.github.io/English-Basic/",
+  "mainTree": {
+    "entryDocuments": [
+      "index.html",
+      "lesson.html",
+      "copyright.html",
+      "privacy.html",
+      "word-game/index.html",
+      "word-forge/index.html",
+      "diagnostic/index.html",
+      "diagnostic/vocabulary.html",
+      "diagnostic/reading.html"
+    ],
+    "runtimeFiles": [
+      ".nojekyll",
+      "analytics.js",
+      "app.css",
+      "app.js",
+      "curriculum-data.js",
+      "favicon.png",
+      "favicon.svg",
+      "home.js",
+      "learning-loop.js",
+      "ownership.js",
+      "preview.png",
+      "preview.svg",
+      "progress.js",
+      "word-data.js",
+      "diagnostic/common.js",
+      "diagnostic/landing.js",
+      "diagnostic/reading.js",
+      "diagnostic/styles.css",
+      "diagnostic/vocabulary.js",
+      "word-game/favicon.png",
+      "word-game/favicon.svg",
+      "word-game/icon-180.png",
+      "word-game/preview.png",
+      "word-game/preview.svg"
+    ],
+    "runtimeDirectories": [
+      "diagnostic/data/"
+    ],
+    "externallyLinkedEntries": [
+      {
+        "path": "diagnostic/index.html",
+        "linkedFrom": "https://englishfornoar.co.il/",
+        "reason": "The personal level-check link on the live home page is part of the main tree."
+      }
+    ]
+  },
+  "detached": {
+    "directories": [
+      "prototypes/",
+      "level2/",
+      "temp/"
+    ],
+    "files": [
+      "index",
+      "lesson1.html",
+      "lesson2.html",
+      "lesson3.html",
+      "lesson4.html",
+      "lesson5.html",
+      "lesson6.html",
+      "lesson7.html",
+      "lesson8.html",
+      "lesson9.html",
+      "lesson10.html",
+      "word-spelling-reader.html"
+    ]
+  },
+  "syncOnlyExceptions": [
+    {
+      "name": "MAAYAN",
+      "path": "temp/index.html",
+      "source": "word-forge/index.html",
+      "script": "scripts/sync-maayan-from-word-forge.mjs",
+      "allowedOperation": "deterministic-sync-only"
+    }
+  ],
+  "scopeControlFiles": [
+    "AGENTS.md",
+    "main-tree-scope.json",
+    "scripts/main-tree-scope.mjs",
+    "scripts/test-main-tree.mjs",
+    "tests/main-tree-scope.test.mjs"
+  ],
+  "verification": {
+    "defaultTestFiles": [
+      "tests/main-tree-scope.test.mjs",
+      "tests/copyright-ownership.test.mjs",
+      "tests/diagnostic-tests.test.mjs",
+      "tests/learning-loop.test.mjs",
+      "tests/stage7-integration.test.mjs",
+      "tests/word-forge-integration.test.mjs",
+      "tests/maayan-temp.test.mjs"
+    ],
+    "explicitDetachedTests": [
+      "tests/word-forge-prototype.test.mjs"
+    ]
+  }
+}
