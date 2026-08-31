@@ -767,6 +767,7 @@
     }
 
     .hebrew-hint span:first-child { font-size: 1.25em; }
+    .hebrew-hint span:last-child { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 
     .tone-cue {
       height: 38px;
@@ -792,6 +793,8 @@
     .question-wait .choices { opacity: .28; pointer-events: none; }
 
     .missing-word {
+      width: 100%;
+      max-width: 100%;
       margin-top: 28px;
       direction: ltr;
       color: #fff;
@@ -799,6 +802,7 @@
       font-size: clamp(3.4rem, 11vw, 6.6rem);
       font-weight: 1000;
       letter-spacing: .03em;
+      overflow-wrap: anywhere;
     }
 
     .missing-slot {
@@ -904,6 +908,7 @@
     }
 
     .choice {
+      min-width: 0;
       min-height: 70px;
       border: 1px solid #ffffff24;
       border-radius: 16px;
@@ -913,6 +918,7 @@
       font-size: 1.6rem;
       font-weight: 1000;
       text-transform: lowercase;
+      overflow-wrap: anywhere;
     }
 
     .choice:hover { border-color: var(--cyan); background: var(--cyan-soft); }
@@ -2121,6 +2127,7 @@
       let challengeResolved = new Set();
       let pendingReviews = [];
       let currentChallenge = null;
+      let previousChallengeCorrectIndex = -1;
       let audioContext = null;
       let mediaAudio = null;
       let mediaAudioUrl = null;
@@ -2421,6 +2428,7 @@
         challengeResolved = new Set();
         pendingReviews = [];
         currentChallenge = null;
+        previousChallengeCorrectIndex = -1;
         gameFinished = false;
         finishStage.hidden = true;
         [...segments.children].forEach(segment => segment.classList.remove('lit'));
@@ -2527,6 +2535,18 @@
         }
         const options = [plan.correct, ...distractors];
         return options.sort((a, b) => optionRank(a, wordIndex + courseLesson) - optionRank(b, wordIndex + courseLesson));
+      }
+
+      function avoidRepeatedChallengePosition(values, correct, previousIndex, seed) {
+        const options = [...values];
+        const correctIndex = options.indexOf(correct);
+        if (options.length < 2 || correctIndex < 0 || correctIndex !== previousIndex) {
+          return { options, correctIndex };
+        }
+        const alternatives = options.map((_, index) => index).filter(index => index !== correctIndex);
+        const swapIndex = alternatives[Math.abs(Number(seed) || 0) % alternatives.length];
+        [options[correctIndex], options[swapIndex]] = [options[swapIndex], options[correctIndex]];
+        return { options, correctIndex: swapIndex };
       }
 
       function escapeMarkup(value) {
@@ -3068,7 +3088,14 @@
         const item = runWords[wordIndex];
         const plan = challengePlanFor(item);
         const correct = plan.correct;
-        const options = challengeOptionsFor(plan, wordIndex);
+        const arranged = avoidRepeatedChallengePosition(
+          challengeOptionsFor(plan, wordIndex),
+          correct,
+          previousChallengeCorrectIndex,
+          wordIndex + courseLevel + courseLesson
+        );
+        const options = arranged.options;
+        previousChallengeCorrectIndex = arranged.correctIndex;
         const displayWord = challengeWordMarkup(item.word, plan);
         const durationMs = timePressureOn ? challengeDurationMs : null;
         currentChallenge = { wordIndex, isReview, ...plan, answered: false, durationMs, startedAt: 0 };

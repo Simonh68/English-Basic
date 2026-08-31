@@ -43,6 +43,24 @@ test('listening, self-reading and mastery check share the return queue', async (
   assert.doesNotMatch(app, /ננסה שוב בהמשך/);
 });
 
+test('listening choices rotate the correct display position', async () => {
+  const app = await source('app.js');
+  const helperSource = app.match(/function avoidRepeatedCorrectPosition\(values,isCorrect,previousIndex=-1,random=Math\.random\)\{[\s\S]*?\n\}/)?.[0];
+  assert.ok(helperSource);
+  const arrange = new Function(`${helperSource}; return avoidRepeatedCorrectPosition;`)();
+  const values = ['correct', 'one', 'two', 'three'];
+  const first = arrange(values, value => value === 'correct', -1, () => 0);
+  const second = arrange(values, value => value === 'correct', first.correctIndex, () => 0);
+  const third = arrange(['one', 'correct', 'two', 'three'], value => value === 'correct', second.correctIndex, () => .99);
+
+  assert.equal(first.choices[first.correctIndex], 'correct');
+  assert.equal(second.choices[second.correctIndex], 'correct');
+  assert.equal(third.choices[third.correctIndex], 'correct');
+  assert.notEqual(second.correctIndex, first.correctIndex);
+  assert.notEqual(third.correctIndex, second.correctIndex);
+  assert.match(app, /previousAnswerIndex=arranged\.correctIndex/);
+});
+
 test('stage 7 keeps mobile, motion, forced-colors and privacy boundaries', async () => {
   const styles = await source('app.css');
   const loop = await source('learning-loop.js');
@@ -51,11 +69,18 @@ test('stage 7 keeps mobile, motion, forced-colors and privacy boundaries', async
   assert.match(styles, /@media\(max-width:360px\)/);
   assert.match(styles, /@media\(prefers-reduced-motion:reduce\)/);
   assert.match(styles, /@media\(forced-colors:active\)/);
+  assert.match(styles, /\.translation,\.choice,\.big-read,\.reveal\{min-width:0;max-width:100%;overflow-wrap:anywhere\}/);
 
   const newClientCode = `${loop}\n${app}`;
   assert.doesNotMatch(newClientCode, /\bfetch\s*\(/);
   assert.doesNotMatch(newClientCode, /\bsendBeacon\b/);
   assert.doesNotMatch(loop, /localStorage|sessionStorage|indexedDB|document\.cookie/);
+});
+
+test('Listen & Find shows long words without clipping them on phones', async () => {
+  const game = await source('word-game/index.html');
+  assert.match(game, /\.choice-word \{[\s\S]*overflow-wrap: anywhere;[\s\S]*white-space: normal;/);
+  assert.doesNotMatch(game, /\.choice-word \{[\s\S]*?text-overflow: ellipsis;[\s\S]*?\}/);
 });
 
 test('lesson cards use an LTR track with RTL card content and a cache-busted stylesheet', async () => {
@@ -64,7 +89,7 @@ test('lesson cards use an LTR track with RTL card content and a cache-busted sty
 
   assert.match(styles, /\.card-track\{direction:ltr\}/);
   assert.match(styles, /\.study-card\{direction:rtl\}/);
-  assert.match(lesson, /app\.css\?v=8/);
+  assert.match(lesson, /app\.css\?v=9/);
 });
 
 test('the home page explains the corrected learning loop in Hebrew', async () => {

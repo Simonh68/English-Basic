@@ -43,6 +43,24 @@ test('the mobile opening is content-sized and starts directly below the topbar',
   assert.doesNotMatch(mobileRules, /\.intro \{[^}]*100svh/);
 });
 
+test('Word Forge moves a repeated correct challenge position', async () => {
+  const html = await source('word-forge/index.html');
+  const helperSource = html.match(/function avoidRepeatedChallengePosition\(values, correct, previousIndex, seed\) \{[\s\S]*?\n      \}/)?.[0];
+  assert.ok(helperSource);
+  const arrange = new Function(`${helperSource}; return avoidRepeatedChallengePosition;`)();
+  const first = arrange(['a', 'b', 'c', 'd'], 'a', -1, 0);
+  const second = arrange(['a', 'b', 'c', 'd'], 'a', first.correctIndex, 0);
+  const third = arrange(['b', 'a', 'c', 'd'], 'a', second.correctIndex, 17);
+
+  assert.equal(first.options[first.correctIndex], 'a');
+  assert.equal(second.options[second.correctIndex], 'a');
+  assert.equal(third.options[third.correctIndex], 'a');
+  assert.notEqual(second.correctIndex, first.correctIndex);
+  assert.notEqual(third.correctIndex, second.correctIndex);
+  assert.match(html, /previousChallengeCorrectIndex = arranged\.correctIndex/);
+  assert.match(html, /\.missing-word \{[\s\S]*max-width: 100%;[\s\S]*overflow-wrap: anywhere;/);
+});
+
 test('hidden Word Forge screens stay out of the question layout', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
@@ -247,7 +265,7 @@ test('course navigation exposes the stage-specific production game', async () =>
   assert.match(app, /function wordForgeHref\(\)\{return `word-forge\/\?level=\$\{level\}&lesson=\$\{lesson\}`\}/);
   assert.match(app, /data-word-forge/);
   assert.match(app, /location\.href=wordForgeHref\(\)/);
-  assert.match(lesson, /app\.js\?v=9/);
+  assert.match(lesson, /app\.js\?v=10/);
   assert.match(home, /href="word-forge\/\?level=1&amp;lesson=1"/);
   assert.match(game, /const lessonHref = `\.\.\/lesson\.html\?level=\$\{courseLevel\}&lesson=\$\{courseLesson\}&mode=cards`/);
 });

@@ -21,7 +21,8 @@
     startLevel: null,
     readingLevel: null,
     clock: null,
-    acceptingAnswer: false
+    acceptingAnswer: false,
+    previousCorrectIndex: -1
   };
 
   function show(name) {
@@ -35,8 +36,9 @@
     const [selected] = api.selectFresh(pool, 1, `reading:${level}`, state.manifest.version);
     state.usedDomains.add(selected.domain);
     const questions = selected.questions.map(question => {
-      const options = api.shuffle(question.options.map((text, index) => ({ text, correct: index === question.answer })));
-      return { ...question, options: options.map(option => option.text), answer: options.findIndex(option => option.correct) };
+      const shuffled = api.shuffleAnswerOptions(question.options, question.answer, state.previousCorrectIndex);
+      state.previousCorrectIndex = shuffled.correctIndex;
+      return { ...question, options: shuffled.options, answer: shuffled.correctIndex };
     });
     return { ...selected, questions };
   }

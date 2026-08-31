@@ -49,6 +49,13 @@ function voice(){const v=speechSynthesis.getVoices();return v.find(x=>x.lang==='
 function speak(text,rate=.8,id=runId){return new Promise(resolve=>{if(id!==runId)return resolve();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate;const v=voice();if(v)u.voice=v;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
 function stopSpeech(){runId++;speechSynthesis.cancel()}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function avoidRepeatedCorrectPosition(values,isCorrect,previousIndex=-1,random=Math.random){
+ const output=[...values],correctIndex=output.findIndex(isCorrect);
+ if(output.length<2||correctIndex<0||correctIndex!==previousIndex)return{choices:output,correctIndex};
+ const alternatives=output.map((_,index)=>index).filter(index=>index!==correctIndex),sample=Math.max(0,Math.min(.999999,Number(random?.())||0)),swapIndex=alternatives[Math.floor(sample*alternatives.length)];
+ [output[correctIndex],output[swapIndex]]=[output[swapIndex],output[correctIndex]];
+ return{choices:output,correctIndex:swapIndex};
+}
 function initialLoopQueue(items,prefix){return items.map((_,itemId)=>({key:`${prefix}-new-${itemId}`,itemId,encounter:'new',cycle:0}))}
 function loopLabel(encounter){if(encounter==='new')return 'ניסיון ראשון';if(encounter==='retry')return 'תיקון פעיל';if(encounter==='review')return 'חזרה מרווחת';return 'חיזוק ביניים'}
 function loopWaiting(queue){return new Set(queue.filter(entry=>entry.encounter==='retry'||entry.encounter==='review').map(entry=>entry.itemId)).size}
@@ -146,7 +153,7 @@ async function readWordCard(wordIndex){
 
 function renderListen(){
  const panel=$('#listenPanel'),items=shuffle(current().words).slice(0,10),prefix=`listen-${level}-${lesson}`;
- let queue=initialLoopQueue(items,prefix),answered=0,correctFirst=0,finished=false;
+ let queue=initialLoopQueue(items,prefix),answered=0,correctFirst=0,finished=false,previousAnswerIndex=-1;
  const mastered=new Set(),hadError=new Set();
  panel.innerHTML=`<div class="panel-pad"><div class="task-head"><h2>זיהוי שמיעתי</h2><p>שומעים, בוחרים ומוכיחים שוב אחרי מרווח</p></div><div class="loop-dashboard" aria-label="מצב תרגול השמיעה"><div><span>הושלמו</span><strong data-loop-mastered>0 / ${items.length}</strong></div><div><span>ממתינות לחזרה</span><strong data-loop-waiting>0</strong></div><div><span>שאלות שנענו</span><strong data-loop-answered>0</strong></div></div><div class="task-card loop-task"><div class="loop-question-top"><span class="loop-encounter"></span><small class="loop-rule">טעות חוזרת אחרי 2 · הצלחה אחרי 4–6</small></div><button class="listen-button" aria-label="השמעת המילה באנגלית">▶</button><div class="choices" role="group" aria-label="אפשרויות תשובה"></div><div class="feedback loop-feedback" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></div><div class="counter"></div></div></div>`;
  function dashboard(){panel.querySelector('[data-loop-mastered]').textContent=`${mastered.size} / ${items.length}`;panel.querySelector('[data-loop-waiting]').textContent=loopWaiting(queue);panel.querySelector('[data-loop-answered]').textContent=answered}
@@ -163,8 +170,9 @@ function renderListen(){
   setActivityProgress('שמיעה',mastered.size,items.length);dashboard();
   panel.querySelector('.loop-encounter').textContent=loopLabel(entry.encounter);
   const distractors=shuffle(items.filter(item=>item[0]!==answer)).slice(0,3),pool=shuffle([[answer,meaning],...distractors]);
+  const arranged=avoidRepeatedCorrectPosition(pool,item=>item[0]===answer,previousAnswerIndex);previousAnswerIndex=arranged.correctIndex;
   const choices=panel.querySelector('.choices'),feedback=panel.querySelector('.loop-feedback');
-  choices.innerHTML=pool.map(([word])=>`<button class="choice" type="button" lang="en" dir="ltr">${esc(word)}</button>`).join('');
+  choices.innerHTML=arranged.choices.map(([word])=>`<button class="choice" type="button" lang="en" dir="ltr">${esc(word)}</button>`).join('');
   feedback.className='feedback loop-feedback';feedback.innerHTML='';
   panel.querySelector('.counter').textContent=`${mastered.size} מתוך ${items.length} הושלמו · ${loopLabel(entry.encounter)}`;
   panel.querySelector('.listen-button').onclick=play;

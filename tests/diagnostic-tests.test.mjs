@@ -96,6 +96,29 @@ test('the basic gate uses four required familiar spellings and rotating cognates
   }
 });
 
+test('random diagnostic answers never keep the same correct position twice', async () => {
+  const api = await loadCommonApi();
+  const values = ['correct', 'one', 'two', 'three'];
+  let previousCorrectIndex = -1;
+
+  for (let question = 0; question < 80; question += 1) {
+    const arranged = api.shuffleAnswerOptions(values, 0, previousCorrectIndex);
+    assert.equal(arranged.options[arranged.correctIndex], 'correct');
+    if (previousCorrectIndex >= 0) assert.notEqual(arranged.correctIndex, previousCorrectIndex);
+    previousCorrectIndex = arranged.correctIndex;
+  }
+
+  const [vocabulary, reading, styles] = await Promise.all([
+    read('diagnostic/vocabulary.js'),
+    read('diagnostic/reading.js'),
+    read('diagnostic/styles.css')
+  ]);
+  assert.match(vocabulary, /shuffleAnswerOptions\(options, correctIndex, state\.previousCorrectIndex\)/);
+  assert.match(reading, /shuffleAnswerOptions\(question\.options, question\.answer, state\.previousCorrectIndex\)/);
+  assert.match(styles, /\.vocab-prompt h1\{[^}]*overflow-wrap:anywhere/);
+  assert.match(styles, /\.answer-option\{[^}]*min-width:0;[^}]*overflow-wrap:anywhere/);
+});
+
 test('the vocabulary bank preserves source records and English Band III definitions', async () => {
   const [bank, definitions] = await Promise.all([
     json('diagnostic/data/vocabulary-bank.json'),

@@ -66,6 +66,21 @@
     return copy;
   }
 
+  function shuffleAnswerOptions(values, correctIndex, previousCorrectIndex = -1) {
+    const output = shuffle(values.map((text, index) => ({ text, correct: index === correctIndex })));
+    let nextCorrectIndex = output.findIndex(option => option.correct);
+    if (output.length > 1 && nextCorrectIndex === previousCorrectIndex) {
+      const alternatives = output.map((_, index) => index).filter(index => index !== nextCorrectIndex);
+      const [swapIndex] = shuffle(alternatives);
+      [output[nextCorrectIndex], output[swapIndex]] = [output[swapIndex], output[nextCorrectIndex]];
+      nextCorrectIndex = swapIndex;
+    }
+    return {
+      options: output.map(option => option.text),
+      correctIndex: nextCorrectIndex
+    };
+  }
+
   function selectFresh(items, count, historyKey, version, key = item => item.id) {
     const storageKey = `history:${version}:${historyKey}`;
     const history = readStorage(storageKey, []);
@@ -340,6 +355,7 @@
     loadJson,
     loadManifest,
     shuffle,
+    shuffleAnswerOptions,
     selectFresh,
     escapeHtml,
     startQuestionClock,

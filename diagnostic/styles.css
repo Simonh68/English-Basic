@@ -80,11 +80,11 @@
 .compact-timer{width:100%;margin:12px 0 17px}
 .vocab-prompt{margin:35px auto 26px;text-align:center}
 .prompt-label,.passage-label{color:#4c67c7;font-size:.74rem;font-weight:900;letter-spacing:.08em}
-.vocab-prompt h1{margin:8px 0 10px;font:700 clamp(2.7rem,9vw,5.3rem) Andika,sans-serif;color:#111c38;line-height:1.05}
+.vocab-prompt h1{max-width:100%;margin:8px 0 10px;font:700 clamp(2.7rem,9vw,5.3rem) Andika,sans-serif;color:#111c38;line-height:1.05;overflow-wrap:anywhere}
 .vocab-prompt p{max-width:690px;margin:0 auto;padding:17px;border-right:4px solid var(--diag-cyan);border-radius:12px;background:#f6f9fd;color:#35415a;font:700 clamp(1.03rem,2.7vw,1.3rem) Andika,sans-serif;line-height:1.7;text-align:left}
 .vocab-prompt.foundation-prompt h1{font-size:clamp(1.8rem,6vw,3.5rem);line-height:1.35}
 .answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.answer-option{position:relative;min-height:66px;padding:13px 58px 13px 15px;border:2px solid #dfe5ef;border-radius:15px;background:#fff;color:#26334e;text-align:right;font-weight:800;cursor:pointer;transition:border-color .15s,transform .15s,background .15s}
+.answer-option{position:relative;min-width:0;max-width:100%;min-height:66px;padding:13px 58px 13px 15px;border:2px solid #dfe5ef;border-radius:15px;background:#fff;color:#26334e;text-align:right;font-weight:800;overflow-wrap:anywhere;cursor:pointer;transition:border-color .15s,transform .15s,background .15s}
 .answer-option:hover{border-color:#91a6ff;background:#f6f8ff;transform:translateY(-1px)}
 .answer-option .answer-letter{position:absolute;top:50%;right:13px;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#edf1fb;color:#405ab6;font:700 .95rem Andika,sans-serif;transform:translateY(-50%)}
 .reading-answers .answer-option{direction:ltr;text-align:left;padding:13px 15px 13px 58px;font-family:Andika,Arial,sans-serif}
@@ -137,7 +137,7 @@
 .staged-passage p.is-new:nth-child(3){animation-delay:.26s}
 @keyframes paragraph-reveal{0%{opacity:0;filter:blur(5px);clip-path:inset(0 0 100% 0);transform:translateY(14px)}55%{opacity:.82;filter:blur(1px)}100%{opacity:1;filter:blur(0);clip-path:inset(0);transform:translateY(0)}}
 .reading-question{direction:rtl}
-.reading-question h2{margin:8px 0 20px;color:#182540;font:700 clamp(1.13rem,2.5vw,1.35rem) Andika,sans-serif;line-height:1.55;text-align:left;direction:ltr}
+.reading-question h2{min-width:0;max-width:100%;margin:8px 0 20px;color:#182540;font:700 clamp(1.13rem,2.5vw,1.35rem) Andika,sans-serif;line-height:1.55;text-align:left;direction:ltr;overflow-wrap:anywhere}
 .passage-ready{text-align:center;direction:rtl}
 .passage-ready h2{margin:0 0 24px;text-align:center;direction:rtl}
 .reading-answers{grid-template-columns:1fr}
@@ -157,7 +157,7 @@
 
 @media(max-width:520px){
   .diagnostic-topbar{min-height:68px}.diagnostic-topbar .home-brand small{display:none}.diagnostic-topbar .brand-mark{width:39px;height:39px}.home-nav .home-return{font-size:0}.home-nav .home-return::after{font-size:1.25rem;content:"⌂"}
-  .diagnostic-shell{padding-bottom:48px}.start-panel{margin-top:35px}.test-card{border-radius:20px}.exam-progress-row{font-size:.87rem}.vocab-prompt{margin-top:27px}.vocab-prompt p{padding:14px}.answer-option{min-height:62px}.intro-facts span{min-width:95px;flex:1}.result-actions{display:grid}.result-actions a{width:100%}.reading-result .level-badge{width:62px;height:62px;border-radius:17px;font-size:1.75rem}
+  .diagnostic-shell{padding-bottom:48px}.start-panel{margin-top:35px}.test-card{border-radius:20px}.exam-progress-row{font-size:.87rem}.vocab-prompt{margin-top:27px}.vocab-prompt h1{font-size:clamp(1.9rem,9vw,3.4rem)}.vocab-prompt p{padding:14px}.answer-option{min-height:62px}.intro-facts span{min-width:95px;flex:1}.result-actions{display:grid}.result-actions a{width:100%}.reading-result .level-badge{width:62px;height:62px;border-radius:17px;font-size:1.75rem}
 }
 
 @media(prefers-reduced-motion:reduce){.loading-orb{animation-duration:1.8s}.diagnostic-cta,.answer-option,.exam-progress span,.paragraph-progress::after,.paragraph-cube{transition:none}.staged-passage p.is-new{animation:none}}

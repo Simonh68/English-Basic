@@ -18,7 +18,8 @@
     foundation: null,
     sessionId: api.getSessionId(),
     clock: null,
-    acceptingAnswer: false
+    acceptingAnswer: false,
+    previousCorrectIndex: -1
   };
 
   function show(name) {
@@ -35,11 +36,9 @@
   }
 
   function shuffleOptions(options, correctIndex) {
-    const shuffled = api.shuffle(options.map((text, index) => ({ text, correct: index === correctIndex })));
-    return {
-      options: shuffled.map(option => option.text),
-      correctIndex: shuffled.findIndex(option => option.correct)
-    };
+    const shuffled = api.shuffleAnswerOptions(options, correctIndex, state.previousCorrectIndex);
+    state.previousCorrectIndex = shuffled.correctIndex;
+    return shuffled;
   }
 
   function makeOptions(item, bandItems) {

@@ -851,3 +851,6 @@ body[data-level] .study-card.finish{background:var(--level-card)}
   .choice.correct{outline:3px solid Highlight}
   .choice.wrong{outline:3px dashed CanvasText}
 }
+
+/* Keep long vocabulary content inside narrow phone viewports. */
+.translation,.choice,.big-read,.reveal{min-width:0;max-width:100%;overflow-wrap:anywhere}

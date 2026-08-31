@@ -381,13 +381,13 @@
       position: relative;
       z-index: 1;
       max-width: 100%;
-      overflow: hidden;
       color: #1c2844;
       font-size: clamp(1.45rem, 5.5vw, 3.15rem);
       font-weight: 700;
       line-height: 1.08;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+      white-space: normal;
     }
 
     .choice-emoji {
