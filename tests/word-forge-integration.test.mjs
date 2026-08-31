@@ -265,7 +265,7 @@ test('the full 5 by 10 journey is explicit, premium, and free of school-facing l
   assert.match(inlineScript, /class="level-route/);
   assert.match(html, /grid-template-columns: repeat\(10, minmax\(0, 1fr\)\)/);
   assert.match(inlineScript, /const nextStageHref = isFinalStage \? null/);
-  assert.match(inlineScript, />השלב הבא <span aria-hidden="true">←<\/span><\/a>/);
+  assert.match(inlineScript, />ממשיכים לשלב הבא <span aria-hidden="true">←<\/span><\/a>/);
   assert.match(inlineScript, /id="restartButton">לשחק שוב<\/button>/);
   assert.match(html, /PREMIUM WORD ARCADE/);
   assert.doesNotMatch(html, /LESSON/);
@@ -390,17 +390,26 @@ test('the timer stays at ten seconds while faster answers earn more and sound di
   assert.match(inlineScript, /timedOut \? 'הזמן הסתיים'/);
 });
 
-test('level completion triggers Golden Buzzer feedback and automatic level-to-level movement', async () => {
+test('every fifteen-question stage stops for a rotating block celebration and an explicit choice', async () => {
   const html = await source('word-forge/index.html');
   const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(inlineScript);
 
   assert.match(inlineScript, /completeWordForgeStage\?\.\(courseLevel, courseLesson\)/);
+  assert.match(inlineScript, /const checkpointRewards = \[/);
+  assert.equal((inlineScript.match(/key: '(?:chest|castle|mine|vault)'/g) || []).length, 4);
+  assert.match(inlineScript, /checkpointRewards\[\(stageOrdinal - 1\) % checkpointRewards\.length\]/);
+  assert.match(inlineScript, /CHECKPOINT · 15 \/ 15/);
+  assert.match(inlineScript, /GOLDEN BUZZER/);
+  assert.match(inlineScript, /האם להמשיך\?/);
+  assert.match(inlineScript, /עוצרים כאן/);
   assert.match(inlineScript, /const currentLevelComplete = Array\.from/);
   assert.match(inlineScript, /const levelAdvanceReady = Boolean\(autoLevelHref && currentLevelComplete\)/);
-  assert.match(inlineScript, /LEVEL \$\{courseLevel\} ✓[\s\S]*LEVEL \$\{courseLevel \+ 1\}[\s\S]*id="autoCountdown">3/);
-  assert.match(inlineScript, /function startAutoAdvance\(href\)/);
-  assert.match(inlineScript, /if \(currentLevelComplete \|\| allStagesComplete\) triggerCoinBurst\(true\)/);
+  assert.match(inlineScript, /ממשיכים ל־LEVEL \$\{courseLevel \+ 1\}/);
+  assert.doesNotMatch(inlineScript, /startAutoAdvance\(autoLevelHref\)/);
+  assert.match(inlineScript, /triggerCoinBurst\(true\)/);
+  assert.match(html, /\.checkpoint-scene/);
+  assert.match(html, /@keyframes checkpoint-coin/);
   assert.match(html, /\.coin-metric\.milestone::before/);
   assert.match(html, /@keyframes golden-rays/);
 });
