@@ -15,8 +15,12 @@ export function createMaayanPage(wordForgeHtml) {
   assert.match(wordForgeHtml, /<title>Word Forge — English Basics<\/title>/);
   assert.doesNotMatch(wordForgeHtml, /English-Basic\/temp\//);
 
+  const wordForgeOnlySharing = /\n  <!-- WORD-FORGE-SHARING-START -->[\s\S]*?  <!-- WORD-FORGE-SHARING-END -->/;
+  assert.match(wordForgeHtml, wordForgeOnlySharing);
+  const sharedGameHtml = wordForgeHtml.replace(wordForgeOnlySharing, '');
+
   let maayanHtml = replaceExactlyOnce(
-    wordForgeHtml,
+    sharedGameHtml,
     '  <title>Word Forge — English Basics</title>',
     '  <title>Word Forge — English Basics</title>\n  <link rel="canonical" href="https://simonh68.github.io/English-Basic/temp/">'
   );

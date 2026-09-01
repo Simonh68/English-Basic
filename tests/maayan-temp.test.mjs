@@ -27,6 +27,7 @@ test('MAAYAN is generated from the canonical Word Forge code with only its name 
   assert.match(inlineScript, /document\.title = `MAAYAN · Level/);
   assert.match(inlineScript, /href: `temp\/\?level=/);
   assert.doesNotMatch(maayanHtml, /WORD FORGE|Word Forge/);
+  assert.doesNotMatch(maayanHtml, /WORD-FORGE-SHARING|word-forge-preview\.jpg/);
 
   assert.match(maayanHtml, /src="\.\.\/curriculum-data\.js\?v=2"/);
   assert.match(maayanHtml, /src="\.\.\/progress\.js\?v=3"/);

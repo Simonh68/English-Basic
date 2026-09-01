@@ -464,3 +464,14 @@ test('Word Forge keeps the approved privacy and audio boundaries', async () => {
   assert.match(html, /lessonBackLink\.setAttribute\('aria-label', 'יציאה ל-English Basics'\)/);
   assert.match(html, /game: 'word_forge',[\s\S]*xp: gained/);
 });
+
+test('Word Forge exposes a complete large sharing preview', async () => {
+  const html = await source('word-forge/index.html');
+
+  assert.match(html, /rel="canonical" href="https:\/\/simonh68\.github\.io\/English-Basic\/word-forge\/"/);
+  assert.match(html, /property="og:title" content="Word Forge — Build, Play, Read"/);
+  assert.match(html, /property="og:image" content="https:\/\/simonh68\.github\.io\/English-Basic\/word-forge-preview\.jpg"/);
+  assert.match(html, /property="og:image:width" content="1200"/);
+  assert.match(html, /property="og:image:height" content="630"/);
+  assert.match(html, /name="twitter:card" content="summary_large_image"/);
+});
