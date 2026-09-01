@@ -39,7 +39,7 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
 
   assert.doesNotMatch(home, /diagnostic\//i);
   for (const html of [landing, vocabulary, reading]) {
-    assert.match(html, /href="\.\.\/index\.html"/);
+    assert.match(html, /href="https:\/\/englishfornoar\.co\.il\/"/);
     assert.match(html, /name="robots" content="noindex,nofollow"/);
     assert.match(html, /analytics\.js/);
   }

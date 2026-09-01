@@ -112,6 +112,9 @@
     .brand-copy strong { font-size: .94rem; letter-spacing: .08em; }
     .brand-copy small { color: var(--muted); font-size: .72rem; }
 
+    .hub-return { color: var(--muted); font-size: .78rem; text-decoration: none; white-space: nowrap; }
+    .hub-return:hover { color: var(--cyan); }
+
     .lab-chip {
       padding: 7px 11px;
       display: inline-flex;
@@ -1642,6 +1645,8 @@
       .brand-mark { width: 34px; height: 34px; }
       .brand-copy strong { font-size: .78rem; }
       .brand-copy small { display: none; }
+      .hub-return { font-size: 0; }
+      .hub-return::after { content: "⌂"; font-size: 1.2rem; }
       main { padding-top: 0; }
       .intro {
         min-height: 0;
@@ -1768,6 +1773,7 @@
           <small lang="en">PREMIUM WORD ARCADE</small>
         </div>
       </a>
+      <a class="hub-return" href="https://englishfornoar.co.il/" aria-label="חזרה לדף הבית של English for Noar">⌂ דף הבית</a>
       <button class="lab-chip" id="stageMenuButton" type="button" aria-haspopup="dialog" aria-controls="stageMap">LEVEL 1 · STAGE 1 <span aria-hidden="true">⌄</span></button>
     </header>
 
