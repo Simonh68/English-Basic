@@ -254,6 +254,17 @@ test('an original quiet arcade loop builds tension and ducks under learning audi
   assert.match(inlineScript, /function showFinish\(\) \{[\s\S]*gameFinished = true;[\s\S]*pauseBackgroundMusic\(true\);/);
 });
 
+test('Apple touch devices prioritize pronunciation over competing game audio', async () => {
+  const html = await source('word-forge/index.html');
+  const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+
+  assert.match(inlineScript, /const appleTouchSpeechMode = \/iPad\|iPhone\|iPod\//);
+  assert.match(inlineScript, /if \(appleTouchSpeechMode\) \{[\s\S]*await speak\('Sound on'/);
+  assert.match(inlineScript, /async function startBackgroundMusic\(\) \{[\s\S]*if \(appleTouchSpeechMode \|\|/);
+  assert.match(inlineScript, /async function playTones\(pattern, id = runId\) \{[\s\S]*if \(appleTouchSpeechMode \|\|/);
+});
+
 test('course navigation exposes the stage-specific production game', async () => {
   const [app, lesson, home, game] = await Promise.all([
     source('app.js'),

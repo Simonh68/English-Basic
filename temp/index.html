@@ -1921,6 +1921,8 @@
         speak() { return Promise.resolve({ ok: false, reason: 'unavailable' }); },
         voiceFor() { return null; }
       };
+      const appleTouchSpeechMode = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const params = new URLSearchParams(location.search);
       const courseLevel = Math.min(5, Math.max(1, Number(params.get('level')) || 1));
       const courseLesson = Math.min(10, Math.max(1, Number(params.get('lesson')) || 1));
@@ -2391,7 +2393,7 @@
         } else {
           speech.prime();
           speech.resume();
-          ensureAudioContext();
+          if (!appleTouchSpeechMode) ensureAudioContext();
           await runSoundCheck(false);
           await startBackgroundMusic();
         }
@@ -2419,7 +2421,7 @@
         startButton.textContent = '◌';
         speech.cancel();
         speech.prime();
-        ensureAudioContext();
+        if (!appleTouchSpeechMode) ensureAudioContext();
         if (!audioUnlocked) await runSoundCheck();
         resetState();
         progressApi?.startGameSession({ game: 'word_forge', level: courseLevel, stage: courseLesson });
@@ -2615,6 +2617,15 @@
           soundCheck.className = 'sound-check';
           soundCheck.textContent = '•••';
         }
+        if (appleTouchSpeechMode) {
+          const result = await speak('Sound on', .88, runId);
+          audioUnlocked = Boolean(result?.ok);
+          if (showStatus) {
+            soundCheck.className = `sound-check ${audioUnlocked ? 'ok' : 'warn'}`;
+            soundCheck.textContent = audioUnlocked ? '✓' : '⚠';
+          }
+          return audioUnlocked;
+        }
         ensureAudioContext();
         const id = runId;
         const toneReady = await playMediaTones([
@@ -2730,7 +2741,7 @@
       }
 
       async function startBackgroundMusic() {
-        if (!soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
+        if (appleTouchSpeechMode || !soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
         const audio = ensureBackgroundAudio();
         if (!audio) return false;
         try {
@@ -2777,7 +2788,7 @@
       }
 
       async function playTones(pattern, id = runId) {
-        if (!soundOn || id !== runId) return;
+        if (appleTouchSpeechMode || !soundOn || id !== runId) return;
         const backgroundWasDucked = duckBackground();
         try {
           const mediaPlayed = await playMediaTones(pattern, id);
