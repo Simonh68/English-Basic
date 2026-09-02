@@ -99,6 +99,9 @@ test('exposure contrasts uppercase and lowercase while letter and chunk tasks st
 
   assert.match(html, /<h2 class="word" lang="en">\$\{item\.word\.toUpperCase\(\)\}<\/h2>/);
   assert.match(html, /characters\.map\(letter => `<span class="letter">\$\{letter\.toLowerCase\(\)\}<\/span>`\)/);
+  assert.match(html, /await speak\(characters\[letterIndex\]\.toLowerCase\(\), 1, id\)/);
+  assert.match(html, /await speak\(correct\.toLowerCase\(\), \.78, id, 'en-US', \.92\)/);
+  assert.doesNotMatch(html, /speak\([^\n]*\.toUpperCase\(\)/);
   assert.match(html, /function challengeWordMarkup\(word, plan, resolved = false\)/);
   assert.match(html, /const missing = '_'\.repeat\(plan\.length\)/);
   assert.match(html, /disabled>\$\{option\.toLowerCase\(\)\}<\/button>/);

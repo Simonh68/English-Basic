@@ -2857,7 +2857,7 @@
           { frequency: 185, duration: .1, gap: .04, type: 'square', gain: .22 },
           { frequency: 147, duration: .16, gap: .02, type: 'triangle', gain: .26 }
         ], id);
-        if (unitKind === 'letter') await speak(correct.toUpperCase(), .78, id, 'en-US', .92);
+        if (unitKind === 'letter') await speak(correct.toLowerCase(), .78, id, 'en-US', .92);
         await speak(item.word, .78, id, 'en-US', .94);
       }
 
@@ -2929,7 +2929,7 @@
           letters.forEach(letter => letter.classList.remove('active'));
           letters[letterIndex].classList.add('active');
           if (/[a-z]/i.test(characters[letterIndex])) {
-            await speak(characters[letterIndex].toUpperCase(), 1, id);
+            await speak(characters[letterIndex].toLowerCase(), 1, id);
             if (!soundOn) await sleep(190);
           } else {
             await sleep(120);
