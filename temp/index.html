@@ -1909,8 +1909,18 @@
 
   <script src="../curriculum-data.js?v=2"></script>
   <script src="../progress.js?v=3"></script>
+  <script src="../speech-runtime.js?v=1"></script>
   <script>
     (() => {
+      const speech = window.EFN_SPEECH || {
+        supported: false,
+        cancel() {},
+        prepareVoices() { return Promise.resolve([]); },
+        prime() { return false; },
+        resume() { return false; },
+        speak() { return Promise.resolve({ ok: false, reason: 'unavailable' }); },
+        voiceFor() { return null; }
+      };
       const params = new URLSearchParams(location.search);
       const courseLevel = Math.min(5, Math.max(1, Number(params.get('level')) || 1));
       const courseLesson = Math.min(10, Math.max(1, Number(params.get('lesson')) || 1));
@@ -2363,7 +2373,10 @@
         });
       });
 
-      soundTestButton.addEventListener('click', () => runSoundCheck());
+      soundTestButton.addEventListener('click', () => {
+        speech.prime();
+        runSoundCheck();
+      });
 
       soundToggle.addEventListener('click', async () => {
         soundOn = !soundOn;
@@ -2371,11 +2384,13 @@
         soundToggle.textContent = soundOn ? '🔊' : '🔇';
         soundToggle.setAttribute('aria-label', soundOn ? 'כיבוי צלילי המשחק' : 'הפעלת צלילי המשחק');
         if (!soundOn) {
-          if ('speechSynthesis' in window) speechSynthesis.cancel();
+          speech.cancel();
           if (mediaAudio) mediaAudio.pause();
           pauseBackgroundMusic(true);
           if (audioContext?.state === 'running') audioContext.suspend();
         } else {
+          speech.prime();
+          speech.resume();
           ensureAudioContext();
           await runSoundCheck(false);
           await startBackgroundMusic();
@@ -2402,6 +2417,8 @@
       startButton.addEventListener('click', async () => {
         startButton.disabled = true;
         startButton.textContent = '◌';
+        speech.cancel();
+        speech.prime();
         ensureAudioContext();
         if (!audioUnlocked) await runSoundCheck();
         resetState();
@@ -2414,7 +2431,7 @@
         startButton.disabled = false;
         startButton.textContent = '▶';
         await startBackgroundMusic();
-        showWord(0);
+        showWord(0, true);
       });
 
       function resetState() {
@@ -2571,33 +2588,19 @@
         return `${before}<span class="missing-slot${chunkClass}" style="--chunk-length:${plan.length}" aria-label="${plan.kind === 'chunk' ? 'צירוף חסר' : 'אות חסרה'}">${missing}</span>${after}`;
       }
 
-      function voiceFor(language) {
-        const voices = speechSynthesis.getVoices();
-        return voices.find(voice => voice.lang === language) || voices.find(voice => voice.lang.startsWith(language.split('-')[0])) || null;
-      }
-
       function speak(text, rate, id, language = 'en-US', pitch = 1) {
         return new Promise(resolve => {
-          if (!soundOn || !('speechSynthesis' in window) || id !== runId) return resolve();
+          if (!soundOn || id !== runId) return resolve({ ok: false, reason: 'cancelled' });
           const backgroundWasDucked = duckBackground();
-          const utterance = new SpeechSynthesisUtterance(text);
           let settled = false;
-          const finish = () => {
+          const finish = result => {
             if (settled) return;
             settled = true;
             restoreBackground(backgroundWasDucked);
-            resolve();
+            resolve(result);
           };
-          utterance.lang = language;
-          utterance.rate = rate;
-          utterance.pitch = pitch;
-          utterance.volume = 1;
-          const voice = voiceFor(language);
-          if (voice) utterance.voice = voice;
-          utterance.onend = finish;
-          utterance.onerror = finish;
-          speechSynthesis.speak(utterance);
-          setTimeout(finish, Math.max(1800, text.length * 180));
+          speech.speak(text, { language, rate, pitch }).then(finish, () => finish({ ok: false, reason: 'exception' }));
+          setTimeout(() => finish({ ok: false, reason: 'timeout' }), Math.min(30000, Math.max(3000, text.length * 240 + 1500)));
         });
       }
 
@@ -2860,11 +2863,11 @@
         setTimeout(() => { fxLayer.className = 'fx-layer'; fxLayer.innerHTML = ''; }, 950);
       }
 
-      async function showWord(wordIndex) {
+      async function showWord(wordIndex, keepPrimed = false) {
         const id = ++runId;
         clearChallengeTimer();
         clearFeedbackAdvance();
-        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        if (!keepPrimed) speech.cancel();
         index = wordIndex;
         wordStage.hidden = false;
         challengeStage.hidden = true;
@@ -2896,7 +2899,11 @@
         const letters = [...wordStage.querySelectorAll('.letter')];
         const repeatButton = wordStage.querySelector('#repeatButton');
         const continueButton = wordStage.querySelector('#continueButton');
-        repeatButton.addEventListener('click', () => showWord(wordIndex));
+        repeatButton.addEventListener('click', () => {
+          speech.cancel();
+          speech.prime();
+          showWord(wordIndex, true);
+        });
         continueButton.addEventListener('click', completeCurrentWord);
 
         await sleep(600);
@@ -3084,7 +3091,7 @@
         const id = ++runId;
         clearChallengeTimer();
         clearFeedbackAdvance();
-        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        speech.cancel();
         pauseBackgroundMusic();
         wordStage.hidden = true;
         challengeStage.hidden = false;
@@ -3343,7 +3350,7 @@
         clearChallengeTimer();
         clearFeedbackAdvance();
         clearAutoAdvance();
-        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        speech.cancel();
         gameFinished = true;
         pauseBackgroundMusic(true);
         wordStage.hidden = true;
@@ -3429,7 +3436,7 @@
         ], runId);
       }
 
-      if ('speechSynthesis' in window) speechSynthesis.getVoices();
+      speech.prepareVoices();
     })();
   </script>
 </body>

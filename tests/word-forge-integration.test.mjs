@@ -116,7 +116,7 @@ test('the spelling challenge is silent underneath and highlights the resolved un
   assert.ok(inlineScript);
 
   assert.match(inlineScript, /async function startBackgroundMusic\(\) \{[\s\S]*!challengeStage\.hidden/);
-  assert.match(inlineScript, /async function showWord\(wordIndex\) \{[\s\S]*challengeStage\.hidden = true;[\s\S]*await startBackgroundMusic\(\);/);
+  assert.match(inlineScript, /async function showWord\(wordIndex, keepPrimed = false\) \{[\s\S]*challengeStage\.hidden = true;[\s\S]*await startBackgroundMusic\(\);/);
   assert.match(inlineScript, /async function showChallenge\(wordIndex, isReview\) \{[\s\S]*pauseBackgroundMusic\(\);[\s\S]*challengeStage\.hidden = false;/);
   assert.match(inlineScript, /class="missing-word" lang="en" aria-live="polite"/);
   assert.match(inlineScript, /const missingWord = challengeStage\.querySelector\('\.missing-word'\);[\s\S]*missingWord\.innerHTML = challengeWordMarkup\(item\.word, currentChallenge, true\);[\s\S]*let audioFeedback;[\s\S]*if \(answer === correct\)/);
@@ -250,7 +250,7 @@ test('an original quiet arcade loop builds tension and ducks under learning audi
   assert.match(inlineScript, /const backgroundVolume = \.36;[\s\S]*const backgroundDuckVolume = \.055;/);
   assert.match(inlineScript, /function speak\([\s\S]*const backgroundWasDucked = duckBackground\(\);[\s\S]*restoreBackground\(backgroundWasDucked\);/);
   assert.match(inlineScript, /async function playTones\([\s\S]*const backgroundWasDucked = duckBackground\(\);[\s\S]*finally \{[\s\S]*restoreBackground\(backgroundWasDucked\);/);
-  assert.match(inlineScript, /game\.classList\.add\('active'\);[\s\S]*await startBackgroundMusic\(\);[\s\S]*showWord\(0\);/);
+  assert.match(inlineScript, /game\.classList\.add\('active'\);[\s\S]*await startBackgroundMusic\(\);[\s\S]*showWord\(0, true\);/);
   assert.match(inlineScript, /function showFinish\(\) \{[\s\S]*gameFinished = true;[\s\S]*pauseBackgroundMusic\(true\);/);
 });
 
@@ -265,7 +265,9 @@ test('course navigation exposes the stage-specific production game', async () =>
   assert.match(app, /function wordForgeHref\(\)\{return `word-forge\/\?level=\$\{level\}&lesson=\$\{lesson\}`\}/);
   assert.match(app, /data-word-forge/);
   assert.match(app, /location\.href=wordForgeHref\(\)/);
-  assert.match(lesson, /app\.js\?v=10/);
+  assert.match(lesson, /speech-runtime\.js\?v=1[\s\S]*app\.js\?v=11/);
+  assert.match(game, /speech-runtime\.js\?v=1/);
+  assert.match(game, /speech\.prime\(\);[\s\S]*showWord\(0, true\);/);
   assert.match(home, /href="word-forge\/\?level=1&amp;lesson=1"/);
   assert.match(game, /const lessonHref = `\.\.\/lesson\.html\?level=\$\{courseLevel\}&lesson=\$\{courseLesson\}&mode=cards`/);
 });

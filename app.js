@@ -5,6 +5,7 @@ const modes=[
  ['sentences','משפטים'],['text','טקסט'],['check','בדיקת שליטה']
 ];
 const $=s=>document.querySelector(s),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const speech=window.EFN_SPEECH||{supported:false,cancel(){},prepareVoices(){return Promise.resolve([])},speak(){return Promise.resolve({ok:false,reason:'unavailable'})}};
 const params=new URLSearchParams(location.search);
 let level=Math.min(5,Math.max(1,Number(params.get('level'))||1));
 let lesson=Math.min(10,Math.max(1,Number(params.get('lesson'))||1));
@@ -45,9 +46,8 @@ function setActivityProgress(label,current,total){
  activityProgress={label,current:Math.max(0,Math.min(total,current)),total};
  updateProgress();
 }
-function voice(){const v=speechSynthesis.getVoices();return v.find(x=>x.lang==='en-US')||v.find(x=>x.lang.startsWith('en'))||null}
-function speak(text,rate=.8,id=runId){return new Promise(resolve=>{if(id!==runId)return resolve();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=rate;const v=voice();if(v)u.voice=v;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
-function stopSpeech(){runId++;speechSynthesis.cancel()}
+function speak(text,rate=.8,id=runId){if(id!==runId)return Promise.resolve({ok:false,reason:'cancelled'});return speech.speak(text,{language:'en-US',rate})}
+function stopSpeech(){runId++;speech.cancel()}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function avoidRepeatedCorrectPosition(values,isCorrect,previousIndex=-1,random=Math.random){
  const output=[...values],correctIndex=output.findIndex(isCorrect);
@@ -131,6 +131,7 @@ function renderCards(){
 }
 function goCard(i,read=true){
  const u=current(),total=u.words.length+2;cardIndex=Math.max(0,Math.min(total-1,i));stopSpeech();
+ if(read)speech.prime?.();
  const panel=$('#cardsPanel'),track=panel.querySelector('.card-track');if(!track)return;
  track.style.transform=`translateX(-${cardIndex*100}%)`;
  const stage=panel.querySelector('.card-stage'),count=panel.querySelector('.card-count'),bar=panel.querySelector('.card-progress span');
@@ -274,5 +275,5 @@ window.addEventListener('ebr:progress',event=>{
  const gained=event.detail?.xpGained||0,live=$('#xpLive');
  if(gained>0&&live){live.textContent=`+${gained} XP`;live.classList.remove('show');void live.offsetWidth;live.classList.add('show');setTimeout(()=>live.classList.remove('show'),1800)}
 });
-window.addEventListener('beforeunload',stopSpeech);document.addEventListener('keydown',e=>{if(mode==='cards'&&e.key==='ArrowLeft')goCard(cardIndex-1);if(mode==='cards'&&e.key==='ArrowRight')goCard(cardIndex+1)});speechSynthesis.getVoices();setupSelectors();renderAll();
+window.addEventListener('beforeunload',stopSpeech);document.addEventListener('keydown',e=>{if(mode==='cards'&&e.key==='ArrowLeft')goCard(cardIndex-1);if(mode==='cards'&&e.key==='ArrowRight')goCard(cardIndex+1)});speech.prepareVoices();setupSelectors();renderAll();
 })();

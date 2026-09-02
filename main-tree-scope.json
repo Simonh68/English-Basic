@@ -29,6 +29,7 @@
       "preview.png",
       "preview.svg",
       "progress.js",
+      "speech-runtime.js",
       "word-data.js",
       "word-forge-preview.jpg",
       "diagnostic/common.js",
@@ -93,6 +94,7 @@
   "verification": {
     "defaultTestFiles": [
       "tests/main-tree-scope.test.mjs",
+      "tests/speech-runtime.test.mjs",
       "tests/copyright-ownership.test.mjs",
       "tests/diagnostic-tests.test.mjs",
       "tests/learning-loop.test.mjs",
