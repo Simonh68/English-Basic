@@ -5,7 +5,7 @@
     loading: document.querySelector('#loadingView'),
     question: document.querySelector('#questionView'),
     transition: document.querySelector('#transitionView'),
-    foundationStop: document.querySelector('#foundationStopView')
+    vocabularyResult: document.querySelector('#vocabularyResultView')
   };
   const state = {
     manifest: null,
@@ -59,15 +59,17 @@
 
   function prepareFoundationQuestions() {
     const count = state.manifest.vocabulary.foundationalQuestions;
-    const anchors = state.foundationalBank.filter(item => item.anchor).slice(0, count);
-    const extrasNeeded = Math.max(0, count - anchors.length);
-    const extras = api.selectFresh(
-      state.foundationalBank.filter(item => !item.anchor),
-      extrasNeeded,
-      'foundation:extra-spelling',
+    const shortCount = state.manifest.vocabulary.foundationalShortQuestions;
+    const shortWords = state.foundationalBank
+      .filter(item => item.tier === 'short')
+      .slice(0, shortCount);
+    const longWords = api.selectFresh(
+      state.foundationalBank.filter(item => item.tier === 'long'),
+      Math.max(0, count - shortWords.length),
+      'foundation:long-spelling',
       state.manifest.version
     );
-    return api.shuffle([...anchors, ...extras]).map(item => ({
+    return [...shortWords, ...longWords].map(item => ({
       ...item,
       ...shuffleOptions(item.options, item.answer),
       kind: 'foundation'
@@ -89,15 +91,22 @@
     return questions;
   }
 
-  function showTransition(step, title, next) {
+  function showTransition(step, title, buttonText, next) {
     state.clock?.stop();
     state.acceptingAnswer = false;
     document.querySelector('#transitionMark').textContent = `0${step}`;
     document.querySelector('#transitionTitle').textContent = title;
     document.querySelector('#transitionText').textContent = `שלב ${step} מתוך 3`;
+    const button = document.querySelector('#transitionButton');
+    button.textContent = buttonText;
+    button.disabled = false;
+    button.onclick = () => {
+      button.disabled = true;
+      next();
+    };
     show('transition');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    window.setTimeout(next, 1200);
+    requestAnimationFrame(() => button.focus());
   }
 
   function renderQuestion() {
@@ -189,52 +198,61 @@
     const answers = state.answers.filter(answer => answer.kind === 'foundation');
     const correct = answers.filter(answer => answer.correct).length;
     const ratio = api.scoreRatio(answers);
-    const passed = correct >= 5 && ratio >= 0.70;
-    state.foundation = { passed, correct, total: answers.length, ratio };
-
-    if (!passed) {
-      api.writeStorage('active-vocabulary', {
-        sessionId: state.sessionId,
-        version: state.manifest.version,
-        level: 'A',
-        profile: 'foundation-stop',
-        foundational: state.foundation,
-        summary: {},
-        answers: state.answers,
-        stoppedAt: 'foundation',
-        completedAt: new Date().toISOString()
-      });
-      show('foundationStop');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+    const accuracy = answers.length ? correct / answers.length : 0;
+    const passed = accuracy >= 0.70;
+    state.foundation = { passed, correct, total: answers.length, accuracy, ratio };
 
     state.stage = 'vocabulary';
     state.questions = prepareVocabularyQuestions();
     state.index = 0;
-    showTransition(2, 'שליטה באוצר מילים', () => {
+    showTransition(2, 'שליטה באוצר מילים', 'להמשך לבדיקת אוצר המילים', () => {
       show('question');
       renderQuestion();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
+  function showVocabularyOnlyResult(result) {
+    const foundationalPassed = result.foundational?.passed === true;
+    const foundationSection = document.querySelector('#foundationRecommendationSection');
+    foundationSection.hidden = foundationalPassed;
+    if (!foundationalPassed) {
+      api.renderRecommendations(
+        document.querySelector('#foundationRecommendationList'),
+        api.foundationRecommendations()
+      );
+    }
+    api.renderRecommendations(
+      document.querySelector('#vocabularyRecommendationList'),
+      api.vocabularyOnlyRecommendations(result.vocabularyLevel, foundationalPassed)
+    );
+    show('vocabularyResult');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function finishVocabulary() {
     state.clock?.stop();
     const summary = summarizeVocabulary();
     const profile = api.vocabularyProfile(summary);
-    const level = api.vocabularyLevel(summary);
-    api.writeStorage('active-vocabulary', {
+    const vocabularyLevel = api.vocabularyLevel(summary);
+    const readingEligible = api.canEnterReading(state.foundation, summary);
+    const result = {
       sessionId: state.sessionId,
       version: state.manifest.version,
-      level,
+      vocabularyLevel,
       profile,
       foundational: state.foundation,
       summary,
       answers: state.answers,
+      readingEligible,
       completedAt: new Date().toISOString()
-    });
-    showTransition(3, 'יכולת הבנת הנקרא', () => {
+    };
+    api.writeStorage('active-vocabulary', result);
+    if (!readingEligible) {
+      showVocabularyOnlyResult(result);
+      return;
+    }
+    showTransition(3, 'יכולת הבנת הנקרא', 'להמשך לבדיקת הבנת הנקרא', () => {
       location.href = `reading.html?session=${encodeURIComponent(state.sessionId)}`;
     });
   }
@@ -243,6 +261,20 @@
     const session = api.validSession(state.sessionId);
     if (!session) {
       location.replace('index.html');
+      return;
+    }
+    const savedResult = api.readStorage('active-vocabulary', null);
+    if (savedResult?.sessionId === state.sessionId && savedResult.completedAt) {
+      const readingEligible = savedResult.readingEligible
+        ?? api.canEnterReading(savedResult.foundational, savedResult.summary);
+      if (readingEligible) {
+        location.replace(`reading.html?session=${encodeURIComponent(state.sessionId)}`);
+      } else {
+        showVocabularyOnlyResult({
+          ...savedResult,
+          vocabularyLevel: savedResult.vocabularyLevel || api.vocabularyLevel(savedResult.summary || {})
+        });
+      }
       return;
     }
     try {
@@ -258,7 +290,7 @@
       state.foundationalBank = foundationalBank;
       state.questions = prepareFoundationQuestions();
       document.querySelector('#unknownButton').addEventListener('click', () => submit(-1, true));
-      showTransition(1, 'יכולת קריאה בסיסית', () => {
+      showTransition(1, 'יכולת קריאה בסיסית', 'מתחילים', () => {
         show('question');
         renderQuestion();
         window.scrollTo({ top: 0, behavior: 'smooth' });

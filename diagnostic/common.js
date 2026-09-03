@@ -165,6 +165,16 @@
     return Math.min(1, points / (answers.length * BASE_POINTS));
   }
 
+  function accuracyRatio(result) {
+    const total = Number(result?.total || 0);
+    return total > 0 ? Number(result?.correct || 0) / total : 0;
+  }
+
+  function canEnterReading(foundational, summary) {
+    return accuracyRatio(foundational) >= 0.70
+      && accuracyRatio(summary?.['Core I']) >= 0.50;
+  }
+
   function visibleReadingParagraphs(paragraphs, questionIndex, scope) {
     const list = Array.isArray(paragraphs) ? paragraphs : [];
     if (scope === 'whole-text') return [...list];
@@ -324,13 +334,23 @@
   }
 
   function combinedRecommendations(level, foundationalPassed, vocabularyLevel = level) {
-    const items = [];
-    if (!foundationalPassed) {
-      items.push(recommendation('▶', 'משחק יסודות הקריאה', 'תרגול זיהוי אותיות, מילים ודיוק בקריאה.', '../word-forge/?level=1&lesson=1'));
-    }
-    items.push(vocabularyRecommendation(vocabularyLevel, foundationalPassed));
-    items.push(storyRecommendation(level, foundationalPassed));
-    return items;
+    return [
+      vocabularyRecommendation(vocabularyLevel, foundationalPassed),
+      storyRecommendation(level, foundationalPassed)
+    ];
+  }
+
+  function foundationRecommendations() {
+    return [recommendation(
+      '▶',
+      'משחק יסודות הקריאה',
+      'תרגול זיהוי מילים ודיוק בקריאה.',
+      '../word-forge/?level=1&lesson=1'
+    )];
+  }
+
+  function vocabularyOnlyRecommendations(vocabularyLevel, foundationalPassed) {
+    return [vocabularyRecommendation(vocabularyLevel, foundationalPassed)];
   }
 
   function renderRecommendations(container, items) {
@@ -361,12 +381,16 @@
     startQuestionClock,
     scoreTimedAnswer,
     scoreRatio,
+    accuracyRatio,
+    canEnterReading,
     visibleReadingParagraphs,
     filterDiagnosticVocabulary,
     vocabularyProfile,
     vocabularyLevel,
     nextReadingStep,
     nextCoreIGroup,
+    foundationRecommendations,
+    vocabularyOnlyRecommendations,
     combinedRecommendations,
     renderRecommendations
   };

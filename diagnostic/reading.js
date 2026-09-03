@@ -161,7 +161,7 @@
   function showResults(existingResult = null) {
     const foundationalPassed = state.vocabularyResult.foundational.passed;
     const level = existingResult?.level || existingResult?.combined?.level || state.readingLevel || 'A';
-    const title = `רמת האנגלית שלך: ${level}`;
+    const title = `הרמה המתאימה לך: ${level}`;
     const detail = 'התוצאה מבוססת על אוצר המילים ועל הבנת הנקרא שהפגנת בבדיקה.';
 
     document.querySelector('#readingResult').innerHTML = `<div class="reading-level">
@@ -170,14 +170,14 @@
     </div>`;
     api.renderRecommendations(
       document.querySelector('#recommendationList'),
-      api.combinedRecommendations(level, foundationalPassed, state.vocabularyResult.level)
+      api.combinedRecommendations(level, foundationalPassed, state.vocabularyResult.vocabularyLevel)
     );
 
     const result = existingResult || {
       sessionId: state.sessionId,
       version: state.manifest.version,
       level,
-      vocabularyLevel: state.vocabularyResult.level,
+      vocabularyLevel: state.vocabularyResult.vocabularyLevel,
       vocabularyProfile: state.vocabularyProfile,
       readingLevel: state.readingLevel,
       foundational: state.vocabularyResult.foundational,
@@ -199,8 +199,10 @@
       location.replace('index.html');
       return;
     }
-    if (state.vocabularyResult.foundational?.passed !== true) {
-      location.replace('index.html');
+    const readingEligible = state.vocabularyResult.readingEligible
+      ?? api.canEnterReading(state.vocabularyResult.foundational, state.vocabularyResult.summary);
+    if (!readingEligible) {
+      location.replace(`vocabulary.html?session=${encodeURIComponent(state.sessionId)}`);
       return;
     }
     state.vocabularyProfile = state.vocabularyResult.profile
@@ -224,7 +226,8 @@
       document.querySelector('#skipButton').addEventListener('click', () => submit(-1, true));
       const firstStep = api.nextReadingStep(state.vocabularyProfile, []);
       state.startLevel = firstStep.level;
-      state.vocabularyResult.level = api.vocabularyLevel(state.vocabularyResult.summary || {});
+      state.vocabularyResult.vocabularyLevel = state.vocabularyResult.vocabularyLevel
+        || api.vocabularyLevel(state.vocabularyResult.summary || {});
       startPassage(state.startLevel);
     } catch {
       views.loading.innerHTML = '<div class="error-message"><strong>לא הצלחנו לטעון את בדיקת הרמה האישית.</strong><br>בדקו את החיבור ונסו לרענן את הדף.</div>';

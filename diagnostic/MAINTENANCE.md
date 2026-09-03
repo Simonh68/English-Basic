@@ -4,7 +4,7 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 
 ## Fixed-level policy
 
-- The student sees a level-check flow: basic spelling/reading, vocabulary, reading comprehension, and one final A/C/E/G level.
+- The student sees a level-check flow: basic word recognition, vocabulary, and—only when the entry threshold is met—reading comprehension and one final A/C/E/G level.
 - The level check never exposes Core/Band coverage, intermediate levels, or item feedback. Direct group labels appear only in the final recommendations.
 - The opening asks for no class or unit-track information. The result never identifies the level as a Bagrut questionnaire.
 - Every vocabulary item keeps its source band: Core I, Core II, or Band III.
@@ -15,17 +15,19 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 
 ## Short form and scoring
 
-- Basic spelling/reading: 6 items. Israel, doctor, ambulance, and Google always appear; two additional familiar cross-language words rotate from the bank.
+- Basic word recognition: 6 items. Bus, cat, and dog always appear first; three longer familiar words then rotate from the bank.
 - Vocabulary: 4 items from each fixed band, 12 items total.
-- A student must answer at least 5 of 6 basic items correctly. A lower result stops the check immediately and links directly to Word Forge.
+- The vocabulary stage always follows through an explicit continue button; the first stage never announces pass/fail.
+- Reading opens only when the student answers at least 70% of the basic items and at least 50% of the Band II Core I vocabulary items correctly.
+- Below that threshold, the result contains no A/C/E/G rating and recommends vocabulary work only. If basic word recognition also needs work, Word Forge appears in its own separate section.
 - Reading: one passage at each level needed by the vocabulary-guided route, with up to three passages total.
-- Total length after passing the first stage: 22–30 questions, depending on the reading route.
+- Total length is 18 questions without reading, or 22–30 questions when reading opens, depending on the reading route.
 - Vocabulary and foundational-reading questions have a hard 30-second limit. Reading-comprehension questions have a hard 5-minute limit.
 - When either limit expires, the unanswered question receives 0 and the level check advances automatically. Each correct answer is worth 4 points inside its limit and 5 points in the first half. Incorrect, skipped, or timed-out answers receive 0.
 - The reading route starts from vocabulary coverage: below Core I starts and ends at A; Core I starts at A and may advance to C; Core II starts at C but never advances to E; Band III starts at E and may move to G, C, or A according to reading performance.
 - Every reading passage contains exactly three staged paragraphs. Questions 1–3 each show only their own paragraph; Question 4 shows all three paragraphs and asks about the whole text.
-- The final A/C/E/G level is the terminal level of that vocabulary-gated reading route.
-- Recommendations link directly to the next Core I group saved on the device when that progress exists, otherwise to the first relevant vocabulary group. A reading-foundations game is added for the lowest profile, and every result includes one direct story link.
+- The final A/C/E/G level is shown only after a vocabulary-gated reading route is completed.
+- Recommendations link directly to the next Core I group saved on the device when that progress exists, otherwise to the first relevant vocabulary group. Word Forge is never mixed into the vocabulary/reading recommendation list, and a story link appears only after reading was assessed.
 
 ## Biweekly release
 

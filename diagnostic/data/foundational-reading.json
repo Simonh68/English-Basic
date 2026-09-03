@@ -1,7 +1,31 @@
 [
   {
+    "id": "basic-spelling-bus",
+    "tier": "short",
+    "wordHe": "אוטובוס",
+    "prompt": "איך כותבים באנגלית את המילה „אוטובוס”?",
+    "options": ["bus", "buss", "bas", "buz"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-cat",
+    "tier": "short",
+    "wordHe": "חתול",
+    "prompt": "איך כותבים באנגלית את המילה „חתול”?",
+    "options": ["cat", "kat", "cet", "catt"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-dog",
+    "tier": "short",
+    "wordHe": "כלב",
+    "prompt": "איך כותבים באנגלית את המילה „כלב”?",
+    "options": ["dog", "doog", "dok", "dag"],
+    "answer": 0
+  },
+  {
     "id": "basic-spelling-israel",
-    "anchor": true,
+    "tier": "long",
     "wordHe": "ישראל",
     "prompt": "איך כותבים באנגלית את המילה „ישראל”?",
     "options": ["Israel", "Isreal", "Israell", "Izrael"],
@@ -9,7 +33,7 @@
   },
   {
     "id": "basic-spelling-doctor",
-    "anchor": true,
+    "tier": "long",
     "wordHe": "דוקטור",
     "prompt": "איך כותבים באנגלית את המילה „דוקטור”?",
     "options": ["doctor", "docter", "doktor", "doctar"],
@@ -17,23 +41,15 @@
   },
   {
     "id": "basic-spelling-ambulance",
-    "anchor": true,
+    "tier": "long",
     "wordHe": "אמבולנס",
     "prompt": "איך כותבים באנגלית את המילה „אמבולנס”?",
     "options": ["ambulance", "ambulence", "ambullance", "ambulanse"],
     "answer": 0
   },
   {
-    "id": "basic-spelling-google",
-    "anchor": true,
-    "wordHe": "גוגל",
-    "prompt": "איך כותבים באנגלית את המילה „גוגל”?",
-    "options": ["Google", "Gogle", "Googel", "Gugle"],
-    "answer": 0
-  },
-  {
     "id": "basic-spelling-telephone",
-    "anchor": false,
+    "tier": "long",
     "wordHe": "טלפון",
     "prompt": "איך כותבים באנגלית את המילה „טלפון”?",
     "options": ["telephone", "telefone", "telephon", "teliphone"],
@@ -41,58 +57,42 @@
   },
   {
     "id": "basic-spelling-internet",
-    "anchor": false,
+    "tier": "long",
     "wordHe": "אינטרנט",
     "prompt": "איך כותבים באנגלית את המילה „אינטרנט”?",
     "options": ["internet", "interent", "internat", "intarnet"],
     "answer": 0
   },
   {
-    "id": "basic-spelling-pizza",
-    "anchor": false,
-    "wordHe": "פיצה",
-    "prompt": "איך כותבים באנגלית את המילה „פיצה”?",
-    "options": ["pizza", "piza", "pitza", "pezza"],
-    "answer": 0
-  },
-  {
     "id": "basic-spelling-chocolate",
-    "anchor": false,
+    "tier": "long",
     "wordHe": "שוקולד",
     "prompt": "איך כותבים באנגלית את המילה „שוקולד”?",
     "options": ["chocolate", "choclate", "chocolat", "shocolate"],
     "answer": 0
   },
   {
-    "id": "basic-spelling-radio",
-    "anchor": false,
-    "wordHe": "רדיו",
-    "prompt": "איך כותבים באנגלית את המילה „רדיו”?",
-    "options": ["radio", "redio", "radiyo", "raddio"],
-    "answer": 0
-  },
-  {
-    "id": "basic-spelling-banana",
-    "anchor": false,
-    "wordHe": "בננה",
-    "prompt": "איך כותבים באנגלית את המילה „בננה”?",
-    "options": ["banana", "bannana", "bananna", "benana"],
-    "answer": 0
-  },
-  {
-    "id": "basic-spelling-music",
-    "anchor": false,
-    "wordHe": "מוזיקה",
-    "prompt": "איך כותבים באנגלית את המילה „מוזיקה”?",
-    "options": ["music", "muzic", "musick", "musik"],
+    "id": "basic-spelling-television",
+    "tier": "long",
+    "wordHe": "טלוויזיה",
+    "prompt": "איך כותבים באנגלית את המילה „טלוויזיה”?",
+    "options": ["television", "televison", "televizion", "televesion"],
     "answer": 0
   },
   {
     "id": "basic-spelling-university",
-    "anchor": false,
+    "tier": "long",
     "wordHe": "אוניברסיטה",
     "prompt": "איך כותבים באנגלית את המילה „אוניברסיטה”?",
     "options": ["university", "univercity", "universety", "universty"],
+    "answer": 0
+  },
+  {
+    "id": "basic-spelling-restaurant",
+    "tier": "long",
+    "wordHe": "מסעדה",
+    "prompt": "איך כותבים באנגלית את המילה „מסעדה”?",
+    "options": ["restaurant", "resturant", "restaraunt", "restorant"],
     "answer": 0
   }
 ]

@@ -50,10 +50,13 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.match(reading, /התוצאה אינה מחליפה הערכה או שיקול דעת של מורה מוסמך/);
   assert.match(reading, /id="paragraphProgress"/);
   assert.equal((reading.match(/class="paragraph-cube/g) || []).length, 4);
-  assert.match(vocabulary, /id="foundationStopView"/);
-  assert.match(vocabulary, /word-forge\/\?level=1&amp;lesson=1/);
+  assert.match(vocabulary, /id="vocabularyResultView"/);
+  assert.match(vocabulary, /id="foundationRecommendationSection"[^>]*hidden/);
+  assert.match(vocabulary, /id="vocabularyRecommendationList"/);
   assert.match(vocabulary, /id="transitionTitle">יכולת קריאה בסיסית/);
   assert.match(vocabulary, /id="transitionMark"[^>]*>01/);
+  assert.match(vocabulary, /id="transitionButton"/);
+  assert.doesNotMatch(vocabulary, /השלב הראשון הושלם|עברת|נכשלת/);
   assert.doesNotMatch(landing, /באיזו כיתה|בחרו כיתה|gradeSelect|gradeError/);
   assert.doesNotMatch(landing, /Core I|Core II|Band III|A · C · E · G|גרסת המאגר|כיסוי/);
   assert.doesNotMatch(vocabulary, /המשימות המומלצות שלך|פרופיל אוצר המילים|Core I|Core II|Band III/);
@@ -71,6 +74,7 @@ test('the biweekly manifest implements the shortest reliable question policy', a
   assert.match(manifest.version, /^\d{4}\.\d{2}-[A-Z]$/);
   assert.equal((review - released) / 86400000, 14);
   assert.equal(manifest.vocabulary.foundationalQuestions, 6);
+  assert.equal(manifest.vocabulary.foundationalShortQuestions, 3);
   assert.equal(manifest.vocabulary.questionsPerBand, 4);
   assert.equal(vocabularyQuestions, 18);
   assert.equal(manifest.reading.questionsPerPassage, 4);
@@ -79,14 +83,17 @@ test('the biweekly manifest implements the shortest reliable question policy', a
   assert.deepEqual(manifest.reading.levels, ['A', 'C', 'E', 'G']);
 });
 
-test('the basic gate uses four required familiar spellings and rotating cognates', async () => {
+test('basic word recognition starts with bus cat and dog, then rotates longer words', async () => {
   const bank = await json('diagnostic/data/foundational-reading.json');
-  const anchors = bank.filter(item => item.anchor);
+  const shortWords = bank.filter(item => item.tier === 'short');
+  const longWords = bank.filter(item => item.tier === 'long');
 
   assert.equal(bank.length, 12);
-  assert.equal(anchors.length, 4);
-  assert.deepEqual(anchors.map(item => item.wordHe), ['ישראל', 'דוקטור', 'אמבולנס', 'גוגל']);
-  assert.equal(bank.filter(item => !item.anchor).length, 8);
+  assert.equal(shortWords.length, 3);
+  assert.equal(longWords.length, 9);
+  assert.deepEqual(shortWords.map(item => item.wordHe), ['אוטובוס', 'חתול', 'כלב']);
+  assert.deepEqual(shortWords.map(item => item.options[item.answer]), ['bus', 'cat', 'dog']);
+  assert.deepEqual(bank.slice(0, 3).map(item => item.tier), ['short', 'short', 'short']);
   for (const item of bank) {
     assert.match(item.prompt, /^איך כותבים באנגלית את המילה „.+”\?$/);
     assert.equal(item.options.length, 4);
@@ -316,6 +323,21 @@ test('vocabulary coverage selects the correlated reading start level', async () 
   assert.equal(api.vocabularyLevel(bandThree), 'E');
 });
 
+test('reading opens only after 70 percent basic accuracy and 50 percent Core I accuracy', async () => {
+  const api = await loadCommonApi();
+  const foundation = (correct, total = 6) => ({ correct, total });
+  const summary = (correct, total = 4) => ({
+    'Core I': { correct, total },
+    'Core II': { correct: 0, total: 4 },
+    'Band III': { correct: 0, total: 4 }
+  });
+
+  assert.equal(api.canEnterReading(foundation(5), summary(2)), true);
+  assert.equal(api.canEnterReading(foundation(4), summary(2)), false);
+  assert.equal(api.canEnterReading(foundation(5), summary(1)), false);
+  assert.equal(api.canEnterReading(foundation(6), summary(4)), true);
+});
+
 test('the diagnostic excludes sensitive content and weak advanced discriminators without changing the source bank', async () => {
   const [api, bank] = await Promise.all([
     loadCommonApi(),
@@ -341,17 +363,25 @@ test('the diagnostic excludes sensitive content and weak advanced discriminators
   }
 });
 
-test('recommendations resume the next saved vocabulary group and link directly to one story', async () => {
+test('reading-foundation, vocabulary, and reading recommendations stay separated', async () => {
   const completed = group => [String(group).padStart(2, '0'), { completedAt: '2026-08-29T00:00:00.000Z' }];
   const progress = JSON.stringify({ version: 1, groups: Object.fromEntries([completed(1), completed(2), completed(3)]) });
   const api = await loadCommonApi({ 'efn.band2.core1.progress.v1': progress });
 
   assert.equal(api.nextCoreIGroup(), 4);
+  const foundations = api.foundationRecommendations();
+  assert.equal(foundations.length, 1);
+  assert.match(foundations[0].href, /word-forge\/\?level=1&lesson=1$/);
+
+  const vocabularyOnly = api.vocabularyOnlyRecommendations('A', false);
+  assert.equal(vocabularyOnly.length, 1);
+  assert.match(vocabularyOnly[0].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
+
   const lowest = api.combinedRecommendations('A', false, 'A');
-  assert.equal(lowest.length, 3);
-  assert.match(lowest[0].href, /word-forge\/\?level=1&lesson=1$/);
-  assert.match(lowest[1].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
-  assert.match(lowest[2].href, /Read-Along\/reader\.html\?id=l1-a1-new-student$/);
+  assert.equal(lowest.length, 2);
+  assert.doesNotMatch(lowest.map(item => item.href).join('\n'), /word-forge/);
+  assert.match(lowest[0].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
+  assert.match(lowest[1].href, /Read-Along\/reader\.html\?id=l1-a1-new-student$/);
 
   const coreOne = api.combinedRecommendations('A', true, 'A');
   assert.match(coreOne[0].href, /groups\/group-04\.html$/);
@@ -365,7 +395,7 @@ test('recommendations resume the next saved vocabulary group and link directly t
   assert.match(bandThree[1].href, /reader\.html\?id=l3-a1-final-place$/);
 });
 
-test('scripts compile, stop weak basic readers, and use staged transitions', async () => {
+test('scripts compile, gate reading after vocabulary, and use button-led transitions', async () => {
   const files = ['diagnostic/common.js', 'diagnostic/landing.js', 'diagnostic/vocabulary.js', 'diagnostic/reading.js'];
   for (const file of files) {
     const source = await read(file);
@@ -382,16 +412,20 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
   assert.match(common, /function selectFresh/);
   assert.match(common, /function filterDiagnosticVocabulary/);
   assert.match(common, /function vocabularyProfile/);
+  assert.match(common, /function canEnterReading/);
   assert.match(common, /function nextReadingStep/);
   assert.doesNotMatch(landing, /getGrade|setGrade|grade=/);
   assert.match(vocabulary, /selectFresh\(/);
   assert.match(vocabulary, /api\.filterDiagnosticVocabulary/);
-  assert.match(vocabulary, /filter\(item => item\.anchor\)/);
-  assert.match(vocabulary, /correct >= 5/);
-  assert.match(vocabulary, /show\('foundationStop'\)/);
-  const basicTransition = vocabulary.indexOf("showTransition(1, 'יכולת קריאה בסיסית'");
-  const vocabularyTransition = vocabulary.indexOf("showTransition(2, 'שליטה באוצר מילים'");
-  const readingTransition = vocabulary.indexOf("showTransition(3, 'יכולת הבנת הנקרא'");
+  assert.match(vocabulary, /filter\(item => item\.tier === 'short'\)/);
+  assert.match(vocabulary, /filter\(item => item\.tier === 'long'\)/);
+  assert.match(vocabulary, /const passed = accuracy >= 0\.70/);
+  assert.doesNotMatch(vocabulary, /foundationStop|stoppedAt/);
+  assert.match(vocabulary, /api\.canEnterReading\(state\.foundation, summary\)/);
+  assert.match(vocabulary, /showVocabularyOnlyResult\(result\)/);
+  const basicTransition = vocabulary.indexOf("showTransition(1, 'יכולת קריאה בסיסית', 'מתחילים'");
+  const vocabularyTransition = vocabulary.indexOf("showTransition(2, 'שליטה באוצר מילים', 'להמשך לבדיקת אוצר המילים'");
+  const readingTransition = vocabulary.indexOf("showTransition(3, 'יכולת הבנת הנקרא', 'להמשך לבדיקת הבנת הנקרא'");
   assert.ok(basicTransition >= 0);
   assert.ok(vocabularyTransition >= 0);
   assert.ok(readingTransition >= 0);
@@ -399,10 +433,11 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
   assert.match(vocabulary, /location\.href = `reading\.html/);
   assert.doesNotMatch(vocabulary, /getGrade|grade=/);
   assert.match(reading, /active-vocabulary/);
+  assert.match(reading, /api\.canEnterReading\(state\.vocabularyResult\.foundational, state\.vocabularyResult\.summary\)/);
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, state\.attempts\)/);
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, \[\]\)/);
   assert.match(reading, /startPassage\(state\.startLevel\)/);
-  assert.match(reading, /רמת האנגלית שלך/);
+  assert.match(reading, /הרמה המתאימה לך/);
   assert.match(reading, /question\.scope === 'whole-text'/);
   assert.match(reading, /api\.visibleReadingParagraphs\(state\.paragraphs, state\.questionIndex, question\.scope\)/);
   assert.match(reading, /replaceChildren\(\.\.\.paragraphNodes\)/);
@@ -411,4 +446,5 @@ test('scripts compile, stop weak basic readers, and use staged transitions', asy
   assert.doesNotMatch(reading, /shuffle\(selected\.questions\)/);
   assert.doesNotMatch(`${common}\n${reading}\n${readingHtml}`, /יחידות|placementCopy|classComparison|השאלון המתאים|combineLevels/);
   assert.doesNotMatch(vocabularyHtml, /נכון|שגוי|Correct|Incorrect|הסבר/);
+  assert.doesNotMatch(vocabularyHtml, /רמת האנגלית שלך|הרמה המתאימה לך/);
 });

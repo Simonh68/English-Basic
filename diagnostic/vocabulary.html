@@ -8,7 +8,7 @@
   <title>בדיקת רמה אישית | English for Noar</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../app.css?v=6">
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body class="home-page diagnostic-page exam-page">
   <a class="skip-link" href="#mainContent">דלגו לתוכן הראשי</a>
@@ -53,27 +53,34 @@
       <div class="transition-mark" id="transitionMark" aria-hidden="true">01</div>
       <h1 id="transitionTitle">יכולת קריאה בסיסית</h1>
       <p id="transitionText">שלב 1 מתוך 3</p>
+      <button class="primary-action transition-action" id="transitionButton" type="button">מתחילים</button>
     </section>
 
-    <section id="foundationStopView" class="exam-panel result-panel foundation-stop-panel" hidden aria-live="polite">
-      <span class="result-kicker">השלב הראשון הושלם</span>
-      <h1>כדאי להתחיל מיסודות הקריאה</h1>
-      <p class="result-lead">Word Forge יעזור לך לחזק זיהוי אותיות, דיוק בקריאה וכתיבת מילים בסיסיות.</p>
-      <a class="recommendation-item foundation-word-forge" id="foundationWordForge" href="../word-forge/?level=1&amp;lesson=1">
-        <span class="recommendation-icon" aria-hidden="true">▶</span>
-        <span class="recommendation-copy"><strong>משחק יסודות הקריאה</strong><small>פתיחת Word Forge מהשלב הראשון</small></span>
-        <span class="recommendation-arrow" aria-hidden="true">←</span>
-      </a>
+    <section id="vocabularyResultView" class="exam-panel result-panel vocabulary-only-result" hidden aria-live="polite">
+      <span class="result-kicker">בדיקת אוצר המילים הושלמה</span>
+      <h1>כדאי להתקדם באוצר המילים</h1>
+      <p class="result-lead">הפעילות המתאימה להמשך מופיעה למטה.</p>
+
+      <section class="recommendations foundation-recommendations" id="foundationRecommendationSection" hidden aria-labelledby="foundationRecommendationTitle">
+        <h2 id="foundationRecommendationTitle">חיזוק יסודות הקריאה</h2>
+        <div id="foundationRecommendationList" class="recommendation-list"></div>
+      </section>
+
+      <section class="recommendations vocabulary-recommendations" aria-labelledby="vocabularyRecommendationTitle">
+        <h2 id="vocabularyRecommendationTitle">אוצר המילים שכדאי ללמוד עכשיו</h2>
+        <div id="vocabularyRecommendationList" class="recommendation-list"></div>
+      </section>
+
       <p class="diagnostic-disclaimer result-disclaimer">הכלי מיועד לתרגול ולהערכה ראשונית באתר בלבד. התוצאה אינה מחליפה הערכה או שיקול דעת של מורה מוסמך.</p>
-      <div class="result-actions foundation-stop-actions">
+      <div class="result-actions vocabulary-result-actions">
         <a class="primary-action link-action" href="https://englishfornoar.co.il/">חזרה לדף הבית</a>
         <a class="secondary-action" href="index.html">בדיקת רמה אישית נוספת</a>
       </div>
     </section>
   </main>
 
-  <script src="common.js?v=9"></script>
-  <script src="vocabulary.js?v=10"></script>
+  <script src="common.js?v=10"></script>
+  <script src="vocabulary.js?v=11"></script>
   <script src="../analytics.js"></script>
 </body>
 </html>

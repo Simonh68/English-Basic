@@ -94,7 +94,11 @@
 .unknown-button{display:block;margin:17px auto 0;padding:10px 15px;border:0;background:transparent;color:#68758d;text-decoration:underline;text-underline-offset:4px;font-weight:800;cursor:pointer}
 .answer-option:disabled,.unknown-button:disabled{cursor:default;opacity:.65}
 .transition-mark{width:72px;height:72px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--diag-lime),var(--diag-cyan));color:#0d3e39;font:900 1.28rem Andika,sans-serif;letter-spacing:.05em;direction:ltr;box-shadow:0 14px 30px #2e9f8933}
-.foundation-stop-panel{text-align:center}.foundation-stop-panel .result-lead{max-width:650px;margin:0 auto}.foundation-word-forge{max-width:620px;margin:28px auto 0;text-align:right}.foundation-stop-actions{justify-content:center}
+.transition-action{margin-top:26px;min-width:210px}
+.vocabulary-only-result{text-align:center}.vocabulary-only-result .result-lead{max-width:650px;margin:0 auto}.vocabulary-only-result .recommendations{text-align:right}
+.foundation-recommendations{padding:20px;border:1px solid #bfe3d9;border-radius:18px;background:#f0faf7}.foundation-recommendations[hidden]{display:none}
+.vocabulary-recommendations{padding-top:22px;border-top:1px solid var(--diag-line)}.foundation-recommendations:not([hidden])+.vocabulary-recommendations{margin-top:18px}
+.vocabulary-result-actions{justify-content:center}
 
 .result-panel h1{margin:6px 0 8px;font-size:clamp(2.15rem,6vw,3.5rem);letter-spacing:-.035em}
 .result-kicker{color:#168f72;font-weight:900}
