@@ -50,6 +50,8 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.match(reading, /התוצאה אינה מחליפה הערכה או שיקול דעת של מורה מוסמך/);
   assert.match(reading, /id="paragraphProgress"/);
   assert.equal((reading.match(/class="paragraph-cube/g) || []).length, 4);
+  assert.match(reading, /id="foundationRecommendationSection"[^>]*hidden/);
+  assert.match(reading, /id="foundationRecommendationList"/);
   assert.match(vocabulary, /id="vocabularyResultView"/);
   assert.match(vocabulary, /id="foundationRecommendationSection"[^>]*hidden/);
   assert.match(vocabulary, /id="vocabularyRecommendationList"/);
@@ -323,19 +325,18 @@ test('vocabulary coverage selects the correlated reading start level', async () 
   assert.equal(api.vocabularyLevel(bandThree), 'E');
 });
 
-test('reading opens only after 70 percent basic accuracy and 50 percent Core I accuracy', async () => {
+test('reading opens solely after 50 percent Core I accuracy', async () => {
   const api = await loadCommonApi();
-  const foundation = (correct, total = 6) => ({ correct, total });
   const summary = (correct, total = 4) => ({
     'Core I': { correct, total },
     'Core II': { correct: 0, total: 4 },
     'Band III': { correct: 0, total: 4 }
   });
 
-  assert.equal(api.canEnterReading(foundation(5), summary(2)), true);
-  assert.equal(api.canEnterReading(foundation(4), summary(2)), false);
-  assert.equal(api.canEnterReading(foundation(5), summary(1)), false);
-  assert.equal(api.canEnterReading(foundation(6), summary(4)), true);
+  assert.equal(api.canEnterReading(summary(2)), true);
+  assert.equal(api.canEnterReading(summary(1)), false);
+  assert.equal(api.canEnterReading(summary(4)), true);
+  assert.equal(api.canEnterReading({}), false);
 });
 
 test('the diagnostic excludes sensitive content and weak advanced discriminators without changing the source bank', async () => {
@@ -377,20 +378,20 @@ test('reading-foundation, vocabulary, and reading recommendations stay separated
   assert.equal(vocabularyOnly.length, 1);
   assert.match(vocabularyOnly[0].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
 
-  const lowest = api.combinedRecommendations('A', false, 'A');
+  const lowest = api.combinedRecommendations('A', 'A');
   assert.equal(lowest.length, 2);
   assert.doesNotMatch(lowest.map(item => item.href).join('\n'), /word-forge/);
-  assert.match(lowest[0].href, /lesson\.html\?level=1&lesson=1&mode=cards$/);
+  assert.match(lowest[0].href, /groups\/group-04\.html$/);
   assert.match(lowest[1].href, /Read-Along\/reader\.html\?id=l1-a1-new-student$/);
 
-  const coreOne = api.combinedRecommendations('A', true, 'A');
+  const coreOne = api.combinedRecommendations('A', 'A');
   assert.match(coreOne[0].href, /groups\/group-04\.html$/);
 
-  const coreTwo = api.combinedRecommendations('C', true, 'C');
+  const coreTwo = api.combinedRecommendations('C', 'C');
   assert.match(coreTwo[0].href, /groups\/group-21\.html$/);
   assert.match(coreTwo[1].href, /reader\.html\?id=l2-a1-wallet$/);
 
-  const bandThree = api.combinedRecommendations('E', true, 'E');
+  const bandThree = api.combinedRecommendations('E', 'E');
   assert.match(bandThree[0].href, /module-e-vocab\/A1\.html$/);
   assert.match(bandThree[1].href, /reader\.html\?id=l3-a1-final-place$/);
 });
@@ -421,7 +422,7 @@ test('scripts compile, gate reading after vocabulary, and use button-led transit
   assert.match(vocabulary, /filter\(item => item\.tier === 'long'\)/);
   assert.match(vocabulary, /const passed = accuracy >= 0\.70/);
   assert.doesNotMatch(vocabulary, /foundationStop|stoppedAt/);
-  assert.match(vocabulary, /api\.canEnterReading\(state\.foundation, summary\)/);
+  assert.match(vocabulary, /api\.canEnterReading\(summary\)/);
   assert.match(vocabulary, /showVocabularyOnlyResult\(result\)/);
   const basicTransition = vocabulary.indexOf("showTransition(1, 'יכולת קריאה בסיסית', 'מתחילים'");
   const vocabularyTransition = vocabulary.indexOf("showTransition(2, 'שליטה באוצר מילים', 'להמשך לבדיקת אוצר המילים'");
@@ -433,7 +434,9 @@ test('scripts compile, gate reading after vocabulary, and use button-led transit
   assert.match(vocabulary, /location\.href = `reading\.html/);
   assert.doesNotMatch(vocabulary, /getGrade|grade=/);
   assert.match(reading, /active-vocabulary/);
-  assert.match(reading, /api\.canEnterReading\(state\.vocabularyResult\.foundational, state\.vocabularyResult\.summary\)/);
+  assert.match(reading, /api\.canEnterReading\(state\.vocabularyResult\.summary\)/);
+  assert.match(reading, /api\.foundationRecommendations\(\)/);
+  assert.match(reading, /api\.combinedRecommendations\(level, state\.vocabularyResult\.vocabularyLevel\)/);
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, state\.attempts\)/);
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, \[\]\)/);
   assert.match(reading, /startPassage\(state\.startLevel\)/);

@@ -18,7 +18,7 @@ The diagnostic lives at `/diagnostic/` and is intentionally not linked from the 
 - Basic word recognition: 6 items. Bus, cat, and dog always appear first; three longer familiar words then rotate from the bank.
 - Vocabulary: 4 items from each fixed band, 12 items total.
 - The vocabulary stage always follows through an explicit continue button; the first stage never announces pass/fail.
-- Reading opens only when the student answers at least 70% of the basic items and at least 50% of the Band II Core I vocabulary items correctly.
+- Reading opens solely when the student answers at least 50% of the Band II Core I vocabulary items correctly. Basic word recognition does not block entry to reading.
 - Below that threshold, the result contains no A/C/E/G rating and recommends vocabulary work only. If basic word recognition also needs work, Word Forge appears in its own separate section.
 - Reading: one passage at each level needed by the vocabulary-guided route, with up to three passages total.
 - Total length is 18 questions without reading, or 22–30 questions when reading opens, depending on the reading route.

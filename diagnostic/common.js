@@ -170,9 +170,8 @@
     return total > 0 ? Number(result?.correct || 0) / total : 0;
   }
 
-  function canEnterReading(foundational, summary) {
-    return accuracyRatio(foundational) >= 0.70
-      && accuracyRatio(summary?.['Core I']) >= 0.50;
+  function canEnterReading(summary) {
+    return accuracyRatio(summary?.['Core I']) >= 0.50;
   }
 
   function visibleReadingParagraphs(paragraphs, questionIndex, scope) {
@@ -322,8 +321,8 @@
     return recommendation('Aa', 'קבוצת אוצר המילים הבאה', 'Band III · קבוצה A1', `${BAND_III_BASE}A1.html`);
   }
 
-  function storyRecommendation(level, foundationalPassed) {
-    const storyId = !foundationalPassed || level === 'A'
+  function storyRecommendation(level) {
+    const storyId = level === 'A'
       ? 'l1-a1-new-student'
       : level === 'C'
         ? 'l2-a1-wallet'
@@ -333,10 +332,10 @@
     return recommendation('R', 'סיפור קריאה מתאים', 'פתיחת סיפור ישירות ברמת הקריאה המתאימה.', `${READ_ALONG_BASE}${storyId}`);
   }
 
-  function combinedRecommendations(level, foundationalPassed, vocabularyLevel = level) {
+  function combinedRecommendations(level, vocabularyLevel = level) {
     return [
-      vocabularyRecommendation(vocabularyLevel, foundationalPassed),
-      storyRecommendation(level, foundationalPassed)
+      vocabularyRecommendation(vocabularyLevel, true),
+      storyRecommendation(level)
     ];
   }
 

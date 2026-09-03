@@ -168,9 +168,17 @@
       <span class="level-badge" aria-hidden="true">${level}</span>
       <div><h2>${api.escapeHtml(title)}</h2><p>${api.escapeHtml(detail)}</p></div>
     </div>`;
+    const foundationSection = document.querySelector('#foundationRecommendationSection');
+    foundationSection.hidden = foundationalPassed;
+    if (!foundationalPassed) {
+      api.renderRecommendations(
+        document.querySelector('#foundationRecommendationList'),
+        api.foundationRecommendations()
+      );
+    }
     api.renderRecommendations(
       document.querySelector('#recommendationList'),
-      api.combinedRecommendations(level, foundationalPassed, state.vocabularyResult.vocabularyLevel)
+      api.combinedRecommendations(level, state.vocabularyResult.vocabularyLevel)
     );
 
     const result = existingResult || {
@@ -199,8 +207,7 @@
       location.replace('index.html');
       return;
     }
-    const readingEligible = state.vocabularyResult.readingEligible
-      ?? api.canEnterReading(state.vocabularyResult.foundational, state.vocabularyResult.summary);
+    const readingEligible = api.canEnterReading(state.vocabularyResult.summary);
     if (!readingEligible) {
       location.replace(`vocabulary.html?session=${encodeURIComponent(state.sessionId)}`);
       return;

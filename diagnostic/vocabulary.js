@@ -235,7 +235,7 @@
     const summary = summarizeVocabulary();
     const profile = api.vocabularyProfile(summary);
     const vocabularyLevel = api.vocabularyLevel(summary);
-    const readingEligible = api.canEnterReading(state.foundation, summary);
+    const readingEligible = api.canEnterReading(summary);
     const result = {
       sessionId: state.sessionId,
       version: state.manifest.version,
@@ -265,8 +265,7 @@
     }
     const savedResult = api.readStorage('active-vocabulary', null);
     if (savedResult?.sessionId === state.sessionId && savedResult.completedAt) {
-      const readingEligible = savedResult.readingEligible
-        ?? api.canEnterReading(savedResult.foundational, savedResult.summary);
+      const readingEligible = api.canEnterReading(savedResult.summary);
       if (readingEligible) {
         location.replace(`reading.html?session=${encodeURIComponent(state.sessionId)}`);
       } else {
