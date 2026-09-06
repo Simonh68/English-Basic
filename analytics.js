@@ -1,4 +1,40 @@
 (() => {
+  if (location.hostname !== 'simonh68.github.io' || !location.pathname.startsWith('/English-Basic/')) return;
+  if (typeof location.replace !== 'function') return;
+  const relative = location.pathname.slice('/English-Basic/'.length);
+  if (relative === 'temp' || relative.startsWith('temp/')) return;
+  const read = {};
+  try {
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (!key) continue;
+      if (key === 'ebr-profile-v2' || key.startsWith('ebr-v1-l') || key.startsWith('efn-diagnostic-v2:')) {
+        const value = localStorage.getItem(key);
+        if (value !== null) read[key] = value;
+      }
+    }
+  } catch {}
+  let targetBase = '/english-basic/';
+  let suffix = relative;
+  if (relative === 'word-forge' || relative.startsWith('word-forge/')) {
+    targetBase = '/word-forge/';
+    suffix = relative.slice('word-forge/'.length);
+  } else if (relative === 'diagnostic' || relative.startsWith('diagnostic/')) {
+    targetBase = '/diagnostic/';
+    suffix = relative.slice('diagnostic/'.length);
+  }
+  try {
+    const bytes = new TextEncoder().encode(JSON.stringify({ v: 1, source: 'english-basic', values: read }));
+    let binary = '';
+    bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+    window.name = `efn-domain-migration:${btoa(binary)}`;
+  } catch { window.name = ''; }
+  window.__EFN_DOMAIN_MIGRATING = true;
+  location.replace(`https://englishfornoar.co.il${targetBase}${suffix}${location.search}${location.hash}`);
+})();
+
+(() => {
+  if (window.__EFN_DOMAIN_MIGRATING) return;
   const endpoint = 'https://englishfornoar.co.il/api/analytics';
   const visitorStorageKey = 'efn-anonymous-browser-v1';
   const roleStorageKey = 'efn-traffic-role-v1';
@@ -79,7 +115,12 @@
     const host = location.hostname.toLowerCase();
     const path = location.pathname.toLowerCase();
     if (host === 'englishfornoar.co.il' || host === 'www.englishfornoar.co.il') {
-      return path.startsWith('/word-forge') ? 'english-basic' : 'home';
+      if (path.startsWith('/read-along')) return 'read-along';
+      if (path.startsWith('/band-ii/ar')) return 'band-ii-ar';
+      if (path.startsWith('/band-ii')) return 'band-ii';
+      if (path.startsWith('/module-e-vocab/play')) return 'module-e';
+      if (path.startsWith('/word-forge') || path.startsWith('/diagnostic') || path.startsWith('/english-basic')) return 'english-basic';
+      return 'home';
     }
     if (path.includes('/module-e-vocab')) return 'module-e';
     if (path.includes('/e-vocab-band-ii/read-along')) return 'read-along';
