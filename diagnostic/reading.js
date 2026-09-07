@@ -142,7 +142,8 @@
       level: state.passage.level,
       correct,
       total: state.passage.questions.length,
-      ratio: api.scoreRatio(state.passageAnswers),
+      ratio: correct / state.passage.questions.length,
+      speedScoreRatio: api.scoreRatio(state.passageAnswers),
       answers: state.passageAnswers
     });
     routeNext();
@@ -160,12 +161,18 @@
 
   function showResults(existingResult = null) {
     const foundationalPassed = state.vocabularyResult.foundational.passed;
-    const level = existingResult?.level || existingResult?.combined?.level || state.readingLevel || 'A';
-    const title = `הרמה המתאימה לך: ${level}`;
-    const detail = 'התוצאה מבוססת על אוצר המילים ועל הבנת הנקרא שהפגנת בבדיקה.';
+    // Re-evaluate stored evidence too: older results assigned A even after no correct answers.
+    const attempts = existingResult?.readingAttempts || state.attempts;
+    const level = api.readingEvidenceLevel(attempts);
+    const title = level
+      ? `נקודת התחלה מומלצת לתרגול: ${level}`
+      : 'כדאי לחזק את הבנת הנקרא הבסיסית';
+    const detail = level
+      ? 'זו המלצת תרגול מתוך מדגם קצר באתר, ולא קביעה של רמת האנגלית הכוללת. אפשר להיעזר במורה לבחירת ההמשך.'
+      : 'המדגם הזה עדיין לא מספק עדות מספקת לקביעת רמת קריאה. מתחילים בתרגול בסיסי עם סיוע, ומומלץ לבדוק שוב עם המורה.';
 
     document.querySelector('#readingResult').innerHTML = `<div class="reading-level">
-      <span class="level-badge" aria-hidden="true">${level}</span>
+      ${level ? `<span class="level-badge" aria-hidden="true">${level}</span>` : ''}
       <div><h2>${api.escapeHtml(title)}</h2><p>${api.escapeHtml(detail)}</p></div>
     </div>`;
     const foundationSection = document.querySelector('#foundationRecommendationSection');
@@ -181,16 +188,19 @@
       api.combinedRecommendations(level, state.vocabularyResult.vocabularyLevel)
     );
 
-    const result = existingResult || {
+    const result = {
+      ...(existingResult || {}),
       sessionId: state.sessionId,
-      version: state.manifest.version,
+      version: existingResult?.version || state.manifest.version,
+      scoringPolicy: '2026-09-07-correctness',
+      assessmentKind: 'practice-recommendation',
       level,
       vocabularyLevel: state.vocabularyResult.vocabularyLevel,
       vocabularyProfile: state.vocabularyProfile,
-      readingLevel: state.readingLevel,
+      readingLevel: level,
       foundational: state.vocabularyResult.foundational,
-      readingAttempts: state.attempts,
-      completedAt: new Date().toISOString()
+      readingAttempts: attempts,
+      completedAt: existingResult?.completedAt || new Date().toISOString()
     };
     api.writeStorage('last-combined-result', result);
     show('result');
@@ -212,8 +222,8 @@
       location.replace(`vocabulary.html?session=${encodeURIComponent(state.sessionId)}`);
       return;
     }
-    state.vocabularyProfile = state.vocabularyResult.profile
-      || api.vocabularyProfile(state.vocabularyResult.summary || {});
+    state.vocabularyProfile = api.vocabularyProfile(state.vocabularyResult.summary || {});
+    state.vocabularyResult.vocabularyLevel = api.vocabularyLevel(state.vocabularyResult.summary || {});
 
     const priorResult = api.readStorage('last-combined-result', null);
     if (priorResult?.sessionId === state.sessionId) {

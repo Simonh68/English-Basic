@@ -66,7 +66,7 @@ test('the diagnostic stays hidden from the home page and presents one simple sta
   assert.doesNotMatch(`${landing}\n${vocabulary}\n${reading}`, />[^<]*(?:מבחן|שאלון בגרות)[^<]*</);
 });
 
-test('the biweekly manifest implements the shortest reliable question policy', async () => {
+test('the biweekly manifest implements the limited screening question policy', async () => {
   const manifest = await json('diagnostic/data/manifest.json');
   const released = new Date(`${manifest.released}T00:00:00Z`);
   const review = new Date(`${manifest.nextReview}T00:00:00Z`);
@@ -258,11 +258,12 @@ test('simple questions use a hard thirty seconds and reading questions use a har
   assert.match(reading, /scoreTimedAnswer\(correct, elapsedMs, api\.READING_TARGET_MS\)/);
 });
 
-test('vocabulary gates the reading ladder and produces a terminal A C E or G level', async () => {
+test('vocabulary gates the reading ladder and produces an evidence-supported practice recommendation', async () => {
   const api = await loadCommonApi();
   const attempt = (level, passed) => ({
     level,
     correct: passed ? 3 : 1,
+    total: 4,
     ratio: passed ? 0.75 : 0.25
   });
   const step = (profile, attempts) => ({ ...api.nextReadingStep(profile, attempts) });
@@ -292,7 +293,7 @@ test('vocabulary gates the reading ladder and produces a terminal A C E or G lev
 
 test('vocabulary coverage selects the correlated reading start level', async () => {
   const api = await loadCommonApi();
-  const score = (correct, ratio) => ({ correct, ratio });
+  const score = (correct, ratio) => ({ correct, total: 4, ratio });
 
   const belowCoreOne = {
     'Core I': score(1, 0.5),
@@ -440,7 +441,7 @@ test('scripts compile, gate reading after vocabulary, and use button-led transit
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, state\.attempts\)/);
   assert.match(reading, /api\.nextReadingStep\(state\.vocabularyProfile, \[\]\)/);
   assert.match(reading, /startPassage\(state\.startLevel\)/);
-  assert.match(reading, /הרמה המתאימה לך/);
+  assert.match(reading, /נקודת התחלה מומלצת לתרגול/);
   assert.match(reading, /question\.scope === 'whole-text'/);
   assert.match(reading, /api\.visibleReadingParagraphs\(state\.paragraphs, state\.questionIndex, question\.scope\)/);
   assert.match(reading, /replaceChildren\(\.\.\.paragraphNodes\)/);

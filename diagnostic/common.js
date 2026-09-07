@@ -219,13 +219,15 @@
     });
   }
 
-  function vocabularyProfile(summary) {
+  function vocabularyProfile(summary = {}) {
     const first = summary['Core I'];
     const second = summary['Core II'];
     const third = summary['Band III'];
-    if (!first || first.correct < 2 || first.ratio < 0.55) return 'below-core1';
-    if (!second || second.correct < 2 || second.ratio < 0.60) return 'core1';
-    if (!third || third.correct < 3 || third.ratio < 0.65) return 'core2';
+    // Site screening rules, not standardized proficiency cut scores.
+    // A speed bonus must never change the recommended starting activity.
+    if (!first || first.correct < 2 || accuracyRatio(first) < 0.50) return 'below-core1';
+    if (!second || second.correct < 2 || accuracyRatio(second) < 0.50) return 'core1';
+    if (!third || third.correct < 3 || accuracyRatio(third) < 0.75) return 'core2';
     return 'band3';
   }
 
@@ -236,10 +238,21 @@
     return 'A';
   }
 
+  function passedReadingAttempt(attempt) {
+    return Boolean(attempt && attempt.correct >= 3 && accuracyRatio(attempt) >= 0.68);
+  }
+
+  function readingEvidenceLevel(attempts = []) {
+    const list = Array.isArray(attempts) ? attempts : [];
+    return ['A', 'C', 'E', 'G'].filter(level => list.some(attempt =>
+      attempt.level === level && passedReadingAttempt(attempt)
+    )).at(-1) || null;
+  }
+
   function nextReadingStep(profile, attempts = []) {
     const list = Array.isArray(attempts) ? attempts : [];
     const last = list.at(-1);
-    const passed = attempt => Boolean(attempt && attempt.correct >= 3 && attempt.ratio >= 0.68);
+    const finish = () => ({ action: 'finish', level: readingEvidenceLevel(list) });
 
     if (!last) {
       if (profile === 'band3') return { action: 'start', level: 'E' };
@@ -247,30 +260,24 @@
       return { action: 'start', level: 'A' };
     }
 
-    if (profile === 'below-core1') return { action: 'finish', level: 'A' };
+    if (profile === 'below-core1') return finish();
 
     if (profile === 'core1') {
-      if (last.level === 'A') return passed(last)
-        ? { action: 'start', level: 'C' }
-        : { action: 'finish', level: 'A' };
-      return { action: 'finish', level: passed(last) ? 'C' : 'A' };
+      if (last.level === 'A' && passedReadingAttempt(last)) return { action: 'start', level: 'C' };
+      return finish();
     }
 
     if (profile === 'core2') {
-      if (last.level === 'C') return passed(last)
-        ? { action: 'finish', level: 'C' }
-        : { action: 'start', level: 'A' };
-      return { action: 'finish', level: 'A' };
+      if (last.level === 'C' && !passedReadingAttempt(last)) return { action: 'start', level: 'A' };
+      return finish();
     }
 
-    if (last.level === 'E') return passed(last)
+    if (last.level === 'E') return passedReadingAttempt(last)
       ? { action: 'start', level: 'G' }
       : { action: 'start', level: 'C' };
-    if (last.level === 'G') return { action: 'finish', level: passed(last) ? 'G' : 'E' };
-    if (last.level === 'C') return passed(last)
-      ? { action: 'finish', level: 'C' }
-      : { action: 'start', level: 'A' };
-    return { action: 'finish', level: 'A' };
+    if (last.level === 'G') return finish();
+    if (last.level === 'C' && !passedReadingAttempt(last)) return { action: 'start', level: 'A' };
+    return finish();
   }
 
   function recommendation(icon, title, detail, href) {
@@ -322,14 +329,14 @@
   }
 
   function storyRecommendation(level) {
-    const storyId = level === 'A'
+    const storyId = !['C', 'E', 'G'].includes(level)
       ? 'l1-a1-new-student'
       : level === 'C'
         ? 'l2-a1-wallet'
         : level === 'G'
           ? 'l3-a2-anonymous-account'
           : 'l3-a1-final-place';
-    return recommendation('R', 'סיפור קריאה מתאים', 'פתיחת סיפור ישירות ברמת הקריאה המתאימה.', `${READ_ALONG_BASE}${storyId}`);
+    return recommendation('R', 'סיפור לתרגול קריאה', level ? 'נקודת התחלה מומלצת מתוך מדגם קצר.' : 'מתחילים בסיפור בסיסי עם הקראה וסיוע; לא נקבעה רמת קריאה.', `${READ_ALONG_BASE}${storyId}`);
   }
 
   function combinedRecommendations(level, vocabularyLevel = level) {
@@ -387,6 +394,7 @@
     vocabularyProfile,
     vocabularyLevel,
     nextReadingStep,
+    readingEvidenceLevel,
     nextCoreIGroup,
     foundationRecommendations,
     vocabularyOnlyRecommendations,

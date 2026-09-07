@@ -187,7 +187,8 @@
         total: answers.length,
         correct: answers.filter(answer => answer.correct).length,
         points: answers.reduce((sum, answer) => sum + answer.points, 0),
-        ratio: api.scoreRatio(answers)
+        ratio: answers.length ? answers.filter(answer => answer.correct).length / answers.length : 0,
+        speedScoreRatio: api.scoreRatio(answers)
       };
       return summary;
     }, {});

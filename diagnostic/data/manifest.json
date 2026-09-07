@@ -1,19 +1,28 @@
 {
-  "version": "2026.09-L",
-  "released": "2026-09-03",
-  "releasedHe": "3.9.2026",
-  "nextReview": "2026-09-17",
+  "version": "2026.09-M",
+  "released": "2026-09-07",
+  "releasedHe": "7.9.2026",
+  "nextReview": "2026-09-21",
   "vocabulary": {
     "file": "data/vocabulary-bank.json",
     "definitionFile": "data/band3-definitions.json",
     "foundationalFile": "data/foundational-reading.json",
     "foundationalQuestions": 6,
     "foundationalShortQuestions": 3,
-    "bands": ["Core I", "Core II", "Band III"],
+    "bands": [
+      "Core I",
+      "Core II",
+      "Band III"
+    ],
     "questionsPerBand": 4
   },
   "reading": {
-    "levels": ["A", "C", "E", "G"],
+    "levels": [
+      "A",
+      "C",
+      "E",
+      "G"
+    ],
     "files": {
       "A": "data/reading-a.json",
       "C": "data/reading-c.json",
