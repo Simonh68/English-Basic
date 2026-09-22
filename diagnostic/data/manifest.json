@@ -1,8 +1,8 @@
 {
-  "version": "2026.09-M",
-  "released": "2026-09-07",
-  "releasedHe": "7.9.2026",
-  "nextReview": "2026-09-21",
+  "version": "2026.09-N",
+  "released": "2026-09-22",
+  "releasedHe": "22.9.2026",
+  "nextReview": "2026-10-06",
   "vocabulary": {
     "file": "data/vocabulary-bank.json",
     "definitionFile": "data/band3-definitions.json",
