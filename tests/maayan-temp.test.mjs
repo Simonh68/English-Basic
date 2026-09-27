@@ -30,7 +30,7 @@ test('MAAYAN is generated from the canonical Word Forge code with only its name 
   assert.doesNotMatch(maayanHtml, /WORD-FORGE-SHARING|word-forge-preview\.jpg/);
 
   assert.match(maayanHtml, /src="\.\.\/curriculum-data\.js\?v=2"/);
-  assert.match(maayanHtml, /src="\.\.\/progress\.js\?v=3"/);
+  assert.match(maayanHtml, /src="\.\.\/progress\.js\?v=4"/);
   assert.doesNotMatch(maayanHtml, /src="\.\/curriculum-data\.js|src="\.\/progress\.js|analytics-v2\.js/);
 });
 

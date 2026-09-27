@@ -29,6 +29,7 @@
       gameLevelDowns: 0,
       bestGameScore: 0,
       wordForgeCoins: 0,
+      wordForgeLastActive: null,
       wordForgePoints: 0,
       wordForgeCompletedStages: [],
       wordForgeCertificates: 0,
@@ -144,6 +145,7 @@
   function startGameSession(detail = {}) {
     const profile = getProfile();
     touch(profile);
+    if (detail.game === 'word_forge') profile.wordForgeLastActive = dateKey();
     const daily = ensureDaily(profile);
     profile.gameSessions += 1;
     daily.gameSessions += 1;
@@ -153,6 +155,7 @@
   function recordGame(correct, points = 0, detail = {}) {
     const profile = getProfile();
     touch(profile);
+    if (detail.game === 'word_forge') profile.wordForgeLastActive = dateKey();
     const daily = ensureDaily(profile);
     profile.gameRounds += 1;
     daily.gameRounds += 1;
@@ -175,6 +178,7 @@
   function completeWordForgeStage(level, stage) {
     const profile = getProfile();
     touch(profile);
+    profile.wordForgeLastActive = dateKey();
     const key = `${Math.max(1, Math.min(5, Number(level) || 1))}-${Math.max(1, Math.min(10, Number(stage) || 1))}`;
     const firstCompletion = !profile.wordForgeCompletedStages.includes(key);
     if (firstCompletion) profile.wordForgeCompletedStages.push(key);

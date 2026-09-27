@@ -1767,6 +1767,14 @@
       .certificate-card { width: 100%; min-width: 0; min-height: 0; height: 100vh; border-radius: 0; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     }
 
+    .progress-share-button { color: #adf6c5; border-color: #398255; margin-block: .75rem; font-size: 1rem; min-height: 44px; white-space: normal; }
+    .progress-share-card { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto; padding: 24px; }
+    .progress-share-card h2 { font-size: 1.4rem; }
+    .progress-share-card p { font-size: 1rem; line-height: 1.6; }
+    .progress-share-card pre { white-space: pre-wrap; overflow-wrap: anywhere; text-align: start; font: 1rem/1.65 Arial, sans-serif; background: #071120; padding: 16px; border-radius: 12px; }
+    .progress-share-card .primary { display: inline-flex; font-size: 1rem; }
+    .progress-share-status { color: var(--muted); }
+
     @media (prefers-contrast: more) {
       :root { --muted: #e1e8f4; --line: #9fb5d4; }
       .forge-panel,.word-panel,.mission-bar,.route-card { border-color: #9fb5d4; }
@@ -1833,6 +1841,7 @@
             <span class="sound-check" id="soundCheck" role="status" aria-live="polite">READY</span>
           </div>
         </div>
+        <button class="secondary progress-share-button" id="whatsappShareBtn" type="button" aria-haspopup="dialog" aria-controls="progressShareDialog">שיתוף התקדמות בוואטסאפ</button>
         <p class="intro-note" aria-label="קול אופציונלי, הפעלה במקלדת, ללא חשבון, ללא דירוג וללא שמירת תשובות">🔊 &nbsp; ⌨️ &nbsp; 🔒</p>
       </section>
 
@@ -1890,6 +1899,17 @@
     </div>
   </dialog>
 
+  <dialog class="name-dialog" id="progressShareDialog" aria-labelledby="progressShareTitle" aria-describedby="progressShareHelp">
+    <div class="name-card progress-share-card">
+      <button class="stage-map-close" id="progressShareClose" type="button" aria-label="סגירה">×</button>
+      <h2 id="progressShareTitle">שיתוף התקדמות בוואטסאפ</h2>
+      <p id="progressShareHelp">זה הסיכום שישותף. בוואטסאפ בוחרים את המורה ומאשרים שליחה.</p>
+      <pre id="progressSharePreview" dir="ltr" lang="en"></pre>
+      <p class="progress-share-status" id="progressShareStatus" role="status"></p>
+      <a class="primary" id="progressShareSend" target="_blank" rel="noopener noreferrer" hidden>פתיחת וואטסאפ</a>
+    </div>
+  </dialog>
+
   <dialog class="name-dialog" id="certificateNameDialog" aria-labelledby="certificateNameTitle">
     <form class="name-card" id="certificateNameForm" method="dialog">
       <button class="stage-map-close" id="certificateNameClose" type="button" aria-label="סגירה">×</button>
@@ -1926,7 +1946,7 @@
   </dialog>
 
   <script src="../curriculum-data.js?v=2"></script>
-  <script src="../progress.js?v=3"></script>
+  <script src="../progress.js?v=4"></script>
   <script src="../speech-runtime.js?v=1"></script>
   <script>
     (() => {
@@ -2151,6 +2171,65 @@
       document.title = `Word Forge · Level ${courseLevel} · Stage ${courseLesson}`;
       progressApi?.setLastLocation({ href: `word-forge/?level=${courseLevel}&lesson=${courseLesson}`, label: `Word Forge · שלב ${courseLesson}` });
 
+      const progressShareDialog = document.querySelector('#progressShareDialog');
+      const progressSharePreview = document.querySelector('#progressSharePreview');
+      const progressShareStatus = document.querySelector('#progressShareStatus');
+      const progressShareSend = document.querySelector('#progressShareSend');
+      let progressShareTrigger = null;
+
+      function buildProgressShareMessage(profile, brand) {
+        const rawCoins = Number(profile.wordForgeCoins ?? profile.wordForgePoints);
+        const coins = Number.isFinite(rawCoins) ? Math.max(0, Math.floor(rawCoins)) : 0;
+        const stages = [...new Set((Array.isArray(profile.wordForgeCompletedStages) ? profile.wordForgeCompletedStages : [])
+          .filter(key => typeof key === 'string' && /^[1-5]-(?:[1-9]|10)$/.test(key)))];
+        const lines = [
+          `${brand} · English Practice Progress`,
+          `Coins: ${coins}`,
+          `Completed stages: ${stages.length}/50`
+        ];
+        for (let level = 1; level <= 5; level += 1) {
+          const completed = stages.filter(key => key.startsWith(`${level}-`)).map(key => Number(key.split('-')[1])).sort((a, b) => a - b);
+          if (completed.length) lines.push(`Level ${level}: stages ${completed.join(', ')}`);
+        }
+        const lastActive = /^\d{4}-\d{2}-\d{2}$/.test(profile.wordForgeLastActive || '') ? profile.wordForgeLastActive : 'Not recorded';
+        lines.push(`Last practice: ${lastActive}`, 'Saved on this device; self-reported progress.');
+        return lines.join('\n');
+      }
+
+      function openProgressShare(event) {
+        progressShareTrigger = event.currentTarget;
+        clearAutoAdvance();
+        stopAllAudio();
+        progressShareSend.hidden = true;
+        progressShareSend.removeAttribute('href');
+        progressSharePreview.textContent = '';
+        progressShareStatus.textContent = '';
+        try {
+          const profile = progressApi?.getProfile?.();
+          if (!profile) throw new Error('Progress unavailable');
+          const brand = document.querySelector('#introTitle').textContent.trim();
+          const message = buildProgressShareMessage(profile, brand);
+          progressSharePreview.textContent = message;
+          const hasProgress = Number(profile.wordForgeCoins ?? profile.wordForgePoints) > 0 || /Completed stages: [1-9]/.test(message);
+          if (hasProgress) {
+            progressShareSend.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            progressShareSend.hidden = false;
+          } else {
+            progressShareStatus.textContent = 'עדיין אין התקדמות שמורה במשחק במכשיר הזה.';
+          }
+        } catch {
+          progressShareStatus.textContent = 'לא ניתן לקרוא את ההתקדמות השמורה. נסו שוב.';
+        }
+        showDialog(progressShareDialog);
+        document.querySelector('#progressShareClose').focus();
+      }
+
+      document.querySelector('#whatsappShareBtn').addEventListener('click', openProgressShare);
+      document.querySelector('#progressShareClose').addEventListener('click', () => closeDialog(progressShareDialog));
+      progressShareDialog.addEventListener('click', event => { if (event.target === progressShareDialog) closeDialog(progressShareDialog); });
+      progressShareDialog.addEventListener('close', () => progressShareTrigger?.focus());
+      progressShareSend.addEventListener('click', () => { clearAutoAdvance(); stopAllAudio(); });
+
       let route = 'space';
       let soundOn = true;
       let index = 0;
@@ -2172,6 +2251,10 @@
       let backgroundAudioUrl = null;
       let backgroundDuckDepth = 0;
       let audioUnlocked = false;
+      let pageAudioPaused = document.hidden;
+      let audioGeneration = 0;
+      let cancelMediaPlayback = null;
+      const activeToneNodes = new Set();
       let gameFinished = false;
       let stageMapTrigger = stageMenuButton;
       let challengeTimerFrame = 0;
@@ -2374,10 +2457,48 @@
         stageMapPausedFeedback = false;
       });
 
+      // A hidden/locked page must never keep playing or restart queued audio.
+      function audioAllowed() {
+        return soundOn && !document.hidden && !pageAudioPaused;
+      }
+
+      function stopAllAudio() {
+        audioGeneration += 1;
+        speech.cancel();
+        cancelMediaPlayback?.();
+        if (mediaAudio) {
+          mediaAudio.pause();
+          try { mediaAudio.currentTime = 0; } catch {}
+        }
+        pauseBackgroundMusic(true);
+        for (const oscillator of activeToneNodes) {
+          try { oscillator.stop(); } catch {}
+          oscillator.disconnect();
+        }
+        activeToneNodes.clear();
+        if (audioContext?.state === 'running') audioContext.suspend().catch(() => {});
+      }
+
+      function pausePageAudio() {
+        pageAudioPaused = true;
+        pauseFeedbackAdvance();
+        clearAutoAdvance();
+        stopAllAudio();
+      }
+
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) pauseFeedbackAdvance();
+        if (document.hidden) pausePageAudio();
         else if (!stageMap.open) resumeFeedbackAdvance();
       });
+      window.addEventListener('pagehide', pausePageAudio);
+      document.addEventListener('freeze', pausePageAudio);
+      // Returning to the page alone does not replay its old finish tune.
+      function allowAudioAfterGesture(event) {
+        if (event.isTrusted && !document.hidden) pageAudioPaused = false;
+      }
+      document.addEventListener('pointerdown', allowAudioAfterGesture, true);
+      document.addEventListener('keydown', allowAudioAfterGesture, true);
+      document.addEventListener('click', allowAudioAfterGesture, true);
 
       for (let i = 0; i < words.length; i += 1) {
         const segment = document.createElement('span');
@@ -2404,10 +2525,7 @@
         soundToggle.textContent = soundOn ? '🔊' : '🔇';
         soundToggle.setAttribute('aria-label', soundOn ? 'כיבוי צלילי המשחק' : 'הפעלת צלילי המשחק');
         if (!soundOn) {
-          speech.cancel();
-          if (mediaAudio) mediaAudio.pause();
-          pauseBackgroundMusic(true);
-          if (audioContext?.state === 'running') audioContext.suspend();
+          stopAllAudio();
         } else {
           speech.prime();
           speech.resume();
@@ -2610,7 +2728,7 @@
 
       function speak(text, rate, id, language = 'en-US', pitch = 1) {
         return new Promise(resolve => {
-          if (!soundOn || id !== runId) return resolve({ ok: false, reason: 'cancelled' });
+          if (!audioAllowed() || id !== runId) return resolve({ ok: false, reason: 'cancelled' });
           const backgroundWasDucked = duckBackground();
           let settled = false;
           const finish = result => {
@@ -2714,7 +2832,8 @@
 
       function playMediaTones(pattern, id = runId) {
         return new Promise(resolve => {
-          if (!soundOn || id !== runId || !('Audio' in window) || !('URL' in window)) return resolve(false);
+          if (!audioAllowed() || id !== runId || !('Audio' in window) || !('URL' in window)) return resolve(false);
+          cancelMediaPlayback?.();
           if (!mediaAudio) {
             mediaAudio = new Audio();
             mediaAudio.preload = 'auto';
@@ -2725,20 +2844,34 @@
           mediaAudioUrl = URL.createObjectURL(createToneWave(pattern));
           mediaAudio.src = mediaAudioUrl;
           mediaAudio.volume = 1;
+          const generation = audioGeneration;
           let settled = false;
+          let timeout = 0;
           const finish = result => {
             if (settled) return;
             settled = true;
+            clearTimeout(timeout);
             mediaAudio.onended = null;
             mediaAudio.onerror = null;
+            mediaAudio.onpause = null;
+            mediaAudio.pause();
+            if (cancelMediaPlayback === cancel) cancelMediaPlayback = null;
             resolve(result);
           };
+          // Cancellation consumes the cue; it must not trigger Web Audio fallback.
+          const cancel = () => finish(true);
+          cancelMediaPlayback = cancel;
           mediaAudio.onended = () => finish(true);
           mediaAudio.onerror = () => finish(false);
-          const playback = mediaAudio.play();
-          if (playback?.catch) playback.catch(() => finish(false));
+          mediaAudio.onpause = cancel;
           const duration = pattern.reduce((sum, tone) => sum + (tone.duration ?? .13) + (tone.gap ?? .035), 0);
-          setTimeout(() => finish(false), duration * 1000 + 700);
+          timeout = setTimeout(() => finish(true), duration * 1000 + 700);
+          try {
+            const playback = mediaAudio.play();
+            playback?.then(() => {
+              if (generation !== audioGeneration || !audioAllowed()) cancel();
+            }, () => finish(false));
+          } catch { finish(false); }
         });
       }
 
@@ -2759,12 +2892,14 @@
       }
 
       async function startBackgroundMusic() {
-        if (appleTouchSpeechMode || !soundOn || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
+        if (appleTouchSpeechMode || !audioAllowed() || gameFinished || !game.classList.contains('active') || !finishStage.hidden || !challengeStage.hidden) return false;
         const audio = ensureBackgroundAudio();
         if (!audio) return false;
         try {
+          const generation = audioGeneration;
           const playback = audio.play();
           if (playback?.then) await playback;
+          if (generation !== audioGeneration || !audioAllowed()) { audio.pause(); return false; }
           return true;
         } catch {
           return false;
@@ -2797,27 +2932,30 @@
       }
 
       function ensureAudioContext() {
-        if (!soundOn) return null;
+        if (!audioAllowed()) return null;
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) return null;
         if (!audioContext) audioContext = new AudioContextClass();
-        if (audioContext.state === 'suspended') audioContext.resume();
+        if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
         return audioContext;
       }
 
       async function playTones(pattern, id = runId) {
-        if (appleTouchSpeechMode || !soundOn || id !== runId) return;
+        if (appleTouchSpeechMode || !audioAllowed() || id !== runId) return;
+        const generation = audioGeneration;
         const backgroundWasDucked = duckBackground();
         try {
           const mediaPlayed = await playMediaTones(pattern, id);
-          if (mediaPlayed || !soundOn || id !== runId) return;
+          if (mediaPlayed || !audioAllowed() || generation !== audioGeneration || id !== runId) return;
           await new Promise(resolve => {
             const context = ensureAudioContext();
-            if (!soundOn || !context || id !== runId) return resolve();
+            if (!audioAllowed() || !context || generation !== audioGeneration || id !== runId) return resolve();
             const start = context.currentTime + .02;
             let cursor = start;
             pattern.forEach(({ frequency, duration = .13, gap = .035, type = 'sine', gain = .15 }) => {
               const oscillator = context.createOscillator();
+              activeToneNodes.add(oscillator);
+              oscillator.onended = () => { activeToneNodes.delete(oscillator); oscillator.disconnect(); };
               const volume = context.createGain();
               oscillator.type = type;
               oscillator.frequency.setValueAtTime(frequency, cursor);
@@ -3434,11 +3572,13 @@
             ${nextAction}
             <a class="secondary checkpoint-stop" href="../index.html">עוצרים כאן</a>
             <button class="secondary" type="button" id="restartButton">לשחק שוב</button>
+            <button class="secondary progress-share-button" id="finishWhatsappShareBtn" type="button" aria-haspopup="dialog" aria-controls="progressShareDialog">שיתוף התקדמות בוואטסאפ</button>
             ${stageMapAction}
           </div>`;
+        finishStage.querySelector('#finishWhatsappShareBtn').addEventListener('click', openProgressShare);
         finishStage.querySelector('#restartButton').addEventListener('click', () => {
           clearAutoAdvance();
-          pauseBackgroundMusic(true);
+          stopAllAudio();
           game.classList.remove('active');
           intro.hidden = false;
           intro.scrollIntoView({ block: 'start' });
