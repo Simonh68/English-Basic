@@ -7,9 +7,13 @@
   const BASE_POINTS = 4;
   const letters = ['A', 'B', 'C', 'D'];
   const CORE_I_PROGRESS_KEY = 'efn.band2.core1.progress.v1';
-  const BAND_II_BASE = 'https://simonh68.github.io/E-Vocab-Band-II/';
-  const BAND_III_BASE = 'https://simonh68.github.io/module-e-vocab/';
-  const READ_ALONG_BASE = `${BAND_II_BASE}Read-Along/reader.html?id=`;
+  // The primary site mounts this app outside the English Basic directory.
+  const primaryRoutes = /^\/(?:english-basic\/)?diagnostic(?:\/|$)/.test(location.pathname || '');
+  const BASIC_BASE = primaryRoutes ? '/english-basic/' : '../';
+  const WORD_FORGE_BASE = primaryRoutes ? '/word-forge/' : '../word-forge/';
+  const BAND_II_BASE = primaryRoutes ? '/band-ii/' : 'https://simonh68.github.io/E-Vocab-Band-II/';
+  const BAND_III_BASE = primaryRoutes ? '/module-e-vocab/play/' : 'https://simonh68.github.io/module-e-vocab/';
+  const READ_ALONG_BASE = primaryRoutes ? '/read-along/reader.html?id=' : `${BAND_II_BASE}Read-Along/reader.html?id=`;
 
   function readStorage(key, fallback) {
     try {
@@ -308,7 +312,7 @@
         'Aa',
         'אוצר מילים בסיסי',
         'Band I · קבוצה 01',
-        '../lesson.html?level=1&lesson=1&mode=cards'
+        `${BASIC_BASE}lesson.html?level=1&lesson=1&mode=cards`
       );
     }
     if (vocabularyLevel === 'A') {
@@ -351,7 +355,7 @@
       '▶',
       'משחק יסודות הקריאה',
       'תרגול זיהוי מילים ודיוק בקריאה.',
-      '../word-forge/?level=1&lesson=1'
+      `${WORD_FORGE_BASE}?level=1&lesson=1`
     )];
   }
 

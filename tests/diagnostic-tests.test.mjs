@@ -29,6 +29,39 @@ async function loadCommonApi(initialStorage = {}, overrides = {}) {
   return context.window.EFN_DIAGNOSTIC;
 }
 
+test('diagnostic recommendations resolve inside the primary site at both mounted paths', async () => {
+  for (const pathname of ['/diagnostic/vocabulary.html', '/english-basic/diagnostic/reading.html']) {
+    const api = await loadCommonApi({}, { location: { pathname, search: '' } });
+    assert.equal(api.vocabularyOnlyRecommendations('A', false)[0].href, '/english-basic/lesson.html?level=1&lesson=1&mode=cards');
+    assert.equal(api.foundationRecommendations()[0].href, '/word-forge/?level=1&lesson=1');
+    assert.equal(api.vocabularyOnlyRecommendations('A', true)[0].href, '/band-ii/groups/group-01.html');
+    assert.equal(api.vocabularyOnlyRecommendations('C', true)[0].href, '/band-ii/groups/group-21.html');
+    assert.equal(api.vocabularyOnlyRecommendations('E', true)[0].href, '/module-e-vocab/play/A1.html');
+    assert.equal(api.combinedRecommendations(null, 'C')[1].href, '/read-along/reader.html?id=l1-a1-new-student');
+  }
+});
+
+test('legacy GitHub diagnostics retain working relative and cross-app recommendations', async () => {
+  const api = await loadCommonApi({}, { location: { pathname: '/English-Basic/diagnostic/vocabulary.html', search: '' } });
+  assert.equal(api.vocabularyOnlyRecommendations('A', false)[0].href, '../lesson.html?level=1&lesson=1&mode=cards');
+  assert.equal(api.foundationRecommendations()[0].href, '../word-forge/?level=1&lesson=1');
+  assert.equal(api.vocabularyOnlyRecommendations('E', true)[0].href, 'https://simonh68.github.io/module-e-vocab/A1.html');
+});
+
+test('primary-domain recommendations continue from saved Core I completion after reloading', async () => {
+  const saved = { 'efn.band2.core1.progress.v1': JSON.stringify({ version: 1, groups: { '01': { completedAt: '2026-09-27T12:00:00Z' } } }) };
+  for (const pathname of ['/diagnostic/vocabulary.html', '/diagnostic/reading.html']) {
+    const api = await loadCommonApi(saved, { location: { pathname, search: '' } });
+    assert.equal(api.vocabularyOnlyRecommendations('A', true)[0].href, '/band-ii/groups/group-02.html');
+  }
+});
+
+test('all diagnostic pages invalidate cached recommendation routing', async () => {
+  for (const name of ['index', 'vocabulary', 'reading']) {
+    assert.match(await read(`diagnostic/${name}.html`), /common\.js\?v=20260927-routing/);
+  }
+});
+
 test('the diagnostic stays hidden from the home page and presents one simple start flow', async () => {
   const [home, landing, vocabulary, reading] = await Promise.all([
     read('index.html'),
