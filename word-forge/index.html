@@ -1774,6 +1774,8 @@
     .progress-share-card pre { white-space: pre-wrap; overflow-wrap: anywhere; text-align: start; font: 1rem/1.65 Arial, sans-serif; background: #071120; padding: 16px; border-radius: 12px; }
     .progress-share-card .primary { display: inline-flex; font-size: 1rem; }
     .progress-share-status { color: var(--muted); }
+    .progress-share-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-block: 16px; }
+    .progress-share-card label { display: block; text-align: start; margin-block: 16px 8px; }
 
     @media (prefers-contrast: more) {
       :root { --muted: #e1e8f4; --line: #9fb5d4; }
@@ -1899,14 +1901,32 @@
     </div>
   </dialog>
 
-  <dialog class="name-dialog" id="progressShareDialog" aria-labelledby="progressShareTitle" aria-describedby="progressShareHelp">
+  <dialog class="name-dialog" id="progressShareDialog" aria-labelledby="progressShareTitle" aria-describedby="progressSharePrivacy" data-analytics-ignore="true">
     <div class="name-card progress-share-card">
       <button class="stage-map-close" id="progressShareClose" type="button" aria-label="סגירה">×</button>
       <h2 id="progressShareTitle">שיתוף התקדמות בוואטסאפ</h2>
-      <p id="progressShareHelp">זה הסיכום שישותף. בוואטסאפ בוחרים את המורה ומאשרים שליחה.</p>
-      <pre id="progressSharePreview" dir="ltr" lang="en"></pre>
+      <p id="progressSharePrivacy">השם יופיע רק בהודעת הוואטסאפ ולא יישמר באתר.</p>
+      <div id="progressShareNameStep">
+        <p>האם להוסיף להודעה את השם שלך?</p>
+        <div class="progress-share-actions">
+          <button class="secondary" id="progressShareNameYes" type="button">כן, להוסיף שם</button>
+          <button class="secondary" id="progressShareNameNo" type="button">לא, להמשיך בלי שם</button>
+        </div>
+        <form id="progressShareNameForm" autocomplete="off" hidden>
+          <label for="progressShareNameInput">השם שיופיע בהודעה</label>
+          <input id="progressShareNameInput" type="text" maxlength="80" autocomplete="off" dir="auto" required aria-describedby="progressSharePrivacy">
+          <button class="primary" type="submit">יצירת הודעה</button>
+        </form>
+      </div>
+      <div id="progressSharePreviewStep" hidden>
+        <p id="progressShareHelp">זה הסיכום שישותף. בוואטסאפ בוחרים את המורה ומאשרים שליחה.</p>
+        <pre id="progressSharePreview" dir="ltr" lang="en" tabindex="-1"></pre>
+        <div class="progress-share-actions">
+          <a class="primary" id="progressShareSend" target="_blank" rel="noopener noreferrer" hidden>פתיחת וואטסאפ</a>
+          <button class="secondary" id="progressShareBack" type="button">חזרה</button>
+        </div>
+      </div>
       <p class="progress-share-status" id="progressShareStatus" role="status"></p>
-      <a class="primary" id="progressShareSend" target="_blank" rel="noopener noreferrer" hidden>פתיחת וואטסאפ</a>
     </div>
   </dialog>
 
@@ -2175,15 +2195,24 @@
       const progressSharePreview = document.querySelector('#progressSharePreview');
       const progressShareStatus = document.querySelector('#progressShareStatus');
       const progressShareSend = document.querySelector('#progressShareSend');
+      const progressShareNameStep = document.querySelector('#progressShareNameStep');
+      const progressShareNameForm = document.querySelector('#progressShareNameForm');
+      const progressShareNameInput = document.querySelector('#progressShareNameInput');
+      const progressSharePreviewStep = document.querySelector('#progressSharePreviewStep');
       let progressShareTrigger = null;
 
-      function buildProgressShareMessage(profile, brand) {
+      function normalizeProgressShareName(value) {
+        return Array.from(String(value || '').replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, ' ').replace(/\s+/g, ' ').trim()).slice(0, 80).join('');
+      }
+
+      function buildProgressShareMessage(profile, brand, studentName = '') {
         const rawCoins = Number(profile.wordForgeCoins ?? profile.wordForgePoints);
         const coins = Number.isFinite(rawCoins) ? Math.max(0, Math.floor(rawCoins)) : 0;
         const stages = [...new Set((Array.isArray(profile.wordForgeCompletedStages) ? profile.wordForgeCompletedStages : [])
           .filter(key => typeof key === 'string' && /^[1-5]-(?:[1-9]|10)$/.test(key)))];
         const lines = [
           `${brand} · English Practice Progress`,
+          ...(normalizeProgressShareName(studentName) ? [`Student: ${normalizeProgressShareName(studentName)}`] : []),
           `Coins: ${coins}`,
           `Completed stages: ${stages.length}/50`
         ];
@@ -2196,21 +2225,38 @@
         return lines.join('\n');
       }
 
-      function openProgressShare(event) {
-        progressShareTrigger = event.currentTarget;
-        clearAutoAdvance();
-        stopAllAudio();
+      function resetProgressShare() {
+        progressShareNameInput.value = '';
+        progressShareNameForm.hidden = true;
+        progressShareNameStep.hidden = false;
+        progressSharePreviewStep.hidden = true;
         progressShareSend.hidden = true;
         progressShareSend.removeAttribute('href');
         progressSharePreview.textContent = '';
         progressShareStatus.textContent = '';
+      }
+
+      function createProgressSharePreview(includeName) {
+        const studentName = includeName ? normalizeProgressShareName(progressShareNameInput.value) : '';
+        if (includeName && !studentName) {
+          progressShareStatus.textContent = 'יש להקליד שם או לבחור להמשיך בלי שם.';
+          progressShareNameInput.focus();
+          return;
+        }
+        progressShareNameInput.value = '';
+        progressShareNameStep.hidden = true;
+        progressSharePreviewStep.hidden = false;
+        progressShareStatus.textContent = '';
+        progressShareSend.hidden = true;
+        progressShareSend.removeAttribute('href');
+        progressSharePreview.textContent = '';
         try {
           const profile = progressApi?.getProfile?.();
           if (!profile) throw new Error('Progress unavailable');
           const brand = document.querySelector('#introTitle').textContent.trim();
-          const message = buildProgressShareMessage(profile, brand);
+          const message = buildProgressShareMessage(profile, brand, studentName);
           progressSharePreview.textContent = message;
-          const hasProgress = Number(profile.wordForgeCoins ?? profile.wordForgePoints) > 0 || /Completed stages: [1-9]/.test(message);
+          const hasProgress = Number(profile.wordForgeCoins ?? profile.wordForgePoints) > 0 || /(?:^|\n)Completed stages: [1-9]/.test(message);
           if (hasProgress) {
             progressShareSend.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
             progressShareSend.hidden = false;
@@ -2220,14 +2266,35 @@
         } catch {
           progressShareStatus.textContent = 'לא ניתן לקרוא את ההתקדמות השמורה. נסו שוב.';
         }
+        progressSharePreview.focus();
+      }
+
+      function openProgressShare(event) {
+        progressShareTrigger = event.currentTarget;
+        clearAutoAdvance();
+        stopAllAudio();
+        resetProgressShare();
         showDialog(progressShareDialog);
-        document.querySelector('#progressShareClose').focus();
+        document.querySelector('#progressShareNameYes').focus();
       }
 
       document.querySelector('#whatsappShareBtn').addEventListener('click', openProgressShare);
+      document.querySelector('#progressShareNameYes').addEventListener('click', () => {
+        progressShareNameForm.hidden = false;
+        progressShareNameInput.focus();
+      });
+      document.querySelector('#progressShareNameNo').addEventListener('click', () => createProgressSharePreview(false));
+      progressShareNameForm.addEventListener('submit', event => {
+        event.preventDefault();
+        createProgressSharePreview(true);
+      });
+      document.querySelector('#progressShareBack').addEventListener('click', () => {
+        resetProgressShare();
+        document.querySelector('#progressShareNameYes').focus();
+      });
       document.querySelector('#progressShareClose').addEventListener('click', () => closeDialog(progressShareDialog));
       progressShareDialog.addEventListener('click', event => { if (event.target === progressShareDialog) closeDialog(progressShareDialog); });
-      progressShareDialog.addEventListener('close', () => progressShareTrigger?.focus());
+      progressShareDialog.addEventListener('close', () => { resetProgressShare(); progressShareTrigger?.focus(); });
       progressShareSend.addEventListener('click', () => { clearAutoAdvance(); stopAllAudio(); });
 
       let route = 'space';
