@@ -13,10 +13,14 @@ remain separate and are not required for this pilot. Do not stretch /t/ or add
 a vowel after consonants. Do not concatenate isolated sounds and call the result
 continuous blending. No word beyond these prerequisites is introduced.
 
-The existing sample curriculum contains proposed audio IDs only. There are no
-recorded or verified audio assets in this pilot directory. No audible playback,
-pronunciation review, physical-phone test or child trial has been performed.
-An audio generation/recording capability is not available in this session.
+The existing sample curriculum contains proposed audio IDs only. One licensed,
+unmodified /æ/ reference candidate is now stored at `audio/reference/short-a.ogg`.
+Its complete decode passed; it has not been listened to and is not approved for
+runtime. No accepted four-phoneme pack or connected `am` asset exists yet.
+No audible playback, pronunciation review, physical-phone test or child trial
+has been performed. An audio generation/recording capability is not available
+in this session. Provenance, checked sources and an exact original-recording
+handoff are in [audio/README.md](audio/README.md).
 
 Candidate references inspected:
 
@@ -32,15 +36,18 @@ Candidate references inspected:
 
 These descriptions do not establish speaker/accent, actual audible suitability
 or permission to incorporate the recordings in this repository. No third-party
-recordings were committed and no external audio dependency was added to a game.
+recordings from those two providers were committed and no external audio
+dependency was added to a game. The separate Commons /æ/ reference above is
+licensed CC BY-SA 3.0 with its credit and source documented.
 
 Exit condition: a usable, rights-cleared sample with provenance and an actual
 listening review of sounds and the complete blend. This production review is
 outside gameplay: it must never become adult approval of a child's progression.
 
-Immediate next action: obtain a small usable audio sample (owned recordings or
-a source with explicit reuse permission) and review it. Until then this gate
-remains open; there is no playable reading pilot.
+Immediate next action: obtain the one original six-cue recording and permission
+specified in `audio/README.md`, then actually review it. Until then this gate
+remains open; there is no playable reading pilot. Avoid repeating the source
+search already documented in that handoff.
 
 ## 2. Learning engine
 
