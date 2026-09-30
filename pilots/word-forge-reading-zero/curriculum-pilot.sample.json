@@ -1,0 +1,802 @@
+{
+  "schemaVersion": "design-sample-1",
+  "productionReady": false,
+  "curriculumVersion": "rz-proposal-2026-09-30",
+  "accent": "en-US; specific speaker and variants require review",
+  "graphemes": [
+    {
+      "id": "RZ-G-M",
+      "lower": "m",
+      "upper": "M",
+      "phoneme": "m",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-S",
+      "lower": "s",
+      "upper": "S",
+      "phoneme": "s",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-A-AE",
+      "lower": "a",
+      "upper": "A",
+      "phoneme": "æ",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-T",
+      "lower": "t",
+      "upper": "T",
+      "phoneme": "t",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-N",
+      "lower": "n",
+      "upper": "N",
+      "phoneme": "n",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-I-IH",
+      "lower": "i",
+      "upper": "I",
+      "phoneme": "ɪ",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    },
+    {
+      "id": "RZ-G-P",
+      "lower": "p",
+      "upper": "P",
+      "phoneme": "p",
+      "letterNameAudioSeparate": true,
+      "audioStatus": "not_recorded_or_verified"
+    }
+  ],
+  "items": [
+    {
+      "id": "RZ-W-AM",
+      "spelling": "am",
+      "graphemes": [
+        "a",
+        "m"
+      ],
+      "phonemes": [
+        "æ",
+        "m"
+      ],
+      "requires": [
+        "RZ-G-A-AE",
+        "RZ-G-M"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-am",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-AT",
+      "spelling": "at",
+      "graphemes": [
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "æ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-A-AE",
+        "RZ-G-T"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-at",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-MAT",
+      "spelling": "mat",
+      "graphemes": [
+        "m",
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "m",
+        "æ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-M",
+        "RZ-G-A-AE",
+        "RZ-G-T"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-mat",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-SAT",
+      "spelling": "sat",
+      "graphemes": [
+        "s",
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "s",
+        "æ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-S",
+        "RZ-G-A-AE",
+        "RZ-G-T"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-sat",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-SIT",
+      "spelling": "sit",
+      "graphemes": [
+        "s",
+        "i",
+        "t"
+      ],
+      "phonemes": [
+        "s",
+        "ɪ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-S",
+        "RZ-G-I-IH",
+        "RZ-G-T"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-sit",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-IN",
+      "spelling": "in",
+      "graphemes": [
+        "i",
+        "n"
+      ],
+      "phonemes": [
+        "ɪ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-I-IH",
+        "RZ-G-N"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-in",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-PIN",
+      "spelling": "pin",
+      "graphemes": [
+        "p",
+        "i",
+        "n"
+      ],
+      "phonemes": [
+        "p",
+        "ɪ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-I-IH",
+        "RZ-G-N"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-pin",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-TAP",
+      "spelling": "tap",
+      "graphemes": [
+        "t",
+        "a",
+        "p"
+      ],
+      "phonemes": [
+        "t",
+        "æ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-T",
+        "RZ-G-A-AE",
+        "RZ-G-P"
+      ],
+      "role": "practice",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": true,
+      "audioIdProposed": "rz-us-tap",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-TAN",
+      "spelling": "tan",
+      "graphemes": [
+        "t",
+        "a",
+        "n"
+      ],
+      "phonemes": [
+        "t",
+        "æ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-T",
+        "RZ-G-A-AE",
+        "RZ-G-N"
+      ],
+      "role": "transfer_in_game",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-tan",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-PAT",
+      "spelling": "pat",
+      "graphemes": [
+        "p",
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "p",
+        "æ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-A-AE",
+        "RZ-G-T"
+      ],
+      "role": "transfer_in_game",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-pat",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-MAN",
+      "spelling": "man",
+      "graphemes": [
+        "m",
+        "a",
+        "n"
+      ],
+      "phonemes": [
+        "m",
+        "æ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-M",
+        "RZ-G-A-AE",
+        "RZ-G-N"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-man",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-MAP",
+      "spelling": "map",
+      "graphemes": [
+        "m",
+        "a",
+        "p"
+      ],
+      "phonemes": [
+        "m",
+        "æ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-M",
+        "RZ-G-A-AE",
+        "RZ-G-P"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-map",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-TIP",
+      "spelling": "tip",
+      "graphemes": [
+        "t",
+        "i",
+        "p"
+      ],
+      "phonemes": [
+        "t",
+        "ɪ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-T",
+        "RZ-G-I-IH",
+        "RZ-G-P"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-tip",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-TIN",
+      "spelling": "tin",
+      "graphemes": [
+        "t",
+        "i",
+        "n"
+      ],
+      "phonemes": [
+        "t",
+        "ɪ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-T",
+        "RZ-G-I-IH",
+        "RZ-G-N"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-tin",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-CODE-MIP",
+      "spelling": "mip",
+      "graphemes": [
+        "m",
+        "i",
+        "p"
+      ],
+      "phonemes": [
+        "m",
+        "ɪ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-M",
+        "RZ-G-I-IH",
+        "RZ-G-P"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "proposed_nonword_code",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-mip",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-CODE-NAM",
+      "spelling": "nam",
+      "graphemes": [
+        "n",
+        "a",
+        "m"
+      ],
+      "phonemes": [
+        "n",
+        "æ",
+        "m"
+      ],
+      "requires": [
+        "RZ-G-N",
+        "RZ-G-A-AE",
+        "RZ-G-M"
+      ],
+      "role": "assessment_A",
+      "lexicalType": "proposed_nonword_code",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-nam",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-PAN",
+      "spelling": "pan",
+      "graphemes": [
+        "p",
+        "a",
+        "n"
+      ],
+      "phonemes": [
+        "p",
+        "æ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-A-AE",
+        "RZ-G-N"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-pan",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-NAP",
+      "spelling": "nap",
+      "graphemes": [
+        "n",
+        "a",
+        "p"
+      ],
+      "phonemes": [
+        "n",
+        "æ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-N",
+        "RZ-G-A-AE",
+        "RZ-G-P"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-nap",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-SIP",
+      "spelling": "sip",
+      "graphemes": [
+        "s",
+        "i",
+        "p"
+      ],
+      "phonemes": [
+        "s",
+        "ɪ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-S",
+        "RZ-G-I-IH",
+        "RZ-G-P"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-sip",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-PIT",
+      "spelling": "pit",
+      "graphemes": [
+        "p",
+        "i",
+        "t"
+      ],
+      "phonemes": [
+        "p",
+        "ɪ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-I-IH",
+        "RZ-G-T"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-pit",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-CODE-NIS",
+      "spelling": "nis",
+      "graphemes": [
+        "n",
+        "i",
+        "s"
+      ],
+      "phonemes": [
+        "n",
+        "ɪ",
+        "s"
+      ],
+      "requires": [
+        "RZ-G-N",
+        "RZ-G-I-IH",
+        "RZ-G-S"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "proposed_nonword_code",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-nis",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-CODE-PIM",
+      "spelling": "pim",
+      "graphemes": [
+        "p",
+        "i",
+        "m"
+      ],
+      "phonemes": [
+        "p",
+        "ɪ",
+        "m"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-I-IH",
+        "RZ-G-M"
+      ],
+      "role": "assessment_B",
+      "lexicalType": "proposed_nonword_code",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-pim",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-NIP",
+      "spelling": "nip",
+      "graphemes": [
+        "n",
+        "i",
+        "p"
+      ],
+      "phonemes": [
+        "n",
+        "ɪ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-N",
+        "RZ-G-I-IH",
+        "RZ-G-P"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-nip",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-NIT",
+      "spelling": "nit",
+      "graphemes": [
+        "n",
+        "i",
+        "t"
+      ],
+      "phonemes": [
+        "n",
+        "ɪ",
+        "t"
+      ],
+      "requires": [
+        "RZ-G-N",
+        "RZ-G-I-IH",
+        "RZ-G-T"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-nit",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-PIP",
+      "spelling": "pip",
+      "graphemes": [
+        "p",
+        "i",
+        "p"
+      ],
+      "phonemes": [
+        "p",
+        "ɪ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-P",
+        "RZ-G-I-IH"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-pip",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-SAP",
+      "spelling": "sap",
+      "graphemes": [
+        "s",
+        "a",
+        "p"
+      ],
+      "phonemes": [
+        "s",
+        "æ",
+        "p"
+      ],
+      "requires": [
+        "RZ-G-S",
+        "RZ-G-A-AE",
+        "RZ-G-P"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-sap",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-SIN",
+      "spelling": "sin",
+      "graphemes": [
+        "s",
+        "i",
+        "n"
+      ],
+      "phonemes": [
+        "s",
+        "ɪ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-S",
+        "RZ-G-I-IH",
+        "RZ-G-N"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-sin",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    },
+    {
+      "id": "RZ-W-AN",
+      "spelling": "an",
+      "graphemes": [
+        "a",
+        "n"
+      ],
+      "phonemes": [
+        "æ",
+        "n"
+      ],
+      "requires": [
+        "RZ-G-A-AE",
+        "RZ-G-N"
+      ],
+      "role": "assessment_C",
+      "lexicalType": "real_word",
+      "initialWrittenExposure": "unseen",
+      "allowedInTeaching": false,
+      "audioIdProposed": "rz-us-an",
+      "audioStatus": "not_recorded_or_verified",
+      "meaningStatus": "not_scored_in_oral_decoding; review before semantic activity"
+    }
+  ],
+  "assessmentProtocol": {
+    "counterbalanceForms": [
+      "assessment_A",
+      "assessment_B",
+      "assessment_C"
+    ],
+    "occasions": [
+      "baseline",
+      "post_training",
+      "delayed_2_to_7_days"
+    ],
+    "neverReuseWrittenItemForUnseenEvidence": true,
+    "inGameTransferDoesNotUseAssessmentForms": true,
+    "formsBalanced": false,
+    "blockingReviewBeforeComparison": "C differs in lexical familiarity and has no nonword codes. Balance and approve before quantitative comparison. Pilot plan only.",
+    "evidenceMode": "autonomous game responses with probabilistic inference; no adult participation, microphone, recordings or learner identifier"
+  },
+  "extensionsExcludedFromPrimaryOutcome": [
+    "Tap it. after teaching it and uppercase T"
+  ],
+  "note": "Content specification only. No runnable learning or game engine exists in this directory."
+}

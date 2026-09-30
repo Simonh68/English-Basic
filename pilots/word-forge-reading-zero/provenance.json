@@ -1,0 +1,70 @@
+{
+  "documentVersion": "1.1",
+  "planningOnly": true,
+  "verifiedOn": "2026-09-30",
+  "repository": "Simonh68/English-Basic",
+  "branch": "codex/word-forge-reading-zero-20260930",
+  "baseBranch": "codex/word-forge-memory-20260930",
+  "baseCommit": "5dcb8971780bd370de528277baf6d740e5bbb837",
+  "verifiedMainCommit": "a0210b709c86d910e505db7f3ea1c94f0cd166c1",
+  "charterVersion": "1.8",
+  "managerInstructionsVersion": "1.0",
+  "canonicalCurriculum": {
+    "version": 2,
+    "revision": "2026-08-22-shared-phonics",
+    "levels": 5,
+    "stages": 50,
+    "itemOccurrences": 750,
+    "uniqueSpellings": 677
+  },
+  "sourceSha256": {
+    "curriculum-data.js": "7bdf2c2104375aeebfcc530a4ff63e1178cde577c17fe76374bc605d4a4bb90a",
+    "speech-runtime.js": "25a3c6bc3c59b3c4489c9d91cf1f2b74d51a36532913e57eeb13477a3264203a",
+    "progress.js": "ee0fabac1fe822530928dea0dc631e4f3d6838fcdc10a89a3ddadde1aa0509f6",
+    "word-forge/index.html": "d7b2961e99ebb2f5cd8bd365d7d99df4c3dfa48d8a2ef38cc8f42b8b178e7db4",
+    "pilots/word-forge-memory/engine.js": "57083bfe18a128476e94f172a6b2f87bce5007dd9b1faebc2b795f1b73b00dbf",
+    "pilots/word-forge-memory/app.js": "2fb5950234d2308b3424718c473646d0f67604292121dca93d5c5aa531ee3bb9",
+    "pilots/word-forge-memory/template.html": "b57287bef18c87f4afa160adc2da69b5b2cf32c5f55bfa604bb8280abc3ca092",
+    "pilots/word-forge-memory/style.css": "e3141405be43543b7e8891ea3f7b39c6db8b9579da0e0a773684c7d4f943fa02",
+    "pilots/word-forge-memory/plans.json": "dc75463666097d72e04b97abe69215805d1cb8e378673e91703992fa536eecb7",
+    "pilots/word-forge-memory/build.cjs": "5469dd91d50b8ef368c88e3eac4460cade1ca6c0269ea256c5fd34b243aff3f2"
+  },
+  "livePilot": {
+    "url": "https://englishfornoar.co.il/word-forge-memory/",
+    "htmlSha256": "61f81bc68e816295eab19b9d713b67237eb9d97609eaadf259f9213147d71605",
+    "bytes": 95193,
+    "noindexPresent": true,
+    "embeddedSourceMatches": {
+      "curriculum-data.js": true,
+      "speech-runtime.js": true,
+      "pilots/word-forge-memory/engine.js": true,
+      "pilots/word-forge-memory/app.js": true,
+      "pilots/word-forge-memory/style.css": true
+    }
+  },
+  "hostingReadback": {
+    "projectId": "appgprj_6a8868141c188191be8611ab7e536b70",
+    "latestVersionNumber": 64,
+    "liveUrl": "https://englishfornoar.co.il",
+    "scope": "Metadata and served HTML checked; no deployment performed"
+  },
+  "qaLimitations": [
+    "No physical-phone visual test in this task",
+    "No audible phoneme or TTS validation",
+    "No child usability or efficacy trial",
+    "Prior engine and DOM results are documented historical results, not rerun results",
+    "Planning data contains proposed audio identifiers, no new audio files"
+  ],
+  "isolation": {
+    "onlyAddedDirectory": "pilots/word-forge-reading-zero",
+    "futureStorageKey": "efn:wf-reading-zero:pilot:v1",
+    "forbiddenReadsAndWrites": [
+      "ebr-profile-v2",
+      "ebr-v1-*",
+      "efn:wf-memory:pilot:v1"
+    ],
+    "noRuntimeImplementation": true,
+    "noMerge": true,
+    "noDeployment": true
+  }
+}

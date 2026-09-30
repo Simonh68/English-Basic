@@ -1,0 +1,117 @@
+{
+  "specificationOnly": true,
+  "version": "probability-design-1",
+  "empiricallyCalibrated": false,
+  "adultRequired": false,
+  "skills": [
+    "letter_sound",
+    "blending",
+    "known_word_recall",
+    "novel_word_decoding",
+    "word_meaning",
+    "sentence_comprehension"
+  ],
+  "initialParameters": {
+    "prior": 0.2,
+    "slip": 0.15,
+    "guessByOptionCount": {
+      "2": 0.6,
+      "3": 0.45
+    },
+    "learningTransitionOncePerCompletedTeachingBlock": 0.05
+  },
+  "sensitivityGrid": {
+    "prior": [
+      0.15,
+      0.2,
+      0.25
+    ],
+    "slip": [
+      0.1,
+      0.15,
+      0.2
+    ],
+    "guessByOptionCount": {
+      "2": [
+        0.5,
+        0.6,
+        0.65
+      ],
+      "3": [
+        0.35,
+        0.45,
+        0.55
+      ]
+    },
+    "lowEstimate": "minimum across parameter grid, NOT confidence interval"
+  },
+  "weights": {
+    "novel_diverse": 1,
+    "spaced_known": 0.5,
+    "near_same_template_max": 0.25,
+    "hinted_or_corrected": 0
+  },
+  "gates": {
+    "M1": {
+      "q": 0.8,
+      "qLow": 0.6,
+      "validAttemptsMin": 4,
+      "taskFamiliesMin": 2,
+      "eachRequiredMappingOpportunitiesMin": 2
+    },
+    "M2": {
+      "q": 0.9,
+      "qLow": 0.75,
+      "effectiveEvidenceMin": 8,
+      "uniqueItemsMin": 6,
+      "taskFamiliesMin": 2,
+      "novelWordsMinWhenDecoding": 3,
+      "novelPhrasesMinWhenComprehension": 4,
+      "relationshipTypesMinWhenComprehension": 2
+    },
+    "M3": {
+      "q": 0.95,
+      "qLow": 0.8,
+      "additionalValidEvidenceMin": 3,
+      "unseenTransferMin": 2,
+      "elapsedDaysMin": 1
+    }
+  },
+  "rules": [
+    "Only first response before hint qualifies for independent evidence",
+    "Weights assigned by exposure/context, independent of correctness",
+    "Do not update multiple component skills with full evidence from one composite response",
+    "Do not unlock from learning transition alone",
+    "Do not store selected answer text",
+    "Do not show latent probability as a calibrated certainty",
+    "Novel phonological matching is not direct measurement of spoken pronunciation",
+    "Sentence comprehension remains unassessed until sentence tasks exist",
+    "Random chance of a success sequence is not posterior probability of mastery",
+    "Reward engine cannot change mastery estimates"
+  ],
+  "validation": [
+    "guessing simulation",
+    "side bias simulation",
+    "hint farming simulation",
+    "repeated-item simulation",
+    "partial-knowledge simulation",
+    "held-out transfer outcomes",
+    "pre-answer predictive Brier sums",
+    "calibration by prediction bin",
+    "parameter sensitivity"
+  ],
+  "gatingEvidencePath": {
+    "qEvidence": "posterior recomputed from initial prior over latest valid evidence window; no learning transitions",
+    "effectiveEvidenceWindow": 12,
+    "windowSensitivity": [
+      10,
+      12,
+      16
+    ],
+    "sameWeightsForCorrectAndWrong": true,
+    "zeroWeightEventsDoNotEvictEvidence": true,
+    "coverageMustBeWithinWindow": true,
+    "allThresholdsMustAlsoPassEvidenceOnlyPath": true,
+    "readyEstimateMayScheduleSupportedPracticeOnly": true
+  }
+}
