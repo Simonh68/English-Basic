@@ -1,5 +1,10 @@
 # Audio production handoff — stage 1 remains incomplete
 
+**Current route:** Simon instructed the assistant to generate audio, with no
+user recording upload. Six synthetic candidates now exist. See
+[SYNTHESIS.md](SYNTHESIS.md) for provenance, reproduction and the listening gate.
+The original-recording instructions below are a fallback, not Simon's next task.
+
 Development assets only. No game, learning engine or machine is implemented here.
 DESIGN.md 1.1 remains unchanged. Adult listening review is production QA only;
 it must never gate a child's progression or require an adult inside gameplay.

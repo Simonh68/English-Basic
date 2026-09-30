@@ -1,0 +1,85 @@
+{
+  "status": "generated-candidates-awaiting-actual-listening",
+  "kind": "synthetic-audio-not-a-human-recording",
+  "voice": "af_heart",
+  "voice_locale_from_provider": "American English",
+  "actual_listening_performed": false,
+  "pronunciation_accepted": false,
+  "physical_phone_tested": false,
+  "runtime_enabled": false,
+  "method": "Explicit phoneme input; one model batch and inference per file. No joins inside am.",
+  "model_source": "https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0",
+  "upstream_model": "https://huggingface.co/hexgrad/Kokoro-82M",
+  "model_license": "Apache-2.0",
+  "implementation_license": "MIT",
+  "model_sha256": "7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5",
+  "voices_sha256": "bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d",
+  "packages": {
+    "kokoro-onnx": "0.4.9",
+    "onnxruntime": "1.30.0",
+    "numpy": "2.5.3",
+    "soundfile": "0.14.0"
+  },
+  "assets": [
+    {
+      "file": "phoneme-m.wav",
+      "phonemes": "m",
+      "speed": 0.5,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.6613333333333333,
+      "peak": 0.42036712169647217,
+      "sha256": "21008bf66af1574fbd0f59ab4702c33329be686095fe4dd75bb706fdee8908a4"
+    },
+    {
+      "file": "phoneme-s.wav",
+      "phonemes": "s",
+      "speed": 0.5,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.5546666666666666,
+      "peak": 0.3898841142654419,
+      "sha256": "0714eeaf72613570742b7eecacc1b1013d83189c87b2e3c765bad35b32d045be"
+    },
+    {
+      "file": "phoneme-short-a.wav",
+      "phonemes": "æ",
+      "speed": 0.5,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.8533333333333334,
+      "peak": 0.33197471499443054,
+      "sha256": "a60892e42ec1f11f7f59c8e9955258ca5e258189600941e5fd2ef5bcfd6efd99"
+    },
+    {
+      "file": "phoneme-t.wav",
+      "phonemes": "t",
+      "speed": 1.0,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.24766666666666667,
+      "peak": 0.41891857981681824,
+      "sha256": "de1b96362650040056ad0ce128b7268ef2ca3762c78a767127d9b18a6411f46f"
+    },
+    {
+      "file": "am-connected-slow.wav",
+      "phonemes": "ˈæm",
+      "speed": 0.5,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 1.5786666666666667,
+      "peak": 0.5794443488121033,
+      "sha256": "1e59182cdf34ff860f6bf7a20623fe8cdfab697602d02bf4f3b7c1d0908b0619"
+    },
+    {
+      "file": "am-whole-word.wav",
+      "phonemes": "ˈæm",
+      "speed": 1.0,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.6826666666666666,
+      "peak": 0.5266605615615845,
+      "sha256": "bdaf9156f56182687441e689247778669cc817956680ed45a761d722664ec870"
+    }
+  ]
+}

@@ -6,8 +6,10 @@ the design authority. This document records execution scope, not a redesign.
 
 ## 1. Audio sample — current, incomplete
 
-Deliverable: four phoneme recordings /m/, /s/, /æ/, /t/ and one complete
-continuous-blending recording for `am`, followed by its natural whole-word form.
+Deliverable: four phoneme samples /m/, /s/, /æ/, /t/ and one complete
+continuous-blending sample for `am`, followed by its natural whole-word form.
+Simon subsequently requested tool-generated audio rather than a user recording.
+Generated samples must be labelled synthetic, not human recordings.
 Use one identified American-English speaker where possible. Letter names must
 remain separate and are not required for this pilot. Do not stretch /t/ or add
 a vowel after consonants. Do not concatenate isolated sounds and call the result
@@ -16,10 +18,14 @@ continuous blending. No word beyond these prerequisites is introduced.
 The existing sample curriculum contains proposed audio IDs only. One licensed,
 unmodified /æ/ reference candidate is now stored at `audio/reference/short-a.ogg`.
 Its complete decode passed; it has not been listened to and is not approved for
-runtime. No accepted four-phoneme pack or connected `am` asset exists yet.
+runtime. Six additional Kokoro synthetic candidates were generated from explicit
+phonemes in `audio/synthetic-candidates/`, with one complete inference per am
+file. Provenance, rights, reproduction and listening limitations are documented
+in `audio/SYNTHESIS.md`. No accepted four-phoneme pack or connected `am` asset
+exists yet: actual listening remains open.
 No audible playback, pronunciation review, physical-phone test or child trial
-has been performed. An audio generation/recording capability is not available
-in this session. Provenance, checked sources and an exact original-recording
+has been performed. Local generation was established using an isolated open
+model runtime; there is no human-recording capability. Earlier checked sources and an original-recording
 handoff are in [audio/README.md](audio/README.md).
 
 Candidate references inspected:
@@ -44,8 +50,8 @@ Exit condition: a usable, rights-cleared sample with provenance and an actual
 listening review of sounds and the complete blend. This production review is
 outside gameplay: it must never become adult approval of a child's progression.
 
-Immediate next action: obtain the one original six-cue recording and permission
-specified in `audio/README.md`, then actually review it. Until then this gate
+Immediate next action: listen to the generated six-cue review sheet and document
+pronunciation acceptance or defects. Simon need not record/upload audio. Until then this gate
 remains open; there is no playable reading pilot. Avoid repeating the source
 search already documented in that handoff.
 
