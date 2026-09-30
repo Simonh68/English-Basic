@@ -93,3 +93,14 @@ Sequential comparison playback is not claimed as a continuous blended recording.
 Run `python build-comparison-review.py /path/to/review.html` to reproduce it.
 Existing candidate WAVs are reused without modification; ten embedded hashes
 are checked against their manifests. Browser/physical-device playback is untested.
+
+## Provisional slow-am revision — 2026-09-30
+
+Simon reported a break and requested correction. The exact location was not
+confirmed. Generated a fresh complete `ˈæm` at speed 0.8, replacing speed 0.5
+as the next review candidate, without file concatenation or waveform editing.
+The dedicated review has separate controls for revised am and accepted normal
+am, avoiding the comparison between an isolated sound and a word.
+This is a candidate correction, not a verified audible fix. Technical decode
+passed; assistant listening and user acceptance remain open. Model, voice,
+rights and method match the documented Kokoro route. See am-revision/manifest.json.

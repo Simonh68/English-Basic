@@ -1,0 +1,36 @@
+{
+  "status": "generated-candidates-awaiting-actual-listening",
+  "kind": "synthetic-audio-not-a-human-recording",
+  "voice": "af_heart",
+  "voice_locale_from_provider": "American English",
+  "actual_listening_performed": false,
+  "previous_user_feedback": "Simon reported a break in the comparison sheet; exact location was not specified. Revise slow am provisionally from 0.5 to 0.8; acceptance remains open.",
+  "pronunciation_accepted": false,
+  "physical_phone_tested": false,
+  "runtime_enabled": false,
+  "method": "Explicit phoneme input; one model batch and inference per file. Each whole word is generated in one inference; no joined sound files.",
+  "model_source": "https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0",
+  "upstream_model": "https://huggingface.co/hexgrad/Kokoro-82M",
+  "model_license": "Apache-2.0",
+  "implementation_license": "MIT",
+  "model_sha256": "7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5",
+  "voices_sha256": "bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d",
+  "packages": {
+    "kokoro-onnx": "0.4.9",
+    "onnxruntime": "1.30.0",
+    "numpy": "2.5.3",
+    "soundfile": "0.14.0"
+  },
+  "assets": [
+    {
+      "file": "am-connected-moderate.wav",
+      "phonemes": "ˈæm",
+      "speed": 0.8,
+      "inference_batches": 1,
+      "sample_rate": 24000,
+      "duration_seconds": 0.9386666666666666,
+      "peak": 0.38837122917175293,
+      "sha256": "073c6b8fa4c7f16d57343d9bc9ab99ebe707e5573fe29a32406ad6411acb104f"
+    }
+  ]
+}

@@ -110,3 +110,7 @@ Simon subsequently listened to normal-speed am/mat/sat and reported "נשמע מ
 This accepts those whole words only. Isolated sounds and slow am still require
 quality review; the comparison sheet pairs them with accepted words.
 Stage 1 remains incomplete and no learning engine is authorized here.
+
+After Simon reported a break, a complete am candidate at speed 0.8 was generated
+for review instead of speed 0.5. Break location and audible correction remain
+unconfirmed. No stage progression or runtime enablement.
