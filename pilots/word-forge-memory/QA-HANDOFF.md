@@ -34,3 +34,9 @@ The exact hosting destination is not selected or provisioned in this task. A hos
 New user: try the cat example, choose a wrong letter, recover, then start the real stage. Existing user: resume the saved question directly, reopen the example from Help, and return to the same question.
 After an actual wrong/hinted answer, use “ננסה שוב יחד”: the assisted correction must not change points or independent-success counts, and the word must still return in delayed review.
 Check the simplified stage-1 action and the two strategy buttons in later stages on a physical phone. Eleven focused DOM regressions and the complete 15-word flow pass; rendered browser/phone and audible speech checks are still open.
+
+## Current handoff: visual arcade, superseding the guided demo
+
+Simon requested no conversational UI or reading-dependent instructions. The cat onboarding and prose coach were removed. The real game starts immediately, with visual coin/dice/arrow choices and a picture-based Help panel.
+Phone check: in stage 2 compare the small-coin button and dice button; add a word, confirm the extra coins are a possible prize, complete one correct and one wrong answer, and try the eye/retry buttons. Refresh mid-question and confirm continuity. Stage 1 intentionally retains the one-word cap.
+All eleven focused DOM tests and the complete run passed. This does not establish that a nonreader independently understands the interface; test with a child before claiming that outcome.

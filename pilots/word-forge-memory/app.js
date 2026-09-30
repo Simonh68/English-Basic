@@ -12,7 +12,7 @@
   catch { game=new MemoryForge.Game(ENGLISH_BASIC_COURSE,MEMORY_PLANS); }
   if(!game.run)game.start(1,1);
   let timer=0, generation=0, speechGeneration=0, audio=null, oscillators=new Set(), paused=false, drawFrame=-1, lastSpoken='', stageTarget=null;
-  let demo=!stored?.game&&!prefs.guideSeen?{step:1,wrong:[]}:null, repair=null;
+  let repair=null;
   const reduced=()=>prefs.reduced || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const colours=[['#75efbe','117,239,190'],['#e8e282','232,226,130'],['#ffcf68','255,207,104'],['#ffaa5e','255,170,94'],['#ff865c','255,134,92'],['#ff706e','255,112,110'],['#ff5e78','255,94,120']];
   function save(){
@@ -26,7 +26,7 @@
   }
   function cancelSpeech(){speechGeneration++;EFN_SPEECH.cancel();}
   function speechStatus(message=''){
-    $('#speechStatus').textContent=message;$('#speechStatus').hidden=!message;
+    $('#speechStatus').innerHTML=message?icon('mute')+`<span class="sr-only">${esc(message)}</span>`:'';$('#speechStatus').hidden=!message;
   }
   function stopMotion(){generation++;clearTimeout(timer);timer=0;drawFrame=-1;}
   function tone(notes=[440],duration=.10){
@@ -40,10 +40,10 @@
     }catch{}
   }
   async function sayWord(index=game.run.challenge?.index??game.run.cursor,manual=false){
-    if(!prefs.sound||document.hidden||paused||document.querySelector('dialog[open]')||(!demo&&(game.run.phase==='drawing'||game.run.phase==='summary')))return;
+    if(!prefs.sound||document.hidden||paused||document.querySelector('dialog[open]')||(game.run.phase==='drawing'||game.run.phase==='summary'))return;
     cancelSpeech();const token=speechGeneration;
     if(!EFN_SPEECH.supported){speechStatus('אין קול זמין במכשיר. אפשר להמשיך לשחק ללא שמע.');return;}
-    const word=demo?'cat':game.items[index]?.word;if(!word)return;
+    const word=game.items[index]?.word;if(!word)return;
     if(manual)EFN_SPEECH.prime();
     let result;
     try{result=await EFN_SPEECH.speak(word,{language:'en-US',rate:.8});}
@@ -52,74 +52,61 @@
     if(result.ok)speechStatus();
     else if(result.reason!=='cancelled')speechStatus('השמע לא הופעל. נסו שוב את כפתור ההשמעה או המשיכו ללא שמע.');
   }
-  function soundButton(index){return `<button class="word-sound" data-speak="${index}"><span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>${prefs.sound?'לשמוע את המילה':'הפעלת שמע'}</button>`;}
+  function icon(name,extra=''){
+    const paths={play:'M9 5l11 7-11 7z',next:'M5 12h14M13 5l7 7-7 7',check:'M5 12l4 4L19 6',close:'M6 6l12 12M18 6L6 18',repeat:'M19 8a8 8 0 1 0 1 7M19 3v5h-5',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',sound:'M3 9h4l5-5v16l-5-5H3z M16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14',mute:'M3 9h4l5-5v16l-5-5H3z M17 9l5 6M22 9l-5 6',dice:'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M7 7h.01M17 7h.01M12 12h.01M7 17h.01M17 17h.01',shield:'M12 2l8 4v7c0 5-8 9-8 9s-8-4-8-9V6z M8 12l3 3 5-6',cards:'M7 6h13v15H7z M4 17H2V2h13v2 M11 13h5M13.5 10.5v5',lock:'M5 10h14v11H5z M8 10V6a4 4 0 0 1 8 0v4',grid:'M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h6v6h-6z',flag:'M5 22V3M5 3h14l-3 5 3 5H5',warn:'M12 3L2 21h20z M12 9v5M12 17h.01'};
+    return `<svg class="glyph ${extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]||paths.play}"/></svg>`;
+  }
+  function coins(value=10,pile=true){
+    const count=pile?Math.min(9,Math.max(1,Math.ceil(value/16))):1;
+    return `<span class="coin-pile${pile?'':' mini'}" aria-hidden="true">${Array.from({length:count},(_,i)=>`<i class="coin" style="--i:${i};--x:${(i%3)*18};--y:${Math.floor(i/3)*9}">★</i>`).join('')}</span>`;
+  }
+  function soundButton(index){return `<button class="word-sound" data-speak="${index}" aria-label="${prefs.sound?'לשמוע את המילה':'הפעלת שמע והשמעת המילה'}">${icon('sound')}</button>`;}
   function masked(index,resolve=false){
     const word=game.items[index].word.toLowerCase(),p=game.run.challenge?.plan||game.plan(index);
     return esc(word.slice(0,p.start))+`<span class="${resolve?'resolved':'missing'}">${resolve?esc(p.correct):'_'.repeat(p.length)}</span>`+esc(word.slice(p.start+p.length));
   }
   function cards(count,cap,selected=-1){
-    return `<div class="cards" aria-label="${count} מילים ברצף מתוך ${cap}">${Array.from({length:cap},(_,i)=>`<span class="memory-card${i<count?' filled':''}${i===selected?' active':''}" data-card="${i}" aria-hidden="true">${i<count?i+1:'·'}</span>`).join('')}</div>`;
+    return `<div class="cards" aria-label="${count} מילים ברצף מתוך ${cap}">${Array.from({length:cap},(_,i)=>`<span class="memory-card${i<count?' filled':''}${i===selected?' active':''}" data-card="${i}" aria-hidden="true">${i<count?'◆':i===count?'+':'·'}</span>`).join('')}</div>`;
   }
   function hud(){
-    const r=game.run,spaced=game.items.filter((_,i)=>game.stat(i).spaced).length;
-    return `<div class="hud"><div class="score"><span class="score-icon" aria-hidden="true">◈</span><div><span class="metric-label">נקודות בשלב</span><strong class="metric-value" id="scoreValue">${number(r.score)}</strong><span class="bank">בבנק: ${number(game.s.bank)}</span></div></div><div class="learning"><div class="learning-label">מילים שהצלחנו <b>${r.passed.length} / ${game.items.length}</b></div><div class="progress" role="progressbar" aria-label="מילים שנענו נכון" aria-valuemin="0" aria-valuemax="${game.items.length}" aria-valuenow="${r.passed.length}"><i style="width:${r.passed.length/game.items.length*100}%"></i></div><span class="bank">${spaced} מילים הצליחו שוב אחרי הפסקה</span></div></div>`;
+    const r=game.run;
+    return `<div class="hud"><div class="score" aria-label="${r.score} נקודות בשלב">${coins(10,false)}<strong id="scoreValue">${number(r.score)}</strong><span class="bank" aria-label="${game.s.bank} נקודות מוגנות משלבים שהושלמו">${icon('lock')} ${number(game.s.bank)}</span></div><div class="learning" role="progressbar" aria-label="מילים שנענו נכון" aria-valuemin="0" aria-valuemax="${game.items.length}" aria-valuenow="${r.passed.length}"><span class="progress-dots" aria-hidden="true">${game.items.map((_,i)=>`<i class="${r.passed.includes(i)?'done':''}"></i>`).join('')}</span><b>${r.passed.length}<small>/${game.items.length}</small></b></div></div>`;
   }
-  function notices(){
-    return (!storageOK?'<p class="toast" role="status">השמירה המקומית אינה זמינה. אפשר לשחק, אך סגירה או רענון עלולים למחוק את ההתקדמות.</p>':'')+
-      (game.run.missesInRow>=2&&game.run.phase==='learn'?'<p class="toast">ניקח רגע לזכור: אפשר להאזין שוב ולבחור רצף קצר יותר.</p>':'');
-  }
-  function coach(title,text,icon='✦'){
-    return `<div class="coach"><span class="coach-icon" aria-hidden="true">${icon}</span><div><strong>${title}</strong><p>${text}</p></div></div>`;
-  }
-  function demoView(){
-    const step=demo.step;
-    return `<section class="arena demo"><div class="arena-top"><span class="mode">ננסה ביחד</span><span class="sequence">${step} מתוך 3 · בלי נקודות</span></div>
-      ${coach(step===1?'רואים מילה וזוכרים':step===2?'איזו אות נעלמה?':'הצלחתם! ככה משחקים',step===1?'עוד רגע נסתיר אות אחת. אפשר להקשיב לפני שמנסים.':step===2?'נוגעים באות שמתאימה לרווח. אפשר לנסות כמה שרוצים.':'במשחק נלמד עוד מילים. אם קשה, אפשר לבקש עזרה.')}
-      <div class="word-surface"><span class="demo-picture" aria-hidden="true">🐈</span><h1 class="word" lang="en">${step===2?'c<span class="missing">_</span>t':'c<span class="resolved">a</span>t'}</h1><p class="translation">חתול</p>${soundButton(0)}</div>
-      ${step===2?`<div class="choices" role="group" aria-label="איזו אות חסרה במילה cat">${['o','a','i','e'].map(x=>`<button class="choice${demo.wrong.length&&x==='a'?' gentle-cue':''}" data-demo-answer="${x}" ${demo.wrong.includes(x)?'disabled':''} lang="en">${x}</button>`).join('')}</div><p class="practice-note" role="status">${demo.wrong.length?'עוד ניסיון! במילה cat האות a נמצאת באמצע.':'אין מה למהר. כל ניסיון עוזר ללמוד.'}</p>`:`<div class="feedback-actions"><button class="action primary" data-demo="${step===1?'hide':'exit'}"><strong>${step===1?'זכרתי. בואו ננסה!':'מתחילים לשחק'}</strong></button></div>`}
-      ${step===3?'':`<button class="text-button" data-demo="${step===2?'show':'exit'}">${step===2?'להציץ שוב במילה':'כבר מכירים? ישר למשחק'}</button>`}</section>`;
-  }
+  function notices(){return !storageOK?`<p class="toast" role="status">${icon('warn')}<span class="sr-only">השמירה המקומית אינה זמינה. אפשר לשחק, אך סגירה או רענון עלולים למחוק את ההתקדמות.</span></p>`:'';}
+  function terms(prize,loss){return `<span class="payoff" aria-hidden="true"><span class="win">✓ <b>+${prize}</b></span><span class="loss">× <b>${loss?'−'+loss:'0'}</b></span></span>`;}
   function learn(){
     const r=game.run,item=game.items[r.cursor],risk=game.risk(),n=r.pending.length;
-    const tutorial=game.cap===1, currentPrize=n?risk.prize:10, nextPrize=MemoryForge.reward(n+1);
+    const tutorial=game.cap===1,currentPrize=n?risk.prize:10,nextPrize=MemoryForge.reward(n+1);
     const nextLoss=tutorial?0:Math.min(r.score,Math.ceil(nextPrize/2)),lift=nextPrize-currentPrize;
     const willDraw=n+1===game.cap||r.cursor+1===game.items.length||game.atSoundFamilyEnd(r.cursor+1);
-    const tip=tutorial?coach('קודם מכירים את המילה','כשמוכנים, נסתיר חלק ממנה וננסה להשלים. מותר לטעות — בשלב הזה לא יורדות נקודות.'):
-      n?coach('עוד מילה, או שננסה עכשיו?',`כבר שמרנו ${n} ${n===1?'מילה':'מילים'}. אפשר להוסיף את המילה שעל המסך, או לנסות לזכור אחת מהמילים ששמרנו.`):
-      coach('עכשיו אפשר לזכור כמה מילים','אפשר לנסות את המילה הזאת, או לשמור אותה ולהמשיך. יותר מילים בזיכרון — פרס אפשרי גדול יותר.');
-    return `${tip}<section class="arena"><div class="arena-top"><span class="mode">מכירים מילה</span><span class="sequence">${r.cursor+1} מתוך ${game.items.length}</span></div>
+    const testLabel=n?`לנסות מילה מתוך ${n} המילים ששמרתם. פרס אפשרי ${currentPrize}; הפחתה בטעות ${risk.loss}. המילה שעל המסך תחכה.`:'לנסות את המילה שעל המסך. תשובה נכונה: 10 נקודות; טעות: ללא הפחתה.';
+    const deferLabel=`להוסיף את המילה שעל המסך לרצף. ${willDraw?'שאלה מתחילה עכשיו':'ממשיכים למילה הבאה'}. פרס אפשרי ${nextPrize}; הפחתה בטעות ${nextLoss}.${!n&&!willDraw?' שמירת מילה נוספת בהמשך תאפשר פרס של 25.':''}`;
+    return `<section class="arena"><div class="arena-top"><span class="mode" aria-label="מכירים את המילה">${icon('eye')}</span><span class="sequence">${r.cursor+1}<small>/${game.items.length}</small></span></div>
       <div class="word-surface"><p class="case-pair" lang="en" dir="ltr">${esc(item.word.toUpperCase())}</p><h1 class="word" lang="en">${esc(item.word.toLowerCase())}</h1><p class="translation">${esc(item.translation)}</p>${soundButton(r.cursor)}</div>
-      <div class="risk-tray">${tutorial?'':`<div class="tray-top"><p>מילים ששמרנו <b>${n} / ${game.cap}</b></p><span class="sequence">כל קלף הוא מילה</span></div>${cards(n,game.cap)}`}
-      <div class="actions${tutorial?' single-action':''}"><button class="action primary" data-action="test"><strong>${tutorial?'זכרתי. בואו ננסה!':n?'לנסות את המילים ששמרנו':'לנסות עכשיו'}</strong><span>${n?`מילה אחת מתוך ${n} · אפשר לזכות ב־${currentPrize}`:'את המילה שעל המסך · 10 נקודות'}</span>${n?`<small>${risk.loss?`בטעות: עד ${risk.loss}− נקודות`:'בלי הפחתת נקודות כרגע'}</small>`:''}</button>
-      ${tutorial?'':`<button class="action secondary defer-action" data-action="defer"><strong>${n?'להוסיף גם את המילה הזאת':'לשמור ולראות עוד מילה'}</strong><span>${willDraw?'ואז תיבחר מילה לשאלה':'השאלה תחכה — עוברים למילה הבאה'}</span><em>${lift>0?`+${lift} לפרס האפשרי`:'פותחים אפשרות לפרס גדול יותר'}</em><small>פרס אפשרי: ${nextPrize}${nextLoss?` · בטעות: עד ${nextLoss}−`:''}</small></button>`}</div>
-      ${n?'<p class="microcopy">„לנסות” בודק רק את הקלפים. המילה שעל המסך תחכה לנו.</p>':tutorial?'<p class="microcopy">אין שעון. אפשר להסתכל ולהקשיב שוב.</p>':'<p class="microcopy">אפשר לנסות אחרי כל מילה. הנקודות מגיעות רק אחרי תשובה נכונה.</p>'}</div></section>`;
+      <div class="risk-tray">${tutorial?'':cards(n,game.cap)}
+      <div class="actions${tutorial?' single-action':''}"><button class="action cash-action" data-action="test" aria-label="${testLabel}"><span class="action-symbol">${icon(tutorial||risk.loss?'play':'shield')}</span>${coins(currentPrize)}<strong class="reward" dir="ltr">+${currentPrize}</strong>${terms(currentPrize,n?risk.loss:0)}<span class="action-path" aria-hidden="true">${n?icon('cards'):icon('eye')}${icon('next')}${icon('check')}</span></button>
+      ${tutorial?'':`<button class="action risk-action defer-action" data-action="defer" aria-label="${deferLabel}"><span class="action-symbol">${icon('dice')}</span>${coins(nextPrize)}<strong class="reward" dir="ltr">${nextPrize}${!n&&!willDraw?`<span class="future-prize">→${MemoryForge.reward(2)}</span>`:''}</strong>${lift>0?`<span class="prize-lift" aria-label="תוספת של ${lift} לפרס האפשרי">+${lift}</span>`:''}${terms(nextPrize,nextLoss)}<span class="action-path" aria-hidden="true">${icon('cards')}<b>+</b>${icon('next')}${icon(willDraw?'dice':'eye')}</span></button>`}</div></div></section>`;
   }
   function drawing(){
     const c=game.run.challenge;
-    return `<section class="arena"><div class="arena-top"><span class="mode">${c.pool.length} מילים. שאלה אחת.</span><span class="sequence">בחירה אקראית</span></div><div class="word-surface drawing"><h1>איזו מילה תיבחר?</h1><p>הפרס של הרצף</p><div class="draw-prize">+${c.prize}</div></div><div class="risk-tray">${cards(c.pool.length,c.pool.length,drawFrame)}<p class="microcopy">לכל מילה ברצף סיכוי שווה.</p></div></section>`;
+    return `<section class="arena drawing"><div class="word-surface"><span class="draw-dice">${icon('dice')}</span>${coins(c.prize)}<div class="draw-prize" dir="ltr">+${c.prize}</div>${terms(c.prize,c.loss)}</div><div class="risk-tray">${cards(c.pool.length,c.pool.length,drawFrame)}</div></section>`;
   }
   function challenge(){
     const c=game.run.challenge,item=game.items[c.index],review=['review','spacing'].includes(c.origin);
-    return `<section class="arena"><div class="arena-top"><span class="mode">${review?'מילה שכבר פגשנו':c.origin==='risk'?'מה זוכרים מהקלפים?':'בואו ננסה'}</span><span class="sequence">${review?'ללא הפחתת נקודות':'ללא הגבלת זמן'}</span></div>
-      <div class="word-surface"><p class="eyebrow">${c.plan.kind==='chunk'?'נוגעים באותיות שחסרות במילה':'נוגעים באות שחסרה במילה'}</p><h1 class="word" lang="en" aria-label="${c.hinted?'המילה המלאה':'השלימו את החסר'}">${masked(c.index,c.hinted)}</h1><p class="translation">${esc(item.translation)}</p>${soundButton(c.index)}</div>
-      <div class="choices" role="group" aria-label="בחרו את ההשלמה">${c.options.map(o=>`<button class="choice" data-answer="${esc(o)}" lang="en" aria-label="${c.plan.kind==='chunk'?'הצירוף':'האות'} ${esc(o)}">${esc(o)}</button>`).join('')}</div>
-      <div class="challenge-footer">${!c.hinted?'<button class="hint" data-action="hint">עזרה? מציצים במילה<span>ללא נקודות הפעם</span></button>':'<span class="microcopy">עכשיו נוגעים במה שהיה חסר. ננסה שוב בלי עזרה בהמשך.</span>'}</div>
-      <div class="challenge-terms"><span>נכון <b dir="ltr">+${c.prize}</b></span><span>בטעות <b dir="ltr">${c.loss?`−${c.loss}`:'0'}</b></span>${c.origin==='risk'?`<span>רצף של ${c.pool.length}</span>`:''}</div></section>`;
+    return `<section class="arena"><div class="arena-top"><span class="mode" aria-label="${review?'חיזוק זיכרון':'השלימו את המילה'}">${icon(review?'repeat':c.origin==='risk'?'dice':'play')}</span>${terms(c.prize,c.loss)}</div>
+      <div class="word-surface"><h1 class="word" lang="en" aria-label="${c.hinted?'המילה המלאה':'השלימו את החסר'}">${masked(c.index,c.hinted)}</h1><p class="translation">${esc(item.translation)}</p>${soundButton(c.index)}</div>
+      <div class="tap-cue" aria-hidden="true">👇</div><div class="choices" role="group" aria-label="בחרו את ההשלמה">${c.options.map(o=>`<button class="choice" data-answer="${esc(o)}" lang="en" aria-label="${c.plan.kind==='chunk'?'הצירוף':'האות'} ${esc(o)}">${esc(o)}</button>`).join('')}</div>
+      <div class="challenge-footer">${!c.hinted?`<button class="hint" data-action="hint" aria-label="הצגת המילה לעזרה; התרגול יהיה ללא נקודות">${icon('eye')}${coins(0,false)}<b>0</b></button>`:`<span class="assisted" aria-label="המילה מוצגת לעזרה; ללא נקודות">${icon('eye')} ${coins(0,false)} 0</span>`}</div></section>`;
   }
   function feedback(){
-    const f=game.run.feedback,item=game.items[f.index],practice=!f.independent;
-    const fixing=repair?.index===f.index;
-    const title=fixing?(repair.done?'יפה! השלמנו יחד.':'עכשיו ננסה יחד'):f.hinted?'לומדים עם עזרה':f.correct?'נכון! הצלחתם לזכור':'לא הפעם. נלמד מזה יחד';
-    const note=fixing?'תרגול קצר בלי לשנות את הנקודות. המילה תחזור גם בהמשך.':practice?'החלק המודגש הוא מה שהיה חסר. אפשר לנסות אותו שוב, בלי להפסיד עוד נקודות.':f.poolCount>1?'קיבלנו את הפרס! נחזור גם למילים האחרות ששמרנו.':'עוד מילה הצליחה! ממשיכים בקצב שלכם.';
-    return `<section class="arena"><div class="arena-top"><span class="mode">${practice?'מותר לטעות. בשביל זה מתרגלים.':'כל ניסיון מקדם'}</span><span class="sequence">${game.run.streak>=3?`${game.run.streak} הצלחות ברצף`:''}</span></div>
-      <div class="word-surface"><div class="result-sign${practice?' miss':''}" aria-hidden="true">${practice&&!repair?.done?'↺':'✓'}</div><h1 class="result-label">${title}</h1><p class="word" lang="en">${masked(f.index,true)}</p><p class="translation">${esc(item.translation)}</p>${!fixing?`<div class="result-delta${f.delta<0?' negative':''}">${f.delta>0?'+':''}${f.delta} <span style="font-size:16px">נקודות</span></div>`:''}<p class="result-note">${note}</p></div>
-      ${fixing&&!repair.done?`<div class="repair-panel"><p class="repair-word" dir="ltr" lang="en">${masked(f.index)}</p><p class="microcopy">נוגעים בחלק המודגש במילה למעלה</p><div class="choices" role="group" aria-label="תרגול התיקון ללא נקודות">${game.run.challenge.options.map(o=>`<button class="choice" data-repair-answer="${esc(o)}" ${repair.wrong.includes(o)?'disabled':''} lang="en">${esc(o)}</button>`).join('')}</div><p class="practice-note" role="status">${repair.wrong.length?'עוד ניסיון. אפשר להיעזר במילה שלמעלה.':''}</p></div>`:''}
-      <div class="feedback-actions">${practice&&!fixing?'<button class="action primary" data-action="repair"><strong>ננסה שוב יחד</strong><span>בלי להפסיד נקודות</span></button>':''}<button class="action ${practice&&(!fixing||!repair.done)?'secondary':'primary'}" data-action="next"><strong>${practice&&(!fixing||!repair.done)?'להמשיך בינתיים':'ממשיכים'}</strong></button>${soundButton(f.index)}</div></section>`;
+    const f=game.run.feedback,item=game.items[f.index],practice=!f.independent,fixing=repair?.index===f.index;
+    return `<section class="arena feedback ${practice?'retry':'success'}"><div class="word-surface"><div class="result-sign${practice?' miss':''}" aria-label="${fixing&&repair.done?'התרגול הושלם':practice?'תרגול נוסף':'תשובה נכונה'}">${icon(practice&&!repair?.done?'repeat':'check')}</div><h1 class="word" lang="en">${masked(f.index,true)}</h1><p class="translation">${esc(item.translation)}</p>${!fixing?`<div class="result-delta${f.delta<0?' negative':''}" aria-label="שינוי של ${f.delta} נקודות">${coins(Math.abs(f.delta))}<b dir="ltr">${f.delta>0?'+':''}${f.delta}</b></div>`:''}</div>
+      ${fixing&&!repair.done?`<div class="repair-panel"><p class="repair-word" dir="ltr" lang="en">${masked(f.index)}</p><div class="choices" role="group" aria-label="תרגול התיקון ללא נקודות">${game.run.challenge.options.map(o=>`<button class="choice" data-repair-answer="${esc(o)}" ${repair.wrong.includes(o)?'disabled':''} lang="en">${esc(o)}</button>`).join('')}</div></div>`:''}
+      <div class="feedback-actions">${practice&&!fixing?`<button class="action repair-action" data-action="repair" aria-label="לנסות את התיקון שוב, בלי שינוי בנקודות">${icon('repeat')}${coins(0,false)}<b>0</b></button>`:''}<button class="action ${practice&&(!fixing||!repair.done)?'secondary':'primary'}" data-action="next" aria-label="ממשיכים למילה הבאה">${icon('next')}</button>${soundButton(f.index)}</div></section>`;
   }
   function summary(){
-    const r=game.run,spaced=game.items.filter((_,i)=>game.stat(i).spaced).length;
-    const last=game.s.level===5&&game.s.lesson===10;
-    return `<section class="arena"><div class="arena-top"><span class="mode">השלב הושלם</span><span class="sequence">${game.items.length} מילים נבדקו</span></div><div class="word-surface"><div class="result-sign" aria-hidden="true">✓</div><h1 class="word" style="font-size:clamp(2rem,6vw,3rem)">זוכרים ומתקדמים</h1><p class="translation">הנקודות שלכם נשמרו.</p></div><div class="summary-numbers"><div><b>${number(r.score)}</b><span>נקודות בשלב</span></div><div><b>${r.passed.length}/${game.items.length}</b><span>נענו נכון ללא עזרה</span></div><div><b>${spaced}</b><span>שתי הצלחות מרווחות</span></div></div><div class="summary-actions"><div class="actions"><button class="action primary" data-action="${last?'stages':'nextStage'}"><strong>${last?'לבחירת שלב':'לשלב הבא'}</strong><span>${last?'ממשיכים לתרגל':'אתגר חדש מחכה'}</span></button><button class="action secondary" data-action="replay"><strong>לחזק שוב</strong><span>אותן מילים · שליפה נוספת</span></button></div><p class="microcopy">השלמת שלב מעידה על הצלחה בתרגול הזה. חזרה בהמשך עוזרת לבדוק מה נשמר בזיכרון.</p></div></section>`;
+    const r=game.run,last=game.s.level===5&&game.s.lesson===10;
+    return `<section class="arena summary"><div class="word-surface"><span class="trophy" aria-hidden="true">🏆</span><div class="summary-count" aria-label="${r.passed.length} מילים נענו נכון">${icon('check')} ${r.passed.length}/${game.items.length}</div><div class="result-delta">${coins(r.score)}<b>+${number(r.score)}</b></div></div><div class="feedback-actions"><button class="action primary" data-action="${last?'stages':'nextStage'}" aria-label="${last?'בחירת שלב':'לשלב הבא'}">${icon(last?'grid':'next')}</button><button class="action secondary" data-action="replay" aria-label="לשחק שוב בשלב הזה">${icon('repeat')}</button></div></section>`;
   }
   function render(focus=false){
     save();
@@ -127,15 +114,13 @@
     const [hex,rgb]=colours[Math.min(6,n)];
     document.documentElement.style.setProperty('--heat',hex);document.documentElement.style.setProperty('--hot-rgb',rgb);
     document.body.classList.toggle('reduced',prefs.reduced);
-    $('#sound').setAttribute('aria-pressed',String(prefs.sound));$('#sound').setAttribute('aria-label',prefs.sound?'כיבוי שמע':'הפעלת שמע');$('#sound').textContent=prefs.sound?'♪':'♩';
+    $('#sound').setAttribute('aria-pressed',String(prefs.sound));$('#sound').setAttribute('aria-label',prefs.sound?'כיבוי שמע':'הפעלת שמע');$('#sound').innerHTML=icon(prefs.sound?'sound':'mute');
     $('#motion').checked=prefs.reduced;
-    $('.route').hidden=Boolean(demo);$('#stages').disabled=Boolean(demo);
-    $('#stages').textContent=`רמה ${game.s.level} · שלב ${game.s.lesson}`;
+    $('#stages').innerHTML=icon('grid')+`<b>${(game.s.level-1)*10+game.s.lesson}</b>`;$('#stages').setAttribute('aria-label',`בחירת שלב. רמה ${game.s.level}, שלב ${game.s.lesson}`);
     $('#focusText').textContent=ENGLISH_BASIC_COURSE.levels[game.s.level-1].lessons[game.s.lesson-1].focus;
-    $('#capLabel').textContent=`עד ${game.cap} ${game.cap===1?'מילה':'מילים'} ברצף`;
+    $('#capLabel').innerHTML=icon('cards')+`<b>${game.cap}</b>`;$('#capLabel').setAttribute('aria-label',`עד ${game.cap} מילים ברצף`);
     const views={learn,drawing,challenge,feedback,summary};
-    $('#main').innerHTML=notices()+(demo?'':hud())+(paused?'<div class="pause-strip">המשחק ממתין לכם.<button data-action="resume">ממשיכים</button></div>':'')+(demo?demoView():views[r.phase]())+
-      (!demo&&r.phase!=='summary'?`<div class="side-info"><button class="text-button" data-action="demo">איך משחקים? ננסה ביחד</button><strong>${r.queue.length?`${r.queue.length} מילים נחזור לתרגל`:'אפשר להקשיב ולנסות שוב'}</strong></div>`:'');
+    $('#main').innerHTML=notices()+hud()+(paused?`<div class="pause-strip"><button data-action="resume" aria-label="המשך המשחק">${icon('play')}</button></div>`:'')+views[r.phase]();
     if(paused)$('#main').querySelectorAll('button:not([data-action="resume"])').forEach(b=>b.disabled=true);
     if(focus){
       $('#main').focus({preventScroll:true});
@@ -167,35 +152,26 @@
   }
   function afterAction(oldPhase){
     render(oldPhase!==game.run.phase||game.run.phase==='learn');announce();
-    if(game.run.phase==='drawing'&&!demo)beginDraw();
+    if(game.run.phase==='drawing')beginDraw();
     else if(game.run.phase==='learn'&&!paused){
       const id=`${game.key}:${game.run.cursor}:${game.run.rounds}`;
       if(id!==lastSpoken){lastSpoken=id;sayWord(game.run.cursor);}
     }
   }
   function openDialog(el){stopMotion();stopAudio();el.showModal();el.querySelector('[data-close]')?.focus();}
-  function closeDialog(el){el.close();if(game.run.phase==='drawing'&&!demo){render();beginDraw();}}
+  function closeDialog(el){el.close();if(game.run.phase==='drawing'){render();beginDraw();}}
   function showStages(){
     stageTarget=null;$('#stageConfirm').hidden=true;$('#stageOptions').hidden=false;
-    $('#stageOptions').innerHTML=ENGLISH_BASIC_COURSE.levels.map((level,l)=>`<h3 class="level-label">רמה ${l+1} · ${esc(level.name)}</h3><div class="level-grid">${level.lessons.map((lesson,i)=>`<button data-stage="${l+1}-${i+1}" class="${game.s.completed.includes(`${l+1}-${i+1}`)?'complete ':''}${game.s.level===l+1&&game.s.lesson===i+1?'current':''}" aria-label="רמה ${l+1}, שלב ${i+1}: ${esc(lesson.focus)}. תקרת רצף ${MemoryForge.capFor(l+1,i+1)}">${i+1}</button>`).join('')}</div>`).join('');
+    $('#stageOptions').innerHTML=ENGLISH_BASIC_COURSE.levels.map((level,l)=>`<h3 class="level-label" aria-label="רמה ${l+1}: ${esc(level.name)}">${'◆'.repeat(l+1)}</h3><div class="level-grid">${level.lessons.map((lesson,i)=>`<button data-stage="${l+1}-${i+1}" class="${game.s.completed.includes(`${l+1}-${i+1}`)?'complete ':''}${game.s.level===l+1&&game.s.lesson===i+1?'current':''}" aria-label="רמה ${l+1}, שלב ${i+1}: ${esc(lesson.focus)}. תקרת רצף ${MemoryForge.capFor(l+1,i+1)}">${i+1}</button>`).join('')}</div>`).join('');
     openDialog($('#stageDialog'));
   }
   $('#main').addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b||b.disabled)return;
     if(b.dataset.speak!==undefined){if(!prefs.sound){prefs.sound=true;render();}sayWord(Number(b.dataset.speak),true);return;}
     const old=game.run.phase,action=b.dataset.action;
-    if(action==='resume'){paused=false;render();if(game.run.phase==='drawing'&&!demo)beginDraw();return;}
+    if(action==='resume'){paused=false;render();if(game.run.phase==='drawing')beginDraw();return;}
     if(paused)return;
     stopMotion();cancelSpeech();
-    if(b.dataset.demo||b.dataset.demoAnswer!==undefined){
-      if(!demo)return;
-      if(b.dataset.demo==='exit'){demo=null;prefs.guideSeen=true;render(true);if(game.run.phase==='drawing')beginDraw();return;}
-      if(b.dataset.demo==='hide')demo.step=2;
-      if(b.dataset.demo==='show'){demo.step=1;demo.wrong=[];}
-      if(b.dataset.demoAnswer!==undefined){if(b.dataset.demoAnswer==='a'){demo.step=3;tone([523,659]);}else demo.wrong.push(b.dataset.demoAnswer);}
-      render(true);$('#announce').textContent=demo.step===3?'הצלחתם! עכשיו אפשר להתחיל לשחק.':demo.wrong.length?'עוד ניסיון. במילה cat האות a נמצאת באמצע.':'';return;
-    }
-    if(action==='demo'){demo={step:1,wrong:[]};render(true);return;}
     if(action==='repair'){repair={index:game.run.feedback.index,done:false,wrong:[]};render(true);return;}
     if(b.dataset.repairAnswer!==undefined){
       if(!repair||game.run.phase!=='feedback')return;
@@ -203,7 +179,6 @@
       else repair.wrong.push(b.dataset.repairAnswer);
       render(true);$('#announce').textContent=repair.done?'יפה! השלמנו יחד.':'ננסה שוב בעזרת המילה שלמעלה.';return;
     }
-    if(demo)return;
     if(b.dataset.answer!==undefined){
       if(game.answer(b.dataset.answer)){tone(game.run.feedback.correct?[523,659,784]:[330,262],.11);afterAction(old);}return;
     }
@@ -218,7 +193,6 @@
   });
   $('#sound').addEventListener('click',()=>{prefs.sound=!prefs.sound;stopAudio();speechStatus();render();if(prefs.sound)sayWord(undefined,true);});
   $('#help').addEventListener('click',()=>openDialog($('#helpDialog')));
-  $('#demoStart').addEventListener('click',()=>{$('#helpDialog').close();stopMotion();stopAudio();demo={step:1,wrong:[]};render(true);});
   $('#stages').addEventListener('click',showStages);
   $('#motion').addEventListener('change',e=>{prefs.reduced=e.target.checked;render();});
   for(const d of document.querySelectorAll('dialog')){
@@ -231,7 +205,7 @@
     if(l===game.s.level&&s===game.s.lesson){closeDialog($('#stageDialog'));return;}
     if(game.run.phase!=='summary'&&(game.run.cursor>0||game.run.phase!=='learn')){
       stageTarget=[l,s];$('#stageOptions').hidden=true;$('#stageConfirm').hidden=false;
-      $('#stageConfirmText').textContent=`לעבור לרמה ${l}, שלב ${s}? הרצף הנוכחי ו־${number(game.run.score)} נקודות השלב יתחילו מחדש. נקודות משלבים שהושלמו נשמרות.`;
+      $('#stageConfirmText').innerHTML=`${coins(10,false)} <b dir="ltr">${number(game.run.score)} → 0</b>`;$('#stageConfirmText').setAttribute('aria-label',`מעבר שלב מאפס את ${game.run.score} נקודות השלב הנוכחי. נקודות משלבים שהושלמו נשמרות.`);
       $('#keepStage').focus();return;
     }
     changeStage(l,s);
@@ -243,7 +217,7 @@
   window.addEventListener('pagehide',pause);document.addEventListener('freeze',pause);
   window.addEventListener('pageshow',e=>{if(e.persisted){paused=true;render();}});
   document.addEventListener('keydown',e=>{
-    if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('dialog[open]')||paused||demo)return;
+    if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('dialog[open]')||paused)return;
     if(game.run.phase==='challenge'&&/^[1-4]$/.test(e.key)){
       const b=$('#main').querySelectorAll('[data-answer]')[Number(e.key)-1];if(b){e.preventDefault();b.click();}
     }

@@ -9,7 +9,6 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});
   await page.goto('file://'+path.join(__dirname,'dist/index.html'));
   await page.evaluate(()=>{localStorage.setItem('efn:existing-game:sentinel','unchanged');});
-  await page.locator('[data-demo="exit"]').first().click();
   await page.locator('#sound').click();
   assert.equal(await page.locator('.word').textContent(),'book');
   await page.locator('[data-action="test"]').click();assert.equal(await page.locator('.choice').count(),4);
@@ -27,7 +26,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.reload();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.run.challenge.index),selected);
   assert.equal(await page.locator('.choice').count(),4);await page.screenshot({path:path.join(__dirname,'qa/mobile-challenge.png'),fullPage:true});
   await page.locator('[data-answer="'+await answer()+'"]').click();assert.equal(await page.locator('#scoreValue').textContent(),'183');
-  await page.locator('[data-action="next"]').click();assert((await page.locator('.mode').textContent()).includes('חיזוק'));
+  await page.locator('[data-action="next"]').click();assert((await page.locator('.mode').getAttribute('aria-label')).includes('חיזוק'));
   // A complete stage through actual UI actions, including review, without reaching into app variables.
   let actions=0;
   while(!(await page.locator('[data-action="nextStage"]').count())&&actions++<150){
@@ -41,7 +40,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.run.passed.length),15);
   const savedBank=await page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.bank);
   await page.reload();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.bank),savedBank);
-  await page.locator('[data-action="nextStage"]').click();assert((await page.locator('#stages').textContent()).includes('שלב 6'));
+  await page.locator('[data-action="nextStage"]').click();assert((await page.locator('#stages').getAttribute('aria-label')).includes('שלב 6'));
   assert.equal(await page.locator('#scoreValue').textContent(),'0');
   await page.setViewportSize({width:1280,height:900});await page.screenshot({path:path.join(__dirname,'qa/desktop.png'),fullPage:true});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -55,7 +54,6 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await noStorage.addInitScript(()=>{Storage.prototype.setItem=function(){throw new Error('storage unavailable');};});
   const blocked=await noStorage.newPage();await blocked.goto('file://'+path.join(__dirname,'dist/index.html'));
   assert((await blocked.locator('#main .toast').textContent()).includes('אינה זמינה'));
-  await blocked.locator('[data-demo="exit"]').first().click();
   await blocked.locator('[data-action="test"]').click();assert.equal(await blocked.locator('.choice').count(),4);
   assert.equal(await page.evaluate(()=>localStorage.getItem('efn:existing-game:sentinel')),'unchanged');
   assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);

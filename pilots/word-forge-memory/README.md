@@ -57,3 +57,12 @@ Copyright © 2026 שמעון הרצל הלוי גובני (Simon Halevi). All ri
 - Large labeled controls, stacked phone choices for the two strategies, shorter feedback, contextual instructions, and a concise expandable rules panel replace the dense introduction. The four answer choices remain in a single row.
 - Scoring engine, caps, vocabulary, storage key, and existing state format are unchanged. Only the optional guideSeen preference is added.
 - Eleven focused DOM regressions and the full 15-word DOM flow pass. Browser layout, physical phone interaction, audible TTS, and testing with a child remain open; no usability outcome is claimed from DOM tests.
+
+### Current interface — visual arcade (supersedes guided interface above)
+
+Per Simon's clarification on 2026-09-30, the playable conversation-style example and all visible gameplay instruction prose were removed. Players open directly on the real word. Controls communicate through coin piles, dice, arrows, eye/speaker/retry icons, letter buttons, and numbers. The first stage retains its one-word cap; later stages offer the two existing strategies side by side.
+
+- A mint button opens the current question; a purple dice button adds the current word to the memory pool. The number, coin pile, success payout, and possible deduction reflect the actual engine terms. The first deferred word shows 10 → 25 as potential growth if another word is later added, not an immediate payout.
+- Progress is a row of fifteen lights. Real awarded coins animate only after an independent correct answer. Wrong/hinted answers expose icon-only assisted practice, with zero additional stakes and unchanged delayed review.
+- The question screen has a pointing-hand cue; Help contains picture/letter/coin diagrams. Accessibility labels and screen-reader announcements retain full meanings. Sound, reduced motion, saved games, and switching-stage confirmation are preserved. No ordinary interface explanation needs reading; the target word and its translation remain course content.
+- Eleven focused DOM checks and the full 15-word run pass, including restoration, icon-only labeled actions, truthful reward/loss numbers, and no point settlement on a strategy click. Engine/curriculum/scoring are unchanged. Visual browser/physical phone/audio and a child usability trial remain unverified.

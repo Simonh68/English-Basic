@@ -65,29 +65,17 @@ test('defer brings new content back into view when the old actions were scrolled
   main.scrollIntoView=()=>scrolls++;a.click('[data-action="defer"]');
   assert.equal(a.state().run.cursor,1);assert.equal(scrolls,1);assert.equal(a.d.activeElement,main);
 });
-test('guided example permits wrong attempts and replay without changing game progress',t=>{
-  const a=launch(t,{guide:true}),before=a.state();
-  assert.equal(a.d.querySelector('.word').textContent,'cat');
-  a.click('[data-demo="hide"]');a.click('[data-demo-answer="o"]');
-  assert(a.d.querySelector('[data-demo-answer="o"]').disabled);
-  assert.match(a.d.querySelector('.practice-note').textContent,/עוד ניסיון/);
-  assert.deepEqual(a.state(),before);
-  a.click('[data-demo="show"]');a.click('[data-demo="hide"]');a.click('[data-demo-answer="a"]');
-  assert.match(a.d.querySelector('.coach strong').textContent,/הצלחתם/);
-  assert.deepEqual(a.state(),before);a.click('[data-demo="exit"]');
+test('new and returning players enter the word directly with icon-only controls',t=>{
+  const a=launch(t,{guide:true});
   assert.equal(a.d.querySelector('.word').textContent,'book');
   assert.equal(a.d.querySelectorAll('#main .actions .action').length,1);
+  assert(!a.d.querySelector('.coach'));assert(!a.d.querySelector('.demo'));
+  for(const b of a.d.querySelectorAll('#main button')){assert(b.getAttribute('aria-label'));assert(!/[א-ת]/.test(b.textContent));}
+  a.click('[data-action="test"]');const before=a.state();
+  a.click('#help');assert(a.d.querySelector('.visual-help'));a.click('#helpDialog [data-close]');
   assert.deepEqual(a.state(),before);
-  const saved=a.w.localStorage.getItem('efn:wf-memory:pilot:v1');
-  const b=launch(t,{guide:true,saved});assert(!b.d.querySelector('.demo'));assert.deepEqual(b.state(),before);
-});
-test('reopening the demo preserves an in-progress challenge and speaks the example word',async t=>{
-  const a=launch(t);a.click('[data-action="test"]');const before=a.state();
-  a.click('#help');a.click('#demoStart');
-  const spoken=[];a.w.EFN_SPEECH={supported:true,prime(){},cancel(){},async speak(w){spoken.push(w);return {ok:true};}};
-  a.click('[data-speak]');await new Promise(setImmediate);assert.deepEqual(spoken,['cat']);
-  a.click('[data-demo="exit"]');assert.deepEqual(a.state(),before);
-  assert.equal(a.d.querySelectorAll('[data-answer]').length,4);
+  const b=launch(t,{saved:a.w.localStorage.getItem('efn:wf-memory:pilot:v1')});
+  assert.deepEqual(b.state(),before);assert.equal(b.d.querySelectorAll('[data-answer]').length,4);
 });
 test('guided correction never settles points again or counts as independent recall',t=>{
   const a=launch(t);a.click('[data-action="test"]');const c=a.state().run.challenge;
@@ -95,7 +83,7 @@ test('guided correction never settles points again or counts as independent reca
   const before=a.state();assert(before.run.queue.includes(c.index));assert(!before.run.passed.includes(c.index));
   a.click('[data-action="repair"]');a.click(`[data-repair-answer="${wrong}"]`);
   assert(a.d.querySelector(`[data-repair-answer="${wrong}"]`).disabled);assert.deepEqual(a.state(),before);
-  a.click(`[data-repair-answer="${c.plan.correct}"]`);assert.match(a.d.querySelector('.result-label').textContent,/השלמנו יחד/);
+  a.click(`[data-repair-answer="${c.plan.correct}"]`);assert.equal(a.d.querySelector('.result-sign').getAttribute('aria-label'),'התרגול הושלם');
   assert.deepEqual(a.state(),before);
   const b=launch(t,{saved:a.w.localStorage.getItem('efn:wf-memory:pilot:v1')});
   assert.equal(b.state().run.phase,'feedback');assert.deepEqual(b.state(),before);
@@ -112,7 +100,21 @@ test('later stages explain whether current word joins pool and show added prize'
   const a=launch(t);a.click('#stages');a.click('[data-stage="1-2"]');
   assert.equal(a.d.querySelectorAll('#main .actions .action').length,2);a.click('[data-action="defer"]');
   assert.equal(a.state().run.pending.length,1);
-  assert.match(a.d.querySelector('[data-action="test"]').textContent,/מתוך 1/);
-  assert.match(a.d.querySelector('[data-action="defer"]').textContent,/\+15 לפרס האפשרי/);
-  assert.match(a.d.querySelector('.microcopy').textContent,/המילה שעל המסך תחכה/);
+  assert.match(a.d.querySelector('[data-action="test"]').getAttribute('aria-label'),/מתוך 1/);
+  assert.equal(a.d.querySelector('.prize-lift').textContent,'+15');
+  assert.equal(a.d.querySelector('.defer-action .reward').textContent,'25');
+  assert.match(a.d.querySelector('[data-action="test"]').getAttribute('aria-label'),/המילה שעל המסך תחכה/);
+});
+
+test('coin buttons display the real available reward and loss without charging for a click',t=>{
+  const a=launch(t);a.click('#stages');a.click('[data-stage="1-2"]');
+  a.click('[data-action="test"]');a.click(`[data-answer="${a.state().run.challenge.plan.correct}"]`);a.click('[data-action="next"]');
+  assert.equal(a.state().run.score,10);a.click('[data-action="defer"]');
+  assert.equal(a.state().run.score,10);
+  assert.equal(a.d.querySelector('.cash-action .reward').textContent,'+10');
+  assert.equal(a.d.querySelector('.cash-action .loss b').textContent,'−5');
+  assert.equal(a.d.querySelector('.risk-action .reward').textContent,'25');
+  assert.equal(a.d.querySelector('.risk-action .loss b').textContent,'−10');
+  const selected=a.state().run.pending[0];a.click('[data-action="test"]');
+  assert.equal(a.state().run.challenge.index,selected);assert.equal(a.state().run.challenge.prize,10);assert.equal(a.state().run.challenge.loss,5);
 });
