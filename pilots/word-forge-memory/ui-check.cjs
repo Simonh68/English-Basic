@@ -15,7 +15,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const answer=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.run.challenge.plan.correct);
   await page.locator('[data-answer="'+await answer()+'"]').click();assert.equal(await page.locator('#scoreValue').textContent(),'10');
   await page.locator('[data-action="next"]').click();
-  await page.locator('#stages').click();await page.locator('[data-stage="1-5"]').click();
+  await page.locator('#stages').click();await page.locator('[data-stage="1-5"]').click();await page.locator('#changeStage').click();
   for(let i=0;i<5;i++)await page.locator('[data-action="defer"]').click();
   assert.equal(await page.locator('#scoreValue').textContent(),'0');assert.equal(await page.locator('.memory-card.filled').count(),5);
   assert((await page.locator('.defer-action').innerText()).includes('+61'));
@@ -53,7 +53,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const noStorage=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
   await noStorage.addInitScript(()=>{Storage.prototype.setItem=function(){throw new Error('storage unavailable');};});
   const blocked=await noStorage.newPage();await blocked.goto('file://'+path.join(__dirname,'dist/index.html'));
-  assert((await blocked.locator('.toast').textContent()).includes('אינה זמינה'));
+  assert((await blocked.locator('#main .toast').textContent()).includes('אינה זמינה'));
   await blocked.locator('[data-action="test"]').click();assert.equal(await blocked.locator('.choice').count(),4);
   assert.equal(await page.evaluate(()=>localStorage.getItem('efn:existing-game:sentinel')),'unchanged');
   assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);

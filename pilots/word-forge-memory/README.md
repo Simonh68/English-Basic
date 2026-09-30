@@ -38,4 +38,13 @@ The source provenance is in `source.json`. `build.cjs` extracts the current cano
 - Visual/browser QA has **not passed or been performed**. Playwright could not start because no browser binary was installed; the attempted browser downloads were invalid/truncated. `ui-check.cjs` is saved for the next environment with Playwright and Chromium. It is not evidence of completed visual checks. A physical phone and actual TTS output remain untested.
 - No publication was performed. The next step is browser/phone verification of the standalone artifact, followed by explicitly authorized detached hosting if desired.
 
+### QA continuation — 2026-09-30
+
+- The current stage button now resumes the existing run. Switching away from an unfinished run requires an explicit confirmation and shows the points that will be lost; completed-stage points remain protected.
+- Moving to the next word/question brings the main content into view if it was scrolled above the viewport. This behavior is checked with a DOM geometry stub; actual phone layout is still unverified.
+- Speech failures now have a visible, accessible message. Repeated playback cancels the older request, stale failures are ignored, and speech exceptions are handled. Muting clears the message; lottery/summary screens do not announce a hidden word when sound is enabled.
+- Six new DOM regression tests cover those behaviors and suspension. Run `node --test pilots/word-forge-memory/qa-regressions.test.cjs` with jsdom available. The existing DOM checks now account for the intentional stage-switch confirmation.
+- The browser opening of the local pilot returned `net::ERR_BLOCKED_BY_CLIENT`. No bypass was attempted. This is an environment limitation, not a verified game defect; browser rendering, physical phones, and audible speech remain open.
+- See [QA-HANDOFF.md](QA-HANDOFF.md) for the specific manual checks and detached release boundary. No publication is authorized by this QA step.
+
 Copyright © 2026 שמעון הרצל הלוי גובני (Simon Halevi). All rights reserved; third-party material retains its original rights.

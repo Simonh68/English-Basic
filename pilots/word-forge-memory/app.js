@@ -11,17 +11,21 @@
   try { game=new MemoryForge.Game(ENGLISH_BASIC_COURSE,MEMORY_PLANS,stored?.game); }
   catch { game=new MemoryForge.Game(ENGLISH_BASIC_COURSE,MEMORY_PLANS); }
   if(!game.run)game.start(1,1);
-  let timer=0, generation=0, audio=null, oscillators=new Set(), paused=false, drawFrame=-1, lastSpoken='', speechProblem=false;
+  let timer=0, generation=0, speechGeneration=0, audio=null, oscillators=new Set(), paused=false, drawFrame=-1, lastSpoken='', stageTarget=null;
   const reduced=()=>prefs.reduced || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const colours=[['#75efbe','117,239,190'],['#e8e282','232,226,130'],['#ffcf68','255,207,104'],['#ffaa5e','255,170,94'],['#ff865c','255,134,92'],['#ff706e','255,112,110'],['#ff5e78','255,94,120']];
   function save(){
     try{localStorage.setItem(KEY,JSON.stringify({prefs,game:game.snapshot()}));storageOK=true;}catch{storageOK=false;}
   }
   function stopAudio(){
-    EFN_SPEECH.cancel();
+    cancelSpeech();
     for(const o of oscillators)try{o.stop();}catch{}
     oscillators.clear();
     if(audio?.state==='running')audio.suspend().catch(()=>{});
+  }
+  function cancelSpeech(){speechGeneration++;EFN_SPEECH.cancel();}
+  function speechStatus(message=''){
+    $('#speechStatus').textContent=message;$('#speechStatus').hidden=!message;
   }
   function stopMotion(){generation++;clearTimeout(timer);timer=0;drawFrame=-1;}
   function tone(notes=[440],duration=.10){
@@ -35,12 +39,17 @@
     }catch{}
   }
   async function sayWord(index=game.run.challenge?.index??game.run.cursor,manual=false){
-    if(!prefs.sound||document.hidden||paused)return;
-    if(!EFN_SPEECH.supported){speechProblem=true;$('#announce').textContent='אין קול זמין במכשיר. אפשר להמשיך לשחק ללא שמע.';return;}
+    if(!prefs.sound||document.hidden||paused||document.querySelector('dialog[open]')||game.run.phase==='drawing'||game.run.phase==='summary')return;
+    cancelSpeech();const token=speechGeneration;
+    if(!EFN_SPEECH.supported){speechStatus('אין קול זמין במכשיר. אפשר להמשיך לשחק ללא שמע.');return;}
     const word=game.items[index]?.word;if(!word)return;
     if(manual)EFN_SPEECH.prime();
-    const result=await EFN_SPEECH.speak(word,{language:'en-US',rate:.8});
-    if(!result.ok&&result.reason!=='cancelled'){speechProblem=true;$('#announce').textContent='השמע לא הופעל. נסו את כפתור ההשמעה או המשיכו ללא שמע.';}
+    let result;
+    try{result=await EFN_SPEECH.speak(word,{language:'en-US',rate:.8});}
+    catch{result={ok:false,reason:'exception'};}
+    if(token!==speechGeneration||document.hidden||paused)return;
+    if(result.ok)speechStatus();
+    else if(result.reason!=='cancelled')speechStatus('השמע לא הופעל. נסו שוב את כפתור ההשמעה או המשיכו ללא שמע.');
   }
   function soundButton(index){return `<button class="word-sound" data-speak="${index}"><span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>${prefs.sound?'לשמוע את המילה':'הפעלת שמע'}</button>`;}
   function masked(index,resolve=false){
@@ -111,7 +120,10 @@
     $('#main').innerHTML=notices()+hud()+(paused?'<div class="pause-strip">המשחק ממתין לכם.<button data-action="resume">ממשיכים</button></div>':'')+views[r.phase]()+
       (r.phase!=='summary'?`<div class="side-info"><span>לתלמידה ולתלמיד: הבחירה בידיים שלכם</span><strong>${r.queue.length?`${r.queue.length} מילים ממתינות לחיזוק`:'כל מילה מקבלת הזדמנות'}</strong></div>`:'');
     if(paused)$('#main').querySelectorAll('button:not([data-action="resume"])').forEach(b=>b.disabled=true);
-    if(focus)$('#main').focus({preventScroll:true});
+    if(focus){
+      $('#main').focus({preventScroll:true});
+      if($('#main').getBoundingClientRect().top<0)$('#main').scrollIntoView({block:'start',behavior:'instant'});
+    }
   }
   function announce(){
     const r=game.run;
@@ -137,7 +149,7 @@
     timer=setTimeout(frame,180);
   }
   function afterAction(oldPhase){
-    render(oldPhase!==game.run.phase);announce();
+    render(oldPhase!==game.run.phase||game.run.phase==='learn');announce();
     if(game.run.phase==='drawing')beginDraw();
     else if(game.run.phase==='learn'&&!paused){
       const id=`${game.key}:${game.run.cursor}:${game.run.rounds}`;
@@ -147,6 +159,7 @@
   function openDialog(el){stopMotion();stopAudio();el.showModal();el.querySelector('[data-close]')?.focus();}
   function closeDialog(el){el.close();if(game.run.phase==='drawing'){render();beginDraw();}}
   function showStages(){
+    stageTarget=null;$('#stageConfirm').hidden=true;$('#stageOptions').hidden=false;
     $('#stageOptions').innerHTML=ENGLISH_BASIC_COURSE.levels.map((level,l)=>`<h3 class="level-label">רמה ${l+1} · ${esc(level.name)}</h3><div class="level-grid">${level.lessons.map((lesson,i)=>`<button data-stage="${l+1}-${i+1}" class="${game.s.completed.includes(`${l+1}-${i+1}`)?'complete ':''}${game.s.level===l+1&&game.s.lesson===i+1?'current':''}" aria-label="רמה ${l+1}, שלב ${i+1}: ${esc(lesson.focus)}. תקרת רצף ${MemoryForge.capFor(l+1,i+1)}">${i+1}</button>`).join('')}</div>`).join('');
     openDialog($('#stageDialog'));
   }
@@ -156,7 +169,7 @@
     const old=game.run.phase,action=b.dataset.action;
     if(action==='resume'){paused=false;render();if(game.run.phase==='drawing')beginDraw();return;}
     if(paused)return;
-    stopMotion();EFN_SPEECH.cancel();
+    stopMotion();cancelSpeech();
     if(b.dataset.answer!==undefined){
       if(game.answer(b.dataset.answer)){tone(game.run.feedback.correct?[523,659,784]:[330,262],.11);afterAction(old);}return;
     }
@@ -169,7 +182,7 @@
     else if(action==='stages'){showStages();return;}
     afterAction(old);
   });
-  $('#sound').addEventListener('click',()=>{prefs.sound=!prefs.sound;stopAudio();render();if(prefs.sound)sayWord(undefined,true);});
+  $('#sound').addEventListener('click',()=>{prefs.sound=!prefs.sound;stopAudio();speechStatus();render();if(prefs.sound)sayWord(undefined,true);});
   $('#help').addEventListener('click',()=>openDialog($('#helpDialog')));
   $('#stages').addEventListener('click',showStages);
   $('#motion').addEventListener('change',e=>{prefs.reduced=e.target.checked;render();});
@@ -177,7 +190,19 @@
     d.querySelector('[data-close]').addEventListener('click',()=>closeDialog(d));
     d.addEventListener('cancel',e=>{e.preventDefault();closeDialog(d);});
   }
-  $('#stageOptions').addEventListener('click',e=>{const b=e.target.closest('[data-stage]');if(!b)return;const [l,s]=b.dataset.stage.split('-').map(Number);stopMotion();stopAudio();game.start(l,s);paused=false;$('#stageDialog').close();render(true);});
+  function changeStage(l,s){stopMotion();stopAudio();game.start(l,s);paused=false;stageTarget=null;$('#stageDialog').close();render(true);}
+  $('#stageOptions').addEventListener('click',e=>{
+    const b=e.target.closest('[data-stage]');if(!b)return;const [l,s]=b.dataset.stage.split('-').map(Number);
+    if(l===game.s.level&&s===game.s.lesson){closeDialog($('#stageDialog'));return;}
+    if(game.run.phase!=='summary'&&(game.run.cursor>0||game.run.phase!=='learn')){
+      stageTarget=[l,s];$('#stageOptions').hidden=true;$('#stageConfirm').hidden=false;
+      $('#stageConfirmText').textContent=`לעבור לרמה ${l}, שלב ${s}? הרצף הנוכחי ו־${number(game.run.score)} נקודות השלב יתחילו מחדש. נקודות משלבים שהושלמו נשמרות.`;
+      $('#keepStage').focus();return;
+    }
+    changeStage(l,s);
+  });
+  $('#keepStage').addEventListener('click',()=>{stageTarget=null;closeDialog($('#stageDialog'));});
+  $('#changeStage').addEventListener('click',()=>{if(stageTarget)changeStage(...stageTarget);});
   function pause(){stopMotion();stopAudio();paused=true;save();}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();else render();});
   window.addEventListener('pagehide',pause);document.addEventListener('freeze',pause);
