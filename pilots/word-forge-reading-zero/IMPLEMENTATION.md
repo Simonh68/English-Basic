@@ -97,3 +97,11 @@ release the lock and present a local/offline review artifact without deployment.
 Each conversation starts from live ACTIVE and the remote branch, records its own
 lock, preserves earlier work and ends with a checked commit and a released lock.
 No merge, publication or navigation changes are authorized.
+
+## Latest audio review feedback — 2026-09-30
+
+Simon found normal/fast pace good but could not judge isolated sounds.
+Created whole-word am, mat, sat samples at speed 1.0 for development listening.
+Source and rights remain Kokoro/af_heart, Apache 2.0 model and MIT runtime.
+The assistant performed technical checks only; whole-word clarity and isolated
+phoneme acceptance remain open. No runtime or learning stage was enabled.

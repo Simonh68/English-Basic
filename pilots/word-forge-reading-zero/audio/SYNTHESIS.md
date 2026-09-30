@@ -59,7 +59,17 @@ trial. No browser playback is claimed.
 
 ## Remaining acceptance
 
-Actual listening has not been performed. Keep `runtime_enabled=false` and
+The assistant has not listened. Simon reported that the normal/fast pace sounded good,
+but could not judge isolated phoneme clarity. This is limited feedback, not
+phoneme acceptance. A dedicated whole-word review now provides am, mat and sat
+at speed 1.0, each generated in one inference with the same af_heart voice.
+See `whole-word-candidates/manifest.json`, `generate-whole-words.py` and
+`build-whole-word-review.py`; run the latter with the destination HTML path.
+These words use only the existing four sounds and are development samples.
+Three files decoded successfully, have finite non-clipped PCM16 samples and
+match the hashes of all three HTML embeddings. Whole-word clarity awaits review.
+
+Actual phoneme acceptance has not been performed. Keep `runtime_enabled=false` and
 `pronunciation_accepted=false`. One review sheet is ready for listening; Simon
 need not record or upload anything. Listen for pure /m/, /s/, /æ/, a brief /t/
 without schwa, and a continuous vowel-to-nasal transition in slow am followed
