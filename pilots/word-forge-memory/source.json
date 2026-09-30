@@ -1,0 +1,9 @@
+{
+  "baseCommit": "a0210b709c86d910e505db7f3ea1c94f0cd166c1",
+  "source": "Simonh68/English-Basic",
+  "files": {
+    "curriculum-data.js": "7bdf2c2104375aeebfcc530a4ff63e1178cde577c17fe76374bc605d4a4bb90a",
+    "speech-runtime.js": "25a3c6bc3c59b3c4489c9d91cf1f2b74d51a36532913e57eeb13477a3264203a",
+    "word-forge/index.html": "d7b2961e99ebb2f5cd8bd365d7d99df4c3dfa48d8a2ef38cc8f42b8b178e7db4"
+  }
+}

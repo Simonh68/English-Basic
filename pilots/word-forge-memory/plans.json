@@ -1,0 +1,299 @@
+{
+  "chunks": {
+    "2-1": [
+      "sh",
+      "ch"
+    ],
+    "2-2": [
+      "th",
+      "wh"
+    ],
+    "2-3": [
+      "ee",
+      "ea"
+    ],
+    "2-4": [
+      "oa",
+      "ow"
+    ],
+    "2-5": [
+      "ai",
+      "ay"
+    ],
+    "2-6": [
+      "oo"
+    ],
+    "2-7": [
+      "ar",
+      "or"
+    ],
+    "2-9": [
+      "er",
+      "ir",
+      "ur"
+    ],
+    "3-1": [
+      "oi",
+      "oy"
+    ],
+    "3-2": [
+      "ou",
+      "ow"
+    ],
+    "3-3": [
+      "aw",
+      "au"
+    ],
+    "3-4": [
+      "igh"
+    ],
+    "3-5": [
+      "air",
+      "are"
+    ],
+    "3-6": [
+      "ear"
+    ],
+    "3-7": [
+      "ph"
+    ],
+    "3-8": [
+      "kn",
+      "wr"
+    ],
+    "3-9": [
+      "ci",
+      "ce",
+      "cy",
+      "gi",
+      "ge",
+      "gy"
+    ],
+    "3-10": [
+      "tch",
+      "dge",
+      "ck"
+    ],
+    "4-1": [
+      "ough"
+    ],
+    "4-2": [
+      "tion"
+    ],
+    "4-3": [
+      "sion",
+      "cian"
+    ],
+    "4-4": [
+      "ture"
+    ],
+    "4-5": [
+      "lk",
+      "mb",
+      "st"
+    ],
+    "4-6": [
+      "ea",
+      "eo",
+      "ie"
+    ],
+    "4-7": [
+      "ed"
+    ],
+    "4-8": [
+      "es"
+    ],
+    "4-9": [
+      "n't",
+      "'re",
+      "'ve",
+      "'ll",
+      "'m",
+      "'s"
+    ],
+    "4-10": [
+      "ould"
+    ],
+    "5-1": [
+      "un"
+    ],
+    "5-2": [
+      "re"
+    ],
+    "5-3": [
+      "ing"
+    ],
+    "5-4": [
+      "est",
+      "er"
+    ],
+    "5-5": [
+      "ly"
+    ],
+    "5-6": [
+      "less",
+      "ful"
+    ],
+    "5-8": [
+      "ough",
+      "th"
+    ],
+    "5-9": [
+      "tion",
+      "graph"
+    ],
+    "5-10": [
+      "ough"
+    ]
+  },
+  "overrides": {
+    "5-7": {
+      "classroom": "room",
+      "football": "ball",
+      "bedroom": "room",
+      "breakfast": "break",
+      "homework": "home",
+      "playground": "ground",
+      "raincoat": "rain",
+      "toothbrush": "tooth",
+      "airport": "port",
+      "weekend": "week",
+      "sunlight": "light",
+      "basketball": "ball",
+      "newspaper": "paper",
+      "bookstore": "book",
+      "snowman": "snow"
+    }
+  },
+  "rounds": {
+    "4-1": [
+      {
+        "label": "OUGH · 1",
+        "words": [
+          "rough",
+          "tough",
+          "enough"
+        ]
+      },
+      {
+        "label": "OUGH · 2",
+        "words": [
+          "thought",
+          "bought",
+          "brought",
+          "fought",
+          "sought"
+        ]
+      },
+      {
+        "label": "OUGH · 3",
+        "words": [
+          "though",
+          "although"
+        ]
+      },
+      {
+        "label": "OUGH · 4",
+        "words": [
+          "through",
+          "throughout"
+        ]
+      },
+      {
+        "label": "OUGH · MIX",
+        "words": [
+          "cough",
+          "drought",
+          "thorough"
+        ]
+      }
+    ]
+  },
+  "pools": {
+    "2": [
+      "sh",
+      "ch",
+      "th",
+      "wh",
+      "ee",
+      "ea",
+      "oa",
+      "ow",
+      "ai",
+      "ay",
+      "oo",
+      "ar",
+      "or",
+      "er",
+      "ir",
+      "ur",
+      "oi",
+      "oy",
+      "ou",
+      "aw",
+      "au",
+      "ph",
+      "kn",
+      "wr",
+      "ck",
+      "ed",
+      "es",
+      "un",
+      "re",
+      "ly",
+      "'m",
+      "'s",
+      "'d"
+    ],
+    "3": [
+      "igh",
+      "air",
+      "are",
+      "ear",
+      "tch",
+      "dge",
+      "ing",
+      "ful",
+      "est",
+      "n't",
+      "'re",
+      "'ve",
+      "'ll"
+    ],
+    "4": [
+      "ough",
+      "tion",
+      "sion",
+      "cian",
+      "ture",
+      "less",
+      "ould",
+      "room",
+      "ball",
+      "home",
+      "rain",
+      "book",
+      "week",
+      "snow",
+      "port"
+    ],
+    "5": [
+      "eigh",
+      "augh",
+      "light",
+      "tooth",
+      "paper",
+      "store",
+      "break",
+      "house"
+    ],
+    "6": [
+      "ground",
+      "school",
+      "friend",
+      "bright",
+      "street",
+      "strong"
+    ]
+  }
+}
