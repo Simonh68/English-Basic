@@ -1,11 +1,11 @@
 {
-  "status": "generated-candidates-awaiting-actual-listening",
+  "status": "whole-words-accepted-by-Simon",
   "kind": "synthetic-audio-not-a-human-recording",
   "voice": "af_heart",
   "voice_locale_from_provider": "American English",
-  "actual_listening_performed": false,
+  "actual_listening_performed": true,
   "previous_user_feedback": "Normal/fast pace sounded good; isolated phoneme clarity could not be judged. Whole words requested.",
-  "pronunciation_accepted": false,
+  "pronunciation_accepted": true,
   "physical_phone_tested": false,
   "runtime_enabled": false,
   "method": "Explicit phoneme input; one model batch and inference per file. Each whole word is generated in one inference; no joined sound files.",
@@ -52,5 +52,12 @@
       "peak": 0.5669299960136414,
       "sha256": "68b2c6ebc7eca3dbe44b9c219da9a93f614f66ca03ca94ec43d375c7a76abac2"
     }
-  ]
+  ],
+  "review": {
+    "reviewer": "Simon",
+    "feedback": "נשמע מעולה",
+    "received_at": "2026-09-30T19:37:28+03:00",
+    "scope": "am mat sat normal speed only; no isolated phoneme or slow-am approval",
+    "assistant_listened": false
+  }
 }

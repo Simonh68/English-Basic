@@ -105,3 +105,8 @@ Created whole-word am, mat, sat samples at speed 1.0 for development listening.
 Source and rights remain Kokoro/af_heart, Apache 2.0 model and MIT runtime.
 The assistant performed technical checks only; whole-word clarity and isolated
 phoneme acceptance remain open. No runtime or learning stage was enabled.
+
+Simon subsequently listened to normal-speed am/mat/sat and reported "נשמע מעולה".
+This accepts those whole words only. Isolated sounds and slow am still require
+quality review; the comparison sheet pairs them with accepted words.
+Stage 1 remains incomplete and no learning engine is authorized here.

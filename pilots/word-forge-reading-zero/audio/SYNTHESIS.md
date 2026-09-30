@@ -81,3 +81,15 @@ without explicit cost approval.
 Stage 1 now has six generated candidates and a concrete listening artifact.
 It is still incomplete until actual listening accepts the pronunciation.
 No learning engine, machine, persistence, merge or publication was performed.
+
+## Whole-word listening acceptance — 2026-09-30
+
+Simon listened to the am/mat/sat normal-speed sheet and reported "נשמע מעולה".
+Whole words at speed 1.0 are accepted by Simon; the assistant has not listened.
+The whole-word manifest records this scoped acceptance, with runtime disabled.
+Isolated phonemes and slow am remain unaccepted. The new comparison sheet
+plays each isolated sound followed by an accepted word as separate files.
+Sequential comparison playback is not claimed as a continuous blended recording.
+Run `python build-comparison-review.py /path/to/review.html` to reproduce it.
+Existing candidate WAVs are reused without modification; ten embedded hashes
+are checked against their manifests. Browser/physical-device playback is untested.
