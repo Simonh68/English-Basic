@@ -14,10 +14,11 @@ function launch(saved=null,deny=false){
   if(deny)w.Storage.prototype.setItem=function(){throw Error('storage unavailable');};
  }});
  const doc=dom.window.document;
+ doc.querySelector('[data-demo="exit"]')?.click();
  return {dom,doc,errors,click(sel){const node=doc.querySelector(sel);assert(node,'Missing '+sel);node.click();},state(){return JSON.parse(dom.window.localStorage.getItem(KEY)).game;},answer(){const c=this.state().run.challenge;this.click(`[data-answer="${c.plan.correct}"]`);}};
 }
 let app=launch();assert.deepEqual(app.errors,[]);assert.equal(app.doc.querySelector('.word').textContent,'book');
-app.click('#sound');app.click('[data-action="defer"]');assert.equal(app.doc.querySelectorAll('.choice').length,4);app.answer();assert.equal(app.state().run.score,10);
+app.click('#sound');app.click('[data-action="test"]');assert.equal(app.doc.querySelectorAll('.choice').length,4);app.answer();assert.equal(app.state().run.score,10);
 app.click('[data-action="next"]');app.click('#stages');assert.equal(app.doc.querySelectorAll('[data-stage]').length,50);
 app.click('[data-stage="1-5"]');app.click('#changeStage');for(let i=0;i<5;i++)app.click('[data-action="defer"]');
 assert.equal(app.state().run.score,0);assert.equal(app.doc.querySelectorAll('.memory-card.filled').length,5);

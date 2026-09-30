@@ -28,3 +28,9 @@ Any issue should be reported with stage, action and screenshot where useful; no 
 After manual checks, publication still requires Simon's explicit instruction. Publish only the built standalone `dist/index.html` at an agreed detached destination. Do not merge the pilot into the existing site, edit its homepage/navigation/sitemap, reuse production progress keys, or change DNS. Retain `noindex,nofollow` and storage key `efn:wf-memory:pilot:v1`.
 
 The exact hosting destination is not selected or provisioned in this task. A hosted-device smoke check will still be required after any authorized deployment. No promise of improved engagement or retention is supported without a student pilot.
+
+## Guided interface follow-up
+
+New user: try the cat example, choose a wrong letter, recover, then start the real stage. Existing user: resume the saved question directly, reopen the example from Help, and return to the same question.
+After an actual wrong/hinted answer, use “ננסה שוב יחד”: the assisted correction must not change points or independent-success counts, and the word must still return in delayed review.
+Check the simplified stage-1 action and the two strategy buttons in later stages on a physical phone. Eleven focused DOM regressions and the complete 15-word flow pass; rendered browser/phone and audible speech checks are still open.

@@ -5,8 +5,9 @@ const {JSDOM}=require('jsdom');
 const fs=require('node:fs');
 const path=require('node:path');
 const html=fs.readFileSync(path.join(__dirname,'dist/index.html'),'utf8');
-function launch(t){
+function launch(t,{guide=false,saved=null}={}){
   const dom=new JSDOM(html,{url:'https://pilot.invalid/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){
+    if(saved)w.localStorage.setItem('efn:wf-memory:pilot:v1',saved);
     w.structuredClone=structuredClone;w.matchMedia=()=>({matches:true});
     w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
     w.HTMLDialogElement.prototype.close=function(){this.open=false;};
@@ -15,6 +16,7 @@ function launch(t){
   const w=dom.window,d=w.document;
   const click=s=>{assert(d.querySelector(s),'Missing '+s);d.querySelector(s).click();};
   const state=()=>JSON.parse(w.localStorage.getItem('efn:wf-memory:pilot:v1')).game;
+  if(!guide)d.querySelector('[data-demo="exit"]')?.click();
   return {w,d,click,state};
 }
 test('choosing the current stage preserves the open question and earned points',t=>{
@@ -62,4 +64,55 @@ test('defer brings new content back into view when the old actions were scrolled
   let scrolls=0;const main=a.d.querySelector('#main');main.getBoundingClientRect=()=>({top:-240});
   main.scrollIntoView=()=>scrolls++;a.click('[data-action="defer"]');
   assert.equal(a.state().run.cursor,1);assert.equal(scrolls,1);assert.equal(a.d.activeElement,main);
+});
+test('guided example permits wrong attempts and replay without changing game progress',t=>{
+  const a=launch(t,{guide:true}),before=a.state();
+  assert.equal(a.d.querySelector('.word').textContent,'cat');
+  a.click('[data-demo="hide"]');a.click('[data-demo-answer="o"]');
+  assert(a.d.querySelector('[data-demo-answer="o"]').disabled);
+  assert.match(a.d.querySelector('.practice-note').textContent,/עוד ניסיון/);
+  assert.deepEqual(a.state(),before);
+  a.click('[data-demo="show"]');a.click('[data-demo="hide"]');a.click('[data-demo-answer="a"]');
+  assert.match(a.d.querySelector('.coach strong').textContent,/הצלחתם/);
+  assert.deepEqual(a.state(),before);a.click('[data-demo="exit"]');
+  assert.equal(a.d.querySelector('.word').textContent,'book');
+  assert.equal(a.d.querySelectorAll('#main .actions .action').length,1);
+  assert.deepEqual(a.state(),before);
+  const saved=a.w.localStorage.getItem('efn:wf-memory:pilot:v1');
+  const b=launch(t,{guide:true,saved});assert(!b.d.querySelector('.demo'));assert.deepEqual(b.state(),before);
+});
+test('reopening the demo preserves an in-progress challenge and speaks the example word',async t=>{
+  const a=launch(t);a.click('[data-action="test"]');const before=a.state();
+  a.click('#help');a.click('#demoStart');
+  const spoken=[];a.w.EFN_SPEECH={supported:true,prime(){},cancel(){},async speak(w){spoken.push(w);return {ok:true};}};
+  a.click('[data-speak]');await new Promise(setImmediate);assert.deepEqual(spoken,['cat']);
+  a.click('[data-demo="exit"]');assert.deepEqual(a.state(),before);
+  assert.equal(a.d.querySelectorAll('[data-answer]').length,4);
+});
+test('guided correction never settles points again or counts as independent recall',t=>{
+  const a=launch(t);a.click('[data-action="test"]');const c=a.state().run.challenge;
+  const wrong=c.options.find(o=>o!==c.plan.correct);a.click(`[data-answer="${wrong}"]`);
+  const before=a.state();assert(before.run.queue.includes(c.index));assert(!before.run.passed.includes(c.index));
+  a.click('[data-action="repair"]');a.click(`[data-repair-answer="${wrong}"]`);
+  assert(a.d.querySelector(`[data-repair-answer="${wrong}"]`).disabled);assert.deepEqual(a.state(),before);
+  a.click(`[data-repair-answer="${c.plan.correct}"]`);assert.match(a.d.querySelector('.result-label').textContent,/השלמנו יחד/);
+  assert.deepEqual(a.state(),before);
+  const b=launch(t,{saved:a.w.localStorage.getItem('efn:wf-memory:pilot:v1')});
+  assert.equal(b.state().run.phase,'feedback');assert.deepEqual(b.state(),before);
+  a.click('[data-action="next"]');assert.equal(a.state().run.phase,'learn');assert(a.state().run.queue.includes(c.index));
+});
+test('hint-assisted success offers guided correction and keeps later independent review',t=>{
+  const a=launch(t);a.click('[data-action="test"]');a.click('[data-action="hint"]');
+  const c=a.state().run.challenge;a.click(`[data-answer="${c.plan.correct}"]`);
+  assert(a.d.querySelector('[data-action="repair"]'));assert.equal(a.state().run.score,0);
+  a.click('[data-action="repair"]');a.click(`[data-repair-answer="${c.plan.correct}"]`);
+  assert.equal(a.state().run.score,0);assert.equal(a.state().run.passed.length,0);assert(a.state().run.queue.includes(c.index));
+});
+test('later stages explain whether current word joins pool and show added prize',t=>{
+  const a=launch(t);a.click('#stages');a.click('[data-stage="1-2"]');
+  assert.equal(a.d.querySelectorAll('#main .actions .action').length,2);a.click('[data-action="defer"]');
+  assert.equal(a.state().run.pending.length,1);
+  assert.match(a.d.querySelector('[data-action="test"]').textContent,/מתוך 1/);
+  assert.match(a.d.querySelector('[data-action="defer"]').textContent,/\+15 לפרס האפשרי/);
+  assert.match(a.d.querySelector('.microcopy').textContent,/המילה שעל המסך תחכה/);
 });

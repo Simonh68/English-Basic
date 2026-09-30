@@ -9,9 +9,10 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))requests.push(r.url());});
   await page.goto('file://'+path.join(__dirname,'dist/index.html'));
   await page.evaluate(()=>{localStorage.setItem('efn:existing-game:sentinel','unchanged');});
+  await page.locator('[data-demo="exit"]').first().click();
   await page.locator('#sound').click();
   assert.equal(await page.locator('.word').textContent(),'book');
-  await page.locator('[data-action="defer"]').click();assert.equal(await page.locator('.choice').count(),4);
+  await page.locator('[data-action="test"]').click();assert.equal(await page.locator('.choice').count(),4);
   const answer=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('efn:wf-memory:pilot:v1')).game.run.challenge.plan.correct);
   await page.locator('[data-answer="'+await answer()+'"]').click();assert.equal(await page.locator('#scoreValue').textContent(),'10');
   await page.locator('[data-action="next"]').click();
@@ -54,6 +55,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await noStorage.addInitScript(()=>{Storage.prototype.setItem=function(){throw new Error('storage unavailable');};});
   const blocked=await noStorage.newPage();await blocked.goto('file://'+path.join(__dirname,'dist/index.html'));
   assert((await blocked.locator('#main .toast').textContent()).includes('אינה זמינה'));
+  await blocked.locator('[data-demo="exit"]').first().click();
   await blocked.locator('[data-action="test"]').click();assert.equal(await blocked.locator('.choice').count(),4);
   assert.equal(await page.evaluate(()=>localStorage.getItem('efn:existing-game:sentinel')),'unchanged');
   assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);
