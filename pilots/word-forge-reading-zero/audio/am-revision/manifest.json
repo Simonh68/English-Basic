@@ -1,11 +1,11 @@
 {
-  "status": "generated-candidates-awaiting-actual-listening",
+  "status": "moderate-am-accepted-by-Simon",
   "kind": "synthetic-audio-not-a-human-recording",
   "voice": "af_heart",
   "voice_locale_from_provider": "American English",
-  "actual_listening_performed": false,
+  "actual_listening_performed": true,
   "previous_user_feedback": "Simon reported a break in the comparison sheet; exact location was not specified. Revise slow am provisionally from 0.5 to 0.8; acceptance remains open.",
-  "pronunciation_accepted": false,
+  "pronunciation_accepted": true,
   "physical_phone_tested": false,
   "runtime_enabled": false,
   "method": "Explicit phoneme input; one model batch and inference per file. Each whole word is generated in one inference; no joined sound files.",
@@ -32,5 +32,13 @@
       "peak": 0.38837122917175293,
       "sha256": "073c6b8fa4c7f16d57343d9bc9ab99ebe707e5573fe29a32406ad6411acb104f"
     }
-  ]
+  ],
+  "review": {
+    "reviewer": "Simon",
+    "feedback": "Me wle, kitkedem.",
+    "interpreted_as": "מעולה, תתקדם",
+    "scope": "revised whole am at speed 0.8 only",
+    "received_at": "2026-09-30T20:41:43+03:00",
+    "assistant_listened": false
+  }
 }

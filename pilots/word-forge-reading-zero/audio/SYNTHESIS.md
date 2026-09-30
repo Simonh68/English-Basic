@@ -104,3 +104,12 @@ am, avoiding the comparison between an isolated sound and a word.
 This is a candidate correction, not a verified audible fix. Technical decode
 passed; assistant listening and user acceptance remain open. Model, voice,
 rights and method match the documented Kokoro route. See am-revision/manifest.json.
+
+## Revised am acceptance — 2026-09-30 20:41 Asia/Jerusalem
+
+Simon responded "Me wle, kitkedem." (understood as "מעולה, תתקדם") to
+the revised am sheet. Revised complete am at speed 0.8 is accepted by Simon.
+The earlier break is no longer an open defect for this replacement candidate.
+The assistant has not listened. This approval does not cover isolated /m/,
+/s/, /æ/, /t/. Stage 1 remains open for those four sounds, with runtime disabled.
+Next conversation should finish that focused quality work, not build the engine.
