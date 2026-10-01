@@ -166,3 +166,25 @@ him now. Do not enter the learning-engine stage or repeat approved words.
 
 Efficiency: reuse accepted word sources and source hashes; do not restart
 isolated synthesis or send Simon repeated isolated-sound approval requests.
+
+## Stage 1 completed — Simon listening acceptance, 2026-10-01
+
+Simon offered to listen personally and received context-candidates/review.html,
+with instructions to check all four isolated crops and report cutoffs or extra
+vowels. His response “Nişîma mewlê.” is interpreted as “נשמע מעולה”.
+This records Simon's listening acceptance of those four exact assets, not an
+assistant listening claim. Their manifest records the reviewer, response and
+unchanged hashes. Earlier candidate/blocked entries above are historical.
+
+Accepted pack: the four context-derived /m/, /s/, /æ/, /t/ crops; existing
+normal am/mat/sat; existing complete moderate am at speed 0.8. Original isolated
+synthesis candidates and slow am 0.5 are not promoted. Context crops remain
+labelled as exact slices, not naturally synthesized isolated phonemes or joins.
+No waveforms or approved words changed. Technical checks remain reusable for
+identical hashes. runtime_enabled remains false because no learning runtime
+is built or authorized in this conversation. Physical-phone behaviour,
+child use and efficacy remain untested.
+
+Stage 1's sample-and-listening gate is complete. Next: stage 2 learning engine
+in a separate scoped development task; do not build a machine, merge or publish
+as part of this acceptance record. No adult review belongs in child gameplay.

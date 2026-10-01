@@ -1,6 +1,6 @@
 {
   "voice": "af_heart",
-  "status": "context-extractions-awaiting-listening",
+  "status": "accepted-by-simon-listening",
   "runtime_enabled": false,
   "model_license": "Apache-2.0",
   "runtime_license": "MIT",
@@ -15,8 +15,10 @@
       "sample_rate": 24000,
       "sha256": "1d9653064cf48d2edb4d1eab0a0ee5319c3548adeb003fbdc6f23dc56d23efe0",
       "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
-      "pronunciation_accepted": false,
-      "actual_listening_performed": false
+      "pronunciation_accepted": true,
+      "actual_listening_performed": true,
+      "listening_reviewer": "Simon Halevi",
+      "assistant_listened": false
     },
     {
       "file": "phoneme-s.wav",
@@ -27,8 +29,10 @@
       "sample_rate": 24000,
       "sha256": "3ad15be97d5d4aae51d4d064fde884b09556b6f38244e60706babd7a66533445",
       "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
-      "pronunciation_accepted": false,
-      "actual_listening_performed": false
+      "pronunciation_accepted": true,
+      "actual_listening_performed": true,
+      "listening_reviewer": "Simon Halevi",
+      "assistant_listened": false
     },
     {
       "file": "phoneme-short-a.wav",
@@ -39,8 +43,10 @@
       "sample_rate": 24000,
       "sha256": "fc3c39377c11ddf59181b8f1a8a484f088a77ba5c734571c2e783fb8b0d33179",
       "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
-      "pronunciation_accepted": false,
-      "actual_listening_performed": false
+      "pronunciation_accepted": true,
+      "actual_listening_performed": true,
+      "listening_reviewer": "Simon Halevi",
+      "assistant_listened": false
     },
     {
       "file": "phoneme-t.wav",
@@ -51,8 +57,20 @@
       "sample_rate": 24000,
       "sha256": "5133d170d702b1e32e9cd516d4e2b2cbdb8f9f9c278f1fc6944c7e3e0984ad64",
       "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
-      "pronunciation_accepted": false,
-      "actual_listening_performed": false
+      "pronunciation_accepted": true,
+      "actual_listening_performed": true,
+      "listening_reviewer": "Simon Halevi",
+      "assistant_listened": false
     }
-  ]
+  ],
+  "actual_listening_performed": true,
+  "listening_reviewer": "Simon Halevi",
+  "assistant_listened": false,
+  "pronunciation_accepted": true,
+  "acceptance": {
+    "date": "2026-10-01",
+    "feedback_verbatim": "Nişîma mewlê.",
+    "interpreted_feedback": "נשמע מעולה",
+    "scope": "Four context-derived phoneme crops in the last review sheet; word approvals retained."
+  }
 }

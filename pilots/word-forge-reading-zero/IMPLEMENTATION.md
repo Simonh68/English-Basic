@@ -4,16 +4,14 @@ Simon authorized one isolated machine pilot on 2026-09-30, then requested small
 conversations rather than one long implementation session. DESIGN.md 1.1 remains
 the design authority. This document records execution scope, not a redesign.
 
-## 1. Audio sample — current, incomplete
+## 1. Audio sample — completed
 
-Current checkpoint: normal am/mat/sat and revised complete am at speed 0.8
-are accepted by Simon. Only isolated phoneme acceptance remains open.
-See audio/SYNTHESIS.md, section “Focused phoneme QA — 2026-10-01”.
-Original isolated /s/ and /t/ have acoustic concerns and are held from selection.
-Four exact crops from accepted words are alternative candidates; no listening
-approval is claimed. Do not ask Simon to record/upload or rejudge pure sounds.
-The dated feedback below is historical and superseded by this checkpoint.
-
+Simon accepted all four exact context-derived phoneme crops on 2026-10-01
+after receiving the latest review sheet. Normal am/mat/sat and moderate am
+at speed 0.8 retain their prior acceptance. The assistant has not listened.
+See the final acceptance entry in audio/SYNTHESIS.md and the context manifest.
+Historical incomplete/blocked notes below are superseded by this checkpoint.
+Stage 2 is the next scoped task; no engine or machine is built here.
 
 Deliverable: four phoneme samples /m/, /s/, /æ/, /t/ and one complete
 continuous-blending sample for `am`, followed by its natural whole-word form.
@@ -59,10 +57,8 @@ Exit condition: a usable, rights-cleared sample with provenance and an actual
 listening review of sounds and the complete blend. This production review is
 outside gameplay: it must never become adult approval of a child's progression.
 
-Immediate next action: actual listening review of audio/context-candidates/review.html
-in a listening-capable development environment. Four pure-sound crops remain
-unaccepted; no action is required from Simon. Keep the stage open until that
-review is available. Reuse all already approved words and moderate am.
+Immediate next action: stage 2 in a separately scoped task, reusing the accepted
+audio pack. Do not reopen approved pronunciation without a concrete new defect.
 
 ## 2. Learning engine
 
