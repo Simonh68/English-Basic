@@ -6,6 +6,15 @@ the design authority. This document records execution scope, not a redesign.
 
 ## 1. Audio sample — current, incomplete
 
+Current checkpoint: normal am/mat/sat and revised complete am at speed 0.8
+are accepted by Simon. Only isolated phoneme acceptance remains open.
+See audio/SYNTHESIS.md, section “Focused phoneme QA — 2026-10-01”.
+Original isolated /s/ and /t/ have acoustic concerns and are held from selection.
+Four exact crops from accepted words are alternative candidates; no listening
+approval is claimed. Do not ask Simon to record/upload or rejudge pure sounds.
+The dated feedback below is historical and superseded by this checkpoint.
+
+
 Deliverable: four phoneme samples /m/, /s/, /æ/, /t/ and one complete
 continuous-blending sample for `am`, followed by its natural whole-word form.
 Simon subsequently requested tool-generated audio rather than a user recording.
@@ -50,10 +59,10 @@ Exit condition: a usable, rights-cleared sample with provenance and an actual
 listening review of sounds and the complete blend. This production review is
 outside gameplay: it must never become adult approval of a child's progression.
 
-Immediate next action: listen to the generated six-cue review sheet and document
-pronunciation acceptance or defects. Simon need not record/upload audio. Until then this gate
-remains open; there is no playable reading pilot. Avoid repeating the source
-search already documented in that handoff.
+Immediate next action: actual listening review of audio/context-candidates/review.html
+in a listening-capable development environment. Four pure-sound crops remain
+unaccepted; no action is required from Simon. Keep the stage open until that
+review is available. Reuse all already approved words and moderate am.
 
 ## 2. Learning engine
 

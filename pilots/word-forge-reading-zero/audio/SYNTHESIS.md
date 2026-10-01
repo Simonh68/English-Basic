@@ -113,3 +113,56 @@ The earlier break is no longer an open defect for this replacement candidate.
 The assistant has not listened. This approval does not cover isolated /m/,
 /s/, /æ/, /t/. Stage 1 remains open for those four sounds, with runtime disabled.
 Next conversation should finish that focused quality work, not build the engine.
+
+## Focused phoneme QA — 2026-10-01
+
+Read live Charter 1.8 / ACTIVE and remote branch at 41eebed3. Approved whole
+words and moderate am remain byte-for-byte unchanged. No new inference was run.
+The assistant has not listened: available tools provide file/signal analysis,
+not an actual perceptual phoneme review. Transcription widgets require user
+media selection and are not a pure-phoneme listening assessor.
+
+`check-phonemes.py` verifies original candidate hashes, PCM and ffmpeg decode,
+then screens 25 ms windows. `phoneme-qa.json` records reproducible measurements.
+A concrete acoustic concern was found: original /s/ has median energy above
+3 kHz of only 1.4%, and 60.8% of active windows cross the periodicity threshold;
+original /t/ has 1.7% high-frequency energy and 48.1% periodic windows. These
+are suspicious for pure unvoiced targets, not a diagnosis of a particular vowel
+or letter name. Original /s/ and /t/ are held from selection pending review.
+Original /m/ and /æ/ also remain unaccepted; input labels do not prove output.
+
+Instead of repeatedly generating short utterances, `build-context-phonemes.py`
+creates exact PCM crops from accepted af_heart words. Nothing is looped,
+concatenated, stretched, faded or regenerated. These are context-derived
+candidates, not naturally produced isolated phonemes or continuous blends:
+
+| Target | Accepted source | Interval | New duration | Energy above 3 kHz |
+| --- | --- | --- | --- | --- |
+| /m/ | am | 300–395 ms | 95 ms | <0.1% |
+| /s/ | sat | 35–105 ms | 70 ms | 97.6% |
+| /æ/ | am | 60–240 ms | 180 ms | 2.2% |
+| /t/ | mat | 340–445 ms | 105 ms | 99.1% |
+
+The source boundaries are manually selected acoustic hypotheses. The /m/ crop
+is word-final; /t/ is a word-final release and may include aspiration. Crops
+are short and may have cut-edge artifacts. Word acceptance does not approve
+these segments. Spectral differences motivate the alternative; they do not
+prove articulatory identity, pure /æ/, accent or audible quality.
+
+`context-candidates/manifest.json` preserves source hashes and exact samples.
+`checks.json` records 4/4 decodes, non-clipped samples and 8/8 matching embedded
+assets in `context-candidates/review.html`. The review has independent players
+for each candidate and its already accepted source word. No original slow am
+0.5 is offered and no previous approval is reopened. Browser/phone playback
+and actual listening were not performed. Model and runtime rights/credits
+remain the already documented Apache-2.0 / MIT route.
+
+Stage 1 remains incomplete for actual phoneme acceptance. All new candidates
+retain pronunciation_accepted=false / runtime_enabled=false. The next action
+is one actual listening review of these four exact crops in a listening-capable
+development environment, correcting only observed failures. Simon need not
+record, upload or judge isolated phonemes; there is no required action from
+him now. Do not enter the learning-engine stage or repeat approved words.
+
+Efficiency: reuse accepted word sources and source hashes; do not restart
+isolated synthesis or send Simon repeated isolated-sound approval requests.

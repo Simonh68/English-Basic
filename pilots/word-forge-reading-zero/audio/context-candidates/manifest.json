@@ -1,0 +1,58 @@
+{
+  "voice": "af_heart",
+  "status": "context-extractions-awaiting-listening",
+  "runtime_enabled": false,
+  "model_license": "Apache-2.0",
+  "runtime_license": "MIT",
+  "limitations": "Word acceptance does not accept cropped phonemes. Boundaries are acoustic hypotheses; short samples and cut edges require listening. No natural blend is assembled.",
+  "assets": [
+    {
+      "file": "phoneme-m.wav",
+      "source_file": "whole-word-candidates/am.wav",
+      "source_sha256": "bdaf9156f56182687441e689247778669cc817956680ed45a761d722664ec870",
+      "start_sample": 7200,
+      "end_sample": 9480,
+      "sample_rate": 24000,
+      "sha256": "1d9653064cf48d2edb4d1eab0a0ee5319c3548adeb003fbdc6f23dc56d23efe0",
+      "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
+      "pronunciation_accepted": false,
+      "actual_listening_performed": false
+    },
+    {
+      "file": "phoneme-s.wav",
+      "source_file": "whole-word-candidates/sat.wav",
+      "source_sha256": "68b2c6ebc7eca3dbe44b9c219da9a93f614f66ca03ca94ec43d375c7a76abac2",
+      "start_sample": 840,
+      "end_sample": 2520,
+      "sample_rate": 24000,
+      "sha256": "3ad15be97d5d4aae51d4d064fde884b09556b6f38244e60706babd7a66533445",
+      "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
+      "pronunciation_accepted": false,
+      "actual_listening_performed": false
+    },
+    {
+      "file": "phoneme-short-a.wav",
+      "source_file": "whole-word-candidates/am.wav",
+      "source_sha256": "bdaf9156f56182687441e689247778669cc817956680ed45a761d722664ec870",
+      "start_sample": 1440,
+      "end_sample": 5760,
+      "sample_rate": 24000,
+      "sha256": "fc3c39377c11ddf59181b8f1a8a484f088a77ba5c734571c2e783fb8b0d33179",
+      "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
+      "pronunciation_accepted": false,
+      "actual_listening_performed": false
+    },
+    {
+      "file": "phoneme-t.wav",
+      "source_file": "whole-word-candidates/mat.wav",
+      "source_sha256": "0c61f6320bdf0308b2e6a12534f487641249a172651bb83de1751489028ab571",
+      "start_sample": 8160,
+      "end_sample": 10680,
+      "sample_rate": 24000,
+      "sha256": "5133d170d702b1e32e9cd516d4e2b2cbdb8f9f9c278f1fc6944c7e3e0984ad64",
+      "method": "Exact PCM slice; no fades, loops, stretching, joining or regeneration.",
+      "pronunciation_accepted": false,
+      "actual_listening_performed": false
+    }
+  ]
+}
