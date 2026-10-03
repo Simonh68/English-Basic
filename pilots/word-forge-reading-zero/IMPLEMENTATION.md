@@ -155,3 +155,13 @@ rewards persist in one snapshot; duplicate outcomes/purchases are idempotent.
 PERSISTENCE.md for error handling, limitations and evidence. Approved engine
 and audio remain unchanged. Next: stage 5 only on a separate instruction.
 No merge or site deployment.
+
+## Stage 5 local verification and handoff — completed
+
+The unchanged stage-4 runtime has a deterministic self-contained offline review
+artifact via build-review.py. Its rendered loop/storage/rewards checks passed
+using simulated Audio events; all eight embedded approved WAVs decode and match
+the original bytes. Existing 39 tests are reused for identical runtime source.
+See HANDOFF.md for evidence, reproduction and one consolidated phone check.
+Native headless media did not advance teaching; physical phone, audible runtime
+and child experience remain open. No merge, hosting deployment or expansion.
