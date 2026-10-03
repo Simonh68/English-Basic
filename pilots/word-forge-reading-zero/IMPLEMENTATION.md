@@ -126,3 +126,12 @@ Stage 1 remains incomplete and no learning engine is authorized here.
 After Simon reported a break, a complete am candidate at speed 0.8 was generated
 for review instead of speed 0.5. Break location and audible correction remain
 unconfirmed. No stage progression or runtime enablement.
+
+## Stage 3 implementation checkpoint — 2026-10-03
+
+One isolated four-connection machine/interface now exists; see MACHINE.md.
+28 engine/controller/DOM tests passed. The approved engine and audio are reused
+unchanged; only mapping tasks are eligible in this short first round. No
+rewards, persistence, merge or deployment. Stage 3 remains **pending rendered
+local-preview acceptance**: Chromium is missing and installation returned an
+invalid ZIP. Next action is that same-version visual preview, not stage 4.
