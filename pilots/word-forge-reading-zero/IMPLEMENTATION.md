@@ -62,6 +62,13 @@ audio pack. Do not reopen approved pronunciation without a concrete new defect.
 
 ## 2. Learning engine
 
+Completed in the scoped 2026-10-03 stage-2 task. See ENGINE.md for the API,
+evidence boundaries, verification and next-step handoff. The implementation is
+learning-engine.mjs with a reviewed-asset-only adapter learning-content.mjs.
+The specification and approved audio remain unchanged. Novel decoding, meaning
+and sentence comprehension remain unassessed; M2/M3 are not manufactured from
+the restricted content. No game runtime, UI, machine or deployment was enabled.
+
 Implement m/s/a/t prerequisites and separate evidence types using
 learning-model.spec.json: first independent response, hint/correction, known
 item recall, visual matching and protected unseen transfer. Coin events never

@@ -1,5 +1,11 @@
 # Word Forge Reading Zero design
 
+Current checkpoint: audio sample stage 1 and isolated learning-engine stage 2
+are complete. See [ENGINE.md](ENGINE.md) for the tested engine and its limits.
+The planning-only statements below describe the original design delivery.
+Next is small-conversation stage 3 (one machine/interface), requiring its own
+scope authorization. No playable game, persistent storage or deployment exists.
+
 Planning-only deliverable authorized by Simon Halevi on 2026-09-30.
 
 Read [DESIGN.md](DESIGN.md) for the full Hebrew game design, curriculum,
