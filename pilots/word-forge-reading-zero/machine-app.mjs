@@ -7,6 +7,24 @@ const shapes={sound:'M11 5L5 10H2V18H5L11 23ZM16 8Q24 14 16 20M15 12Q18 14 15 16
 function icon(name){return `<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="${shapes[name]}"/></svg>`;}
 let storage,spec,resetConfirm=false,teachReady=null;let session,player,epoch=0,busy=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function button(host,label,name,act,cls='',disabled=false){const b=document.createElement('button');b.setAttribute('aria-label',label);b.title=label;b.className=cls;b.disabled=disabled;b.innerHTML=icon(name);b.addEventListener('click',act);host.append(b);return b;}
+const wordParts=['RZ-G-M','RZ-G-A-AE','RZ-G-T'];
+// Meaning is taught in a reward demonstration, never inferred from a tap.
+function matPicture(){return `<svg class="mat-picture" viewBox="0 0 300 145" role="img" aria-label="שטיחון ארוג עם פסים וגדילים"><rect x="16" y="7" width="268" height="128" rx="18" fill="#203d4a"/><path d="M48 115L242 115L268 39L72 39Z" fill="#be8942"/><path d="M61 101L232 101L249 50L80 50Z" fill="#f1cb7f"/><path d="M74 89L238 89M79 76L242 76M83 63L246 63" stroke="#3f8e81" stroke-width="7"/><path d="M48 115L43 127M62 115L57 127M76 115L71 127M90 115L85 127M104 115L99 127M118 115L113 127M132 115L127 127M146 115L141 127M160 115L155 127M174 115L169 127M188 115L183 127M202 115L197 127M216 115L211 127M230 115L225 127M72 39L76 28M86 39L90 28M100 39L104 28M114 39L118 28M128 39L132 28M142 39L146 28M156 39L160 28M170 39L174 28M184 39L188 28M198 39L202 28M212 39L216 28M226 39L230 28M240 39L244 28M254 39L258 28" stroke="#f1cb7f" stroke-width="4" stroke-linecap="round"/></svg>`;}
+function rewardPlay(id){if(session.rewardAudioAllowed(id))play(id,()=>session.rewardHeard(id));}
+function rewardCard(host){
+  const card=document.createElement('div');card.className='word-reward';card.innerHTML=matPicture()+'<div class="meaning" lang="he" dir="rtl">שטיחון</div>';host.append(card);
+  const word=button(card,'השמעת המילה mat — שטיחון','sound',()=>rewardPlay('RZ-W-MAT'),'primary word-audio demo '+(busy?'listening':''),busy);
+  word.innerHTML='<span lang="en" dir="ltr">mat</span> '+icon('sound')+'<small dir="rtl">השמעת המילה</small>';
+  const sounds=document.createElement('div');sounds.className='word-sounds';card.append(sounds);
+  for(const id of wordParts){const b=button(sounds,`השמעת צליל ${letters[id]} במילה mat`,'sound',()=>rewardPlay(id),'',busy);b.innerHTML=`<span>${letters[id]}</span> ${icon('sound')}`;}
+}
+function renderWordGoal(phase){
+  const goal=$('word-goal');goal.replaceChildren();goal.hidden=['PAUSED','STOPPED'].includes(phase);
+  if(goal.hidden)return;
+  const slots=document.createElement('div');slots.className='word-slots';slots.dir='ltr';slots.setAttribute('aria-label','בונים מילה מצלילים');
+  for(const [i,id] of wordParts.entries()){const earned=session.connections>=[1,3,4][i];const tile=document.createElement('span');tile.className=earned?'earned':'';tile.textContent=earned&&['TEACH','SUCCESS','COMPLETE','FINISHED'].includes(phase)?letters[id]:'·';slots.append(tile);}
+  const caption=document.createElement('span');caption.className='goal-caption';caption.innerHTML=matPicture()+'<small>בונים מילה</small>';goal.append(caption,slots);
+}
 function canAct(){storage.current();if(storage.problem==='conflict'){clearAudio();render();return false;}return true;}
 function persist(){storage.save({machine:session.snapshot(),prefs:{reduced}});}
 function clearAudio(){epoch++;busy=false;player.stop();}
@@ -17,7 +35,7 @@ async function play(id,after=()=>{}){
 }
 function action(fn){if(!canAct())return;clearAudio();fn();persist();render();}
 function render(){
-  const phase=session.phase;document.body.classList.toggle('paused',phase==='PAUSED');document.body.classList.toggle('reduced',reduced);
+  const phase=session.phase;renderWordGoal(phase);document.body.classList.toggle('word-built',session.rewardWordAvailable());document.body.classList.toggle('paused',phase==='PAUSED');document.body.classList.toggle('reduced',reduced);
   $('machine').classList.toggle('running',phase==='COMPLETE');$('machine').classList.toggle('paddle',session.rewards.state.part==='paddle');
   document.querySelector('.rotor').innerHTML=session.rewards.state.part==='paddle'?'<path d="M280 61L307 35" stroke="#f4d181" stroke-width="10" stroke-linecap="round"/><circle cx="309" cy="32" r="12" fill="#f4d181"/><circle cx="280" cy="61" r="10" class="hub"/>':'<circle cx="280" cy="61" r="35" class="rim"/><path d="M280 32V90M251 61H309M260 41L300 81M260 81L300 41" class="spokes"/><circle cx="280" cy="61" r="9" class="hub"/>';
   const bank=$('bank');bank.replaceChildren();const coin=document.createElement('span');coin.className='coin';coin.textContent=String(session.rewards.state.coins);bank.append(coin);bank.setAttribute('aria-label',`בנק המטבעות: ${session.rewards.state.coins}`);$('machine').setAttribute('aria-label',`מכונה: ${session.connections} מתוך ארבעה חיבורים מותקנים`);
@@ -71,20 +89,22 @@ function render(){
     button(actions,'סיום הפעילות','pause',()=>action(()=>session.dispose()));
   }
   if(phase==='SUCCESS'){
-    $('signal').textContent='✓';$('signal').classList.add('success');
-    const text=document.createElement('span');text.textContent=letters[session.task.itemId];prompt.append(text);
-    const next=button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary advance demo');next.insertAdjacentHTML('beforeend','<small>המשך</small>');
+    $('signal').textContent=session.rewardWordAvailable()?'✓ בנית מילה!':'✓ חיבור נוסף!';$('signal').classList.add('success');
+    if(session.rewardWordAvailable())rewardCard(prompt);
+    else {const id=session.task.itemId;const tile=button(prompt,`השמעת הצליל שהצלחת לחבר: ${letters[id]}`,'sound',()=>rewardPlay(id),'target',busy);tile.innerHTML=`<span>${letters[id]}</span> ${icon('sound')}`;}
+    const prize=document.createElement('span');prize.className='earned-prize';prize.textContent=`+${session.rewards.state.settled[session.lastEvent.id]} ●`;prize.setAttribute('aria-label','מטבעות שקיבלת על החיבור');prompt.append(prize);
+    const next=button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary advance demo',busy);next.insertAdjacentHTML('beforeend','<small>המשך</small>');
   }
   if(phase==='COMPLETE'){
-    $('signal').textContent='✓';button(prompt,'הפעלת המכונה','power',()=>{
+    $('signal').textContent='✓ בנית מילה!';rewardCard(prompt);button(actions,'הפעלת המכונה','power',()=>{
       $('machine').classList.remove('running');requestAnimationFrame(()=>$('machine').classList.add('running'));
-    },'primary');
+    },'decision').insertAdjacentHTML('beforeend','<small>המכונה</small>');
     const shop=document.createElement('div');shop.className='parts';choices.append(shop);
     for(const part of parts){const owned=session.rewards.state.owned.includes(part.id);const b=button(shop,`${part.id==='fan'?'מניפה':'זרוע מקפיצה'} — ${owned?'בבעלותך':'4 מטבעות'}`,part.id==='fan'?'motion':'retry',()=>action(()=>session.buyPart(part.id)),session.rewards.state.part===part.id?'selected':'',!owned&&session.rewards.state.coins<part.price);b.dataset.part=part.id;b.innerHTML=part.id==='fan'?'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="M14 3V25M3 14H25M6 6L22 22M6 22L22 6"/></svg>':'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="M5 23L21 8"/><circle cx="22" cy="6" r="4"/><circle cx="5" cy="23" r="3"/></svg>';b.insertAdjacentHTML('beforeend',`<small>${owned?'✓':'● ● ● ●'}</small>`);}
-    button(actions,'המשך למכונה נוספת','next',()=>action(()=>session.continueRound()),'decision');
-    button(actions,'סיום ושמירת ההתקדמות','finish',()=>action(()=>session.finish()),'decision');
+    button(actions,'המשך למכונה נוספת','next',()=>action(()=>session.continueRound()),'decision').insertAdjacentHTML('beforeend','<small>עוד סבב</small>');
+    button(actions,'סיום ושמירת ההתקדמות','finish',()=>action(()=>session.finish()),'decision').insertAdjacentHTML('beforeend','<small>סיום</small>');
   }
-  if(phase==='FINISHED')button(actions,'חזרה לסדנה','play',()=>action(()=>session.reopen()),'primary');
+  if(phase==='FINISHED'){rewardCard(prompt);button(actions,'חזרה לסדנה','play',()=>action(()=>session.reopen()),'primary');}
   if(phase==='PAUSED')button(prompt,'חזרה לפעילות','play',()=>action(()=>session.resume()),'primary');
   if(phase==='STOPPED')$('signal').textContent='□';
   const warning=$('storage-warning'),recovery=$('recovery');recovery.replaceChildren();warning.hidden=!storage.problem;
@@ -102,6 +122,6 @@ async function init(){
   $('pause').onclick=()=>action(()=>session.phase==='PAUSED'?session.resume():session.pause());
   $('motion').onclick=()=>action(()=>{reduced=!reduced;});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAudio();session.pause();persist();render();}});
-  window.addEventListener('pagehide',()=>{clearAudio();persist();});window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY||event.key===null){storage.current();clearAudio();render();}});if(!saved)persist();render();
+  window.addEventListener('pagehide',()=>{clearAudio();persist();});window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY||event.key===null){storage.current();clearAudio();render();}});if(session.rewardWordShown()||!saved)persist();render();
 }
 init().catch(()=>{$('signal').textContent='לא ניתן לטעון את הפעילות. רעננו כדי לנסות שוב.';});

@@ -15,3 +15,21 @@ test('audio cancels old playback and never reports stale success',async()=>{cons
 test('audio failure reports failure without teaching completion',async()=>{let errors=0,a;const player=new AudioPlayer({create:()=>a=new FakeAudio(),onError:()=>errors++});const done=player.play(mappings[0]);a.onerror();assert.equal(await done,false);assert.equal(errors,1);});
 test('three supported errors offer accessible familiar practice instead of endless correction',()=>{const s=make();intro(s);s.heardAudio(s.task.itemId);const wrong=s.task.options.find(x=>x!==s.task.itemId);s.choose(wrong);for(let i=0;i<3;i++){s.correction();s.choose(wrong);}assert.equal(s.phase,'REST');s.familiar();assert.equal(s.task.family,'visual_match');s.choose(s.task.itemId);assert.equal(s.connections,1);assert.equal(s.lastEvent.weight,0);});
 test('natural endpoint pause before ended succeeds once; genuine pause still cancels',async()=>{let a,errors=0;const player=new AudioPlayer({create:()=>a=new FakeAudio(),onError:()=>errors++});const done=player.play(mappings[0]);assert.equal(a.playbackRate,.25);assert.equal(a.preservesPitch,true);a.ended=true;a.onpause();a.onended();a.onended();assert.equal(await done,true);assert.equal(errors,0);const cancelled=player.play(mappings[1]);a.ended=false;a.onpause();assert.equal(await cancelled,false);a.onended();assert.equal(errors,0);});
+
+test('word reward is exposure only, never a scored task or a prerequisite bypass',()=>{
+  const s=make();intro(s);assert.equal(s.rewardWordAvailable(),false);assert.equal(s.rewardHeard('RZ-W-MAT'),false);
+  for(let i=0;i<4;i++)pass(s);
+  assert.equal(s.rewardWordAvailable(),true);assert.equal(s.engine.inspect().exposure['RZ-W-MAT'].written,true);
+  const before=structuredClone({coins:s.rewards.state.coins,outcomes:s.engine.inspect().outcomes,known:s.engine.report('known_word_recall'),meaning:s.engine.report('word_meaning'),novel:s.engine.report('novel_word_decoding')});
+  assert.equal(s.rewardHeard('RZ-W-MAT'),true);const size=s.engine.snapshot().length;
+  for(let i=0;i<10;i++)assert.equal(s.rewardHeard('RZ-W-MAT'),true);
+  assert.equal(s.engine.snapshot().length,size);assert.equal(s.engine.inspect().exposure['RZ-W-MAT'].audio,true);
+  assert.deepEqual({coins:s.rewards.state.coins,outcomes:s.engine.inspect().outcomes,known:s.engine.report('known_word_recall'),meaning:s.engine.report('word_meaning'),novel:s.engine.report('novel_word_decoding')},before);
+  assert.equal(s.engine.availableActivities().some(t=>t.itemId==='RZ-W-MAT'),false);
+  s.continueRound();assert.equal(s.rewardWordAvailable(),false);assert.equal(s.rewardHeard('RZ-W-MAT'),false);assert.equal(s.engine.inspect().pending.supported,false);
+});
+test('existing completed saves gain the word demonstration without losing rewards or autoplay evidence',()=>{
+  const s=make();intro(s);for(let i=0;i<4;i++)pass(s);const old=s.snapshot();old.learning=old.learning.filter(e=>!(e.method==='expose'&&e.args[0]==='RZ-W-MAT'));
+  const restored=new MachineSession(spec,{snapshot:old});assert.equal(restored.rewardWordShown(),true);assert.equal(restored.rewardWordShown(),false);assert.equal(restored.rewards.state.coins,8);assert.equal(restored.engine.inspect().exposure['RZ-W-MAT'].audio,false);assert.equal(restored.heard.size,0);
+  const again=new MachineSession(spec,{snapshot:restored.snapshot()});assert.equal(again.rewardWordAvailable(),true);assert.equal(again.engine.report('word_meaning').status,'unassessed');
+});

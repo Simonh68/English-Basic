@@ -80,3 +80,41 @@ claim; Simon will review clarity on the public site.
 Artifact: 274557 bytes; SHA256
 3395dc21fab08c8dfc9a2a037ab4ddda3b0823e6ded589d1caa3720586049cda.
 Publish only to the existing detached route, preserving homepage and sitemap.
+
+
+## Word, meaning and success correction — 2026-10-03
+
+Simon reported that completing a sequence did not produce a playable word or an
+understandable purpose. He explicitly authorized fixing and publishing a word,
+meaning illustration and positive reinforcement on the same isolated public route.
+
+The goal now previews a small original vector mat illustration and three word
+slots. Earned m/a/t letters appear between tasks; target letters are hidden during
+active questions so the goal is not a highlighted answer. Success offers replay
+of the earned phoneme and the actual settled coin amount. After the fourth
+connection, the main card shows mat, a woven mat with stripes/fringe, Hebrew
+שטיחון, the accepted whole-word recording, and three separate phoneme buttons.
+Word playback precedes the visual priority of the part shop. Continue/end controls
+also have short visible labels. The card persists on completed/finished saves.
+
+This is a product reward demonstration authorized by Simon, not a scored word
+teaching block or a bypass of M1. Written/audio exposure is recorded via existing
+engine operations. Replay is idempotent, adds no coins/outcomes/readiness, and
+cannot mark novel decoding, meaning or sentence comprehension assessed. Phoneme
+buttons are separate sounds, not a synthetic concatenated blending model. No
+learning engine/content adapter/spec/audio bytes changed. Old saved schema and
+reward values remain compatible; existing completed saves gain written exposure
+without automatic audio. Pending questions cannot invoke reward audio.
+
+Validation: 42 engine/controller/storage/DOM tests passed, including replay
+without extra evidence/rewards, old completed snapshots, mat asset/rate binding,
+individual sound buttons and pause cancellation. Chromium native audio completed
+all four connections, mat, silent reload/resume and mat replay with no page errors.
+Rendered full-loop/storage/recovery QA passed with simulated media events and no
+horizontal overflow at 320/360/640/720. Final short control labels passed the DOM
+integration check. Audible/physical-phone and child comprehension remain open.
+
+Artifact: 280545 bytes; SHA256
+b0789efb666ef20917c0e806c83ac2ab9af52aadb6755d96846a4500ce0bc51a.
+Deployment retains Sites v66 / 34579529286a922668200460efe09549f433b66b
+as rollback baseline. No homepage/sitemap link, no English-Basic main merge.

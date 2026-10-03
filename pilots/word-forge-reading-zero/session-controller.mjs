@@ -43,7 +43,7 @@ export class MachineSession {
     this.lastEvent=this.engine.respond(this.encounter,id===this.task.itemId);
     if(this.lastEvent.correct){this.rewards.settle(this.lastEvent);if(!this.task.review){this.connections++;this.index++;}
       else {this.practiceCount++;if(this.lastEvent.independent)this.reviewed.add(this.task.itemId);}
-      this.phase='SUCCESS';
+      this.phase='SUCCESS';this.rewardWordShown();
     }else{this.engine.support(this.encounter,'correction');if(!this.lastEvent.first)this.supportedErrors++;this.phase=this.supportedErrors>=3?'REST':'ERROR';this.selected=null;}
     return true;
   }
@@ -60,6 +60,13 @@ export class MachineSession {
     const item=other>=3?debt.itemId:mappings.filter(x=>x!==debt.itemId)[this.practiceCount%3];
     this.open(item,'letter_to_sound',true);return true;
   }
+  rewardWordAvailable(){return this.connections===4&&['SUCCESS','COMPLETE','FINISHED'].includes(this.phase);}
+  rewardWordShown(){if(!this.rewardWordAvailable()||this.engine.inspect().exposure['RZ-W-MAT']?.written)return false;this.engine.expose('RZ-W-MAT','written');return true;}
+  rewardAudioAllowed(id){
+    if(this.phase==='SUCCESS'&&id===this.task.itemId)return true;
+    return this.rewardWordAvailable()&&['RZ-W-MAT','RZ-G-M','RZ-G-A-AE','RZ-G-T'].includes(id);
+  }
+  rewardHeard(id){if(!this.rewardAudioAllowed(id))return false;if(!this.engine.inspect().exposure[id]?.audio)this.engine.expose(id,'audio');return true;}
   pause(){if(this.phase==='PAUSED')return false;this.previous=this.phase;this.phase='PAUSED';return true;}
   resume(){if(this.phase!=='PAUSED')return false;this.phase=this.previous;return true;}
   dispose(){if(this.engine.inspect().pending)this.engine.abandon(this.encounter);this.phase='STOPPED';}

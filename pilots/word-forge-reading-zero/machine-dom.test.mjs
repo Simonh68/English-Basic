@@ -30,6 +30,12 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   const target=opts.find(b=>b.dataset.option==='RZ-G-M');await click(document.querySelector(`button[data-option="${target.dataset.option}"]`));await end();
   await click(button('אישור בחירת הצליל'));await click(button('המשך לחיבור הבא'));
   assert.ok(button('הפעלת המכונה'));assert.equal(document.querySelectorAll('.connection.on').length,4);assert.equal(document.querySelectorAll('#choices button[data-part]').length,2);
+  assert.ok(document.querySelector('svg[aria-label="שטיחון ארוג עם פסים וגדילים"]'));assert.equal(document.querySelector('.meaning').textContent,'שטיחון');
+  const coins=()=>JSON.parse(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1')).snapshot.machine.rewards.coins;const prior=coins();
+  await click(button('השמעת המילה mat — שטיחון'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/mat.wav');assert.equal(audios.at(-1).playbackRate,1);await end();
+  for(const letter of ['m','a','t']){await click(button(`השמעת צליל ${letter} במילה mat`));await end();}
+  assert.equal(coins(),prior);await click(button('השמעת המילה mat — שטיחון'));await click(button('השהיה'));await end();await click(button('חזרה לפעילות'));assert.ok(button('השמעת המילה mat — שטיחון'));assert.equal(coins(),prior);
+
   await click(button('הפעלת המכונה'));await click(button('הפחתת תנועה'));assert.ok(document.body.classList.contains('reduced'));assert.equal(document.querySelectorAll('button:not([aria-label])').length,0);
   assert.equal(dom.window.localStorage.length,1);assert.ok(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1'));dom.window.close();
 });
