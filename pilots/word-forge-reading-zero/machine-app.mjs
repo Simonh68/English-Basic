@@ -1,3 +1,4 @@
+import {setupComplexDemo} from './complex-demo.mjs';
 import {MachineSession,letters} from './session-controller.mjs';
 import {AudioPlayer} from './audio-player.mjs';
 import {PilotStorage,STORAGE_KEY} from './storage.mjs';
@@ -126,5 +127,6 @@ async function init(){
   $('motion').onclick=()=>action(()=>{reduced=!reduced;});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAudio();session.pause();persist();render();}});
   window.addEventListener('pagehide',()=>{clearAudio();persist();});window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY||event.key===null){storage.current();clearAudio();render();}});if(session.rewardWordShown()||!saved)persist();render();
+  setupComplexDemo({beforeOpen:()=>{clearAudio();session.pause();persist();},afterClose:()=>render()});
 }
 init().catch(()=>{$('signal').textContent='לא ניתן לטעון את הפעילות. רעננו כדי לנסות שוב.';});
