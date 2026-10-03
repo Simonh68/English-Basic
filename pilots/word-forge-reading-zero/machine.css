@@ -6,3 +6,5 @@
 
 .goal-caption .mat-picture{width:70px;height:38px}.goal-caption small{display:block;text-align:center;font-size:12px}
 .decision small{display:block;font-size:13px;margin-top:5px}
+
+.goal-preview{width:100%;max-width:300px}.goal-preview .mat-picture{height:120px}.goal-preview .meaning{margin-bottom:6px}body:not(.word-built) #prompt:has(.goal-preview){flex-direction:column;gap:10px}.goal-replay{min-width:48px;min-height:48px}.goal-replay small{display:block;font-size:11px;margin-top:2px}.goal-preview+.target{font-size:40px;min-height:85px;width:100%;max-width:300px}.goal-preview+.target .icon{width:40px;height:40px}

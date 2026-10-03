@@ -118,3 +118,46 @@ Artifact: 280545 bytes; SHA256
 b0789efb666ef20917c0e806c83ac2ab9af52aadb6755d96846a4500ce0bc51a.
 Deployment retains Sites v66 / 34579529286a922668200460efe09549f433b66b
 as rollback baseline. No homepage/sitemap link, no English-Basic main merge.
+
+
+## Heard target from the start — 2026-10-03
+
+Simon approved improving the model/algorithm and immediate publication: hear the
+word from the beginning without seeing its spelling, make the goal explicit,
+and demonstrate harder-to-picture meaning. The dictated example was ambiguous;
+a clarification returned no answer, so the bounded demonstration uses the already
+accepted sat audio and a two-frame action scene. No new audio/content inventory.
+
+Every new round now opens READY with the target's meaning scene, empty letter
+slots and a large speaker. Completed target playback reveals Build; failure or
+cancellation cannot reveal Build. mat is the first target; subsequent rounds
+alternate sat/mat. sat depicts the same person standing then sitting with a left
+to right arrow (a past event), Hebrew ישב. Written spelling is absent from the
+READY DOM, including the accessible audio labels; the goal is heard audio exposure
+only. Letter slots fill between tasks. Target-goal replay is offered during
+teaching; it is unavailable during independent questions. Complete/finished word
+cards reuse the same round-specific scene, accepted word audio and phoneme tiles.
+
+Continue now prepares a new silent READY instead of immediately opening a scored
+question. Existing completed/in-progress snapshots and prior coins are retained.
+The READY validator accepts later rounds with all four mappings already taught;
+start then opens the existing alternate-direction mapping practice. No new saved
+fields/schema or engine/spec/audio change. Whole-word audio exposure is recorded
+before building; spelling is recorded only on construction completion. Goal
+listening, scene viewing, and word reward remain demonstrations, not independent
+word/meaning/novel decoding evidence, and never bypass word-task M1 gates.
+
+Validation: 43 engine/controller/storage/DOM checks passed, covering silent goal
+setup, hidden spelling, audio failure, two rounds, round-specific assets/meaning,
+no independent-question goal replay, exposure/evidence boundaries and later READY
+save restore. Chromium native audio completed hidden mat goal, mat construction,
+word playback, silent reload/resume/replay, hidden sat goal, second round and sat
+playback, with no page errors. Simulated rendered full-loop/storage/recovery checks
+passed; widths 320/360/640/720 have no horizontal overflow. Original two-frame
+vector action scene visually inspected at 360px. Physical phone, audible quality
+and learner understanding remain open.
+
+Artifact: 283483 bytes; SHA256
+9ef9d984b1923179ed94fea99a92073be9157a2fe6234138027fa73e10df9f8a.
+Rollback: existing public v67 / b7f926972fe0454fe8074cf985641b1674f65316.
+Continue only the existing isolated route; no main merge or homepage/sitemap link.

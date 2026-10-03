@@ -26,10 +26,17 @@ test('word reward is exposure only, never a scored task or a prerequisite bypass
   assert.equal(s.engine.snapshot().length,size);assert.equal(s.engine.inspect().exposure['RZ-W-MAT'].audio,true);
   assert.deepEqual({coins:s.rewards.state.coins,outcomes:s.engine.inspect().outcomes,known:s.engine.report('known_word_recall'),meaning:s.engine.report('word_meaning'),novel:s.engine.report('novel_word_decoding')},before);
   assert.equal(s.engine.availableActivities().some(t=>t.itemId==='RZ-W-MAT'),false);
-  s.continueRound();assert.equal(s.rewardWordAvailable(),false);assert.equal(s.rewardHeard('RZ-W-MAT'),false);assert.equal(s.engine.inspect().pending.supported,false);
+  s.continueRound();assert.equal(s.rewardWordAvailable(),false);assert.equal(s.rewardHeard('RZ-W-MAT'),false);assert.equal(s.engine.inspect().pending,null);s.start();assert.equal(s.engine.inspect().pending.supported,false);
 });
 test('existing completed saves gain the word demonstration without losing rewards or autoplay evidence',()=>{
   const s=make();intro(s);for(let i=0;i<4;i++)pass(s);const old=s.snapshot();old.learning=old.learning.filter(e=>!(e.method==='expose'&&e.args[0]==='RZ-W-MAT'));
   const restored=new MachineSession(spec,{snapshot:old});assert.equal(restored.rewardWordShown(),true);assert.equal(restored.rewardWordShown(),false);assert.equal(restored.rewards.state.coins,8);assert.equal(restored.engine.inspect().exposure['RZ-W-MAT'].audio,false);assert.equal(restored.heard.size,0);
   const again=new MachineSession(spec,{snapshot:restored.snapshot()});assert.equal(again.rewardWordAvailable(),true);assert.equal(again.engine.report('word_meaning').status,'unassessed');
+});
+
+test('heard goal starts as audio exposure only and alternates to action word sat',()=>{
+  const s=make();assert.equal(s.wordGoal().text,'mat');assert.equal(s.goalHeard(),true);assert.equal(s.engine.inspect().exposure['RZ-W-MAT'].audio,true);assert.equal(s.engine.inspect().exposure['RZ-W-MAT'].written,false);assert.equal(s.engine.inspect().outcomes.length,0);assert.equal(s.rewards.state.coins,0);
+  intro(s);assert.equal(s.goalHeard(),false);assert.equal(s.engine.inspect().pending.supported,false);for(let i=0;i<4;i++)pass(s);s.continueRound();assert.equal(s.phase,'READY');assert.equal(s.wordGoal().text,'sat');assert.equal(s.goalHeard(),true);assert.equal(s.engine.inspect().exposure['RZ-W-SAT'].written,false);
+  s.start();for(let i=0;i<4;i++){for(const id of s.task.options){s.optionAudio(id);s.heardAudio(id);}s.choose(s.task.itemId);s.confirm();s.next();}
+  assert.equal(s.phase,'COMPLETE');assert.equal(s.rewardAudioAllowed('RZ-W-SAT'),true);assert.equal(s.rewardAudioAllowed('RZ-W-MAT'),false);assert.equal(s.engine.inspect().exposure['RZ-W-SAT'].written,true);assert.equal(s.engine.report('word_meaning').status,'unassessed');assert.equal(s.engine.report('novel_word_decoding').status,'unassessed');
 });

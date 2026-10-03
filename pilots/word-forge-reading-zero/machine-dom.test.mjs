@@ -11,7 +11,10 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   const button=label=>document.querySelector(`button[aria-label="${label}"]`);
   const click=async b=>{assert.ok(b);assert.equal(b.disabled,false);b.click();await tick();};
   const end=async()=>{audios.at(-1).onended();await tick();};
-  await click(button('התחלת הדגמת מגע וצליל'));
+  assert.equal(document.querySelector('.word-audio'),null);assert.equal(document.querySelector('#word-goal').textContent.includes('mat'),false);
+  fail=true;await click(button('התחלת הדגמת מגע וצליל'));assert.equal(button('בניית המילה ששמעת'),null);fail=false;
+  await click(button('התחלת הדגמת מגע וצליל'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/mat.wav');assert.equal(button('בניית המילה ששמעת'),null);await end();assert.equal(document.querySelector('.word-audio'),null);await click(button('בניית המילה ששמעת'));
+
   assert.equal(button('המשך להדגמה הבאה'),null);await click(button('השהיה'));await click(button('חזרה לפעילות'));
   fail=true;await click(button('נגיעה באריח והשמעת הצליל'));assert.equal(document.getElementById('audio-error').hidden,false);assert.ok(button('נגיעה באריח והשמעת הצליל'));
   fail=false;await click(button('נגיעה באריח והשמעת הצליל'));await click(button('השהיה'));await end();assert.ok(button('חזרה לפעילות'));await click(button('חזרה לפעילות'));assert.ok(button('נגיעה באריח והשמעת הצליל'));
@@ -37,5 +40,9 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   assert.equal(coins(),prior);await click(button('השמעת המילה mat — שטיחון'));await click(button('השהיה'));await end();await click(button('חזרה לפעילות'));assert.ok(button('השמעת המילה mat — שטיחון'));assert.equal(coins(),prior);
 
   await click(button('הפעלת המכונה'));await click(button('הפחתת תנועה'));assert.ok(document.body.classList.contains('reduced'));assert.equal(document.querySelectorAll('button:not([aria-label])').length,0);
+  await click(button('המשך למכונה נוספת'));assert.equal(document.querySelector('.word-audio'),null);assert.equal(document.querySelector('.goal-preview .meaning').textContent,'ישב');assert.ok(document.querySelector('.sat-picture'));
+  await click(button('התחלת הדגמת מגע וצליל'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/sat.wav');await end();await click(button('בניית המילה ששמעת'));
+  for(const id of ['RZ-G-M','RZ-G-S','RZ-G-A-AE','RZ-G-T']){assert.equal(button('השמעת מילת היעד בלי כתיב'),null);assert.equal(document.querySelector('.word-audio'),null);for(let i=1;i<=2;i++){await click(button(`השמעת אפשרות ${i}`));await end();}await click(document.querySelector(`button[data-option="${id}"]`));await end();await click(button('אישור בחירת הצליל'));await click(button('המשך לחיבור הבא'));}
+  assert.ok(button('השמעת המילה sat — ישב'));await click(button('השמעת המילה sat — ישב'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/sat.wav');await end();
   assert.equal(dom.window.localStorage.length,1);assert.ok(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1'));dom.window.close();
 });

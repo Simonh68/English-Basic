@@ -11,7 +11,7 @@ export class MachineSession {
     this.supportedErrors=0; this.reviewed=new Set(); this.practiceCount=0; this.lastEvent=null;this.previous=null;
     if(snapshot)this.restore(snapshot);
   }
-  start(){if(this.phase!=='READY')return false; this.phase='TEACH';return true;}
+  start(){if(this.phase!=='READY')return false; if(this.taughtIndex<2)this.phase='TEACH';else this.open(mappings[0],this.round%2===0?'letter_to_sound':'sound_to_letter');return true;}
   teachingItem(){return mappings[this.taughtIndex];}
   teachHeard(id){if(this.phase!=='TEACH'||id!==this.teachingItem())return false;
     this.engine.completeTeachingBlock(`intro:${id}`,id,{learnerActed:true});
@@ -60,18 +60,21 @@ export class MachineSession {
     const item=other>=3?debt.itemId:mappings.filter(x=>x!==debt.itemId)[this.practiceCount%3];
     this.open(item,'letter_to_sound',true);return true;
   }
+  wordGoal(){const sat=this.round%2===0;return {id:sat?'RZ-W-SAT':'RZ-W-MAT',text:sat?'sat':'mat',meaning:sat?'ישב':'שטיחון',parts:[sat?'RZ-G-S':'RZ-G-M','RZ-G-A-AE','RZ-G-T']};}
+  goalAudioAllowed(){return ['READY','TEACH'].includes(this.phase);}
+  goalHeard(){if(!this.goalAudioAllowed())return false;const id=this.wordGoal().id;if(!this.engine.inspect().exposure[id]?.audio)this.engine.expose(id,'audio');return true;}
   rewardWordAvailable(){return this.connections===4&&['SUCCESS','COMPLETE','FINISHED'].includes(this.phase);}
-  rewardWordShown(){if(!this.rewardWordAvailable()||this.engine.inspect().exposure['RZ-W-MAT']?.written)return false;this.engine.expose('RZ-W-MAT','written');return true;}
+  rewardWordShown(){if(!this.rewardWordAvailable()||this.engine.inspect().exposure[this.wordGoal().id]?.written)return false;this.engine.expose(this.wordGoal().id,'written');return true;}
   rewardAudioAllowed(id){
     if(this.phase==='SUCCESS'&&id===this.task.itemId)return true;
-    return this.rewardWordAvailable()&&['RZ-W-MAT','RZ-G-M','RZ-G-A-AE','RZ-G-T'].includes(id);
+    return this.rewardWordAvailable()&&[this.wordGoal().id,...this.wordGoal().parts].includes(id);
   }
   rewardHeard(id){if(!this.rewardAudioAllowed(id))return false;if(!this.engine.inspect().exposure[id]?.audio)this.engine.expose(id,'audio');return true;}
   pause(){if(this.phase==='PAUSED')return false;this.previous=this.phase;this.phase='PAUSED';return true;}
   resume(){if(this.phase!=='PAUSED')return false;this.phase=this.previous;return true;}
   dispose(){if(this.engine.inspect().pending)this.engine.abandon(this.encounter);this.phase='STOPPED';}
   buyPart(id){return this.phase==='COMPLETE'&&this.rewards.buy(id);}
-  continueRound(){if(this.phase!=='COMPLETE')return false;this.engine.newSession();this.round++;this.connections=0;this.index=0;this.practiceCount=0;this.reviewed.clear();this.lastEvent=null;this.open(mappings[0],this.round%2===0?'letter_to_sound':'sound_to_letter');return true;}
+  continueRound(){if(this.phase!=='COMPLETE')return false;this.engine.newSession();this.round++;this.connections=0;this.index=0;this.practiceCount=0;this.reviewed.clear();this.lastEvent=null;this.phase='READY';this.task=null;this.encounter=null;this.heard.clear();this.selected=null;this.previous=null;return true;}
   finish(){if(this.phase!=='COMPLETE')return false;this.phase='FINISHED';return true;}
   reopen(){if(this.phase!=='FINISHED')return false;this.phase='COMPLETE';return true;}
   snapshot(){return {version:1,learning:this.engine.snapshot(),rewards:this.rewards.snapshot(),session:{phase:this.phase,previous:this.previous,connections:this.connections,index:this.index,taughtIndex:this.taughtIndex,task:this.task,encounter:this.encounter,supportedErrors:this.supportedErrors,reviewed:[...this.reviewed],practiceCount:this.practiceCount,round:this.round,lastEvent:this.lastEvent}};}
@@ -88,7 +91,7 @@ export class MachineSession {
     if(state.taught.length!==s.taughtIndex)fail();
     if(s.task){const canonical=engine.availableActivities().find(t=>t.id===s.task.id);if(!canonical||JSON.stringify(canonical)!==JSON.stringify(Object.fromEntries(Object.entries(s.task).filter(([k])=>!['options','review'].includes(k))))||typeof s.task.review!=='boolean'||!Array.isArray(s.task.options)||s.task.options.length!==2||new Set(s.task.options).size!==2||!s.task.options.includes(s.task.itemId)||s.task.options.some(id=>!state.taught.includes(id)))fail();}
     const active=s.phase==='PAUSED'?s.previous:s.phase;
-    if(active==='PAUSED'||!active||(active==='TEACH'&&s.taughtIndex>=4)||(active==='READY'&&(s.taughtIndex||s.connections))||(['COMPLETE','FINISHED'].includes(active)&&s.connections!==4))fail();
+    if(active==='PAUSED'||!active||(active==='TEACH'&&s.taughtIndex>=4)||(active==='READY'&&(s.connections||(s.round===1?s.taughtIndex!==0:s.taughtIndex!==4)))||(['COMPLETE','FINISHED'].includes(active)&&s.connections!==4))fail();
     if(['PROMPT','SUPPORT','ERROR','REST'].includes(active)){if(!state.pending||state.pending.id!==s.encounter||state.pending.task.id!==s.task?.id||JSON.stringify(state.pending.options)!==JSON.stringify(s.task.options))fail();}
     else if(state.pending)fail();
     if(s.lastEvent&&JSON.stringify(state.outcomes.at(-1))!==JSON.stringify(s.lastEvent))fail();
