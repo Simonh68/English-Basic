@@ -144,3 +144,14 @@ completed one machine loop, touch emulation, keyboard start, correction,
 pause/resume, 320/360px layouts and 200% zoom. Audio completion was simulated;
 no physical phone, child or new audible review is claimed. See MACHINE.md.
 Stage 3 is complete. Next: stage 4 only after Simon authorizes that scoped task.
+
+## Stage 4 implementation checkpoint — completed
+
+Simon authorized this scoped stage after accepting stage 3. Coins, two visibly
+different purchased/selectable parts, a dedicated versioned storage key,
+refresh/resume and explicit finish/continue are implemented. Engine evidence and
+rewards persist in one snapshot; duplicate outcomes/purchases are idempotent.
+39 tests and focused rendered-browser storage/reward checks passed. See
+PERSISTENCE.md for error handling, limitations and evidence. Approved engine
+and audio remain unchanged. Next: stage 5 only on a separate instruction.
+No merge or site deployment.

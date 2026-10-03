@@ -86,3 +86,9 @@ scoped task is IMPLEMENTATION.md stage 4, rewards/persistence, only on Simon's
 explicit instruction. No stage 4 implementation is included. Reuse the 28 tests
 for the unchanged implementation; this checkpoint changes documentation and
 captures only, with no runtime/audio/model changes.
+
+## Stage 4 superseding checkpoint
+
+Stage 3's historical no-reward/no-storage scope above remains its checkpoint.
+Simon subsequently approved stage 4; the current runtime includes rewards and
+persistence as documented in PERSISTENCE.md. No learning-engine or audio change.

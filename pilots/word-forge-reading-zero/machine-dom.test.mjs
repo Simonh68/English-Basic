@@ -28,7 +28,7 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   for(let i=1;i<=2;i++){await click(button(`השמעת אפשרות ${i}`));await end();}
   const target=opts.find(b=>b.dataset.option==='RZ-G-M');await click(document.querySelector(`button[data-option="${target.dataset.option}"]`));await end();
   await click(button('אישור בחירת הצליל'));await click(button('המשך לחיבור הבא'));
-  assert.ok(button('הפעלת המכונה'));assert.equal(document.querySelectorAll('.connection.on').length,4);assert.equal(document.querySelectorAll('#choices button').length,0);
+  assert.ok(button('הפעלת המכונה'));assert.equal(document.querySelectorAll('.connection.on').length,4);assert.equal(document.querySelectorAll('#choices button[data-part]').length,2);
   await click(button('הפעלת המכונה'));await click(button('הפחתת תנועה'));assert.ok(document.body.classList.contains('reduced'));assert.equal(document.querySelectorAll('button:not([aria-label])').length,0);
-  assert.equal(dom.window.localStorage.length,0);dom.window.close();
+  assert.equal(dom.window.localStorage.length,1);assert.ok(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1'));dom.window.close();
 });
