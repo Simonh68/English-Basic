@@ -5,7 +5,7 @@ import {parts} from './rewards.mjs';
 const $=id=>document.getElementById(id);
 const shapes={sound:'M11 5L5 10H2V18H5L11 23ZM16 8Q24 14 16 20M15 12Q18 14 15 16',next:'M8 4L20 14L8 24',help:'M7 5Q2 10 8 15L18 25L23 20L13 10Q16 3 10 2L11 7L7 9Z',pause:'M8 4V24M20 4V24',play:'M8 4L23 14L8 24Z',motion:'M3 9H17M3 15H12M15 4L25 14L15 24',check:'M3 14L10 21L25 5',retry:'M6 7Q24 0 24 15Q24 26 8 24M6 2V10H14',finish:'M6 6H22V22H6ZM10 10H18V18H10Z',power:'M14 2V14M7 6Q-1 13 6 22Q14 30 23 22Q30 13 21 6'};
 function icon(name){return `<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="${shapes[name]}"/></svg>`;}
-let storage,spec,resetConfirm=false;let session,player,epoch=0,busy=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let storage,spec,resetConfirm=false,teachReady=null;let session,player,epoch=0,busy=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function button(host,label,name,act,cls='',disabled=false){const b=document.createElement('button');b.setAttribute('aria-label',label);b.title=label;b.className=cls;b.disabled=disabled;b.innerHTML=icon(name);b.addEventListener('click',act);host.append(b);return b;}
 function canAct(){storage.current();if(storage.problem==='conflict'){clearAudio();render();return false;}return true;}
 function persist(){storage.save({machine:session.snapshot(),prefs:{reduced}});}
@@ -27,15 +27,22 @@ function render(){
   $('motion').innerHTML=icon('motion');$('motion').setAttribute('aria-pressed',String(reduced));
   const prompt=$('prompt'),choices=$('choices'),actions=$('actions');prompt.replaceChildren();choices.replaceChildren();actions.replaceChildren();
   $('signal').className='signal';$('signal').textContent='';
-  if(phase==='READY')button(prompt,'התחלת הדגמת מגע וצליל','play',()=>action(()=>session.start()),'primary demo');
+  if(phase==='READY'){
+    $('signal').textContent='☟';
+    const start=button(prompt,'התחלת הדגמת מגע וצליל','play',()=>{action(()=>session.start());play(session.teachingItem(),()=>{teachReady=session.teachingItem();});},'primary target demo');
+    start.innerHTML='<span aria-hidden="true">m</span> '+icon('sound')+'<small>התחלה</small>';
+  }
   if(phase==='TEACH'){
-    const id=session.teachingItem();const tile=button(prompt,'נגיעה באריח והשמעת הצליל','sound',()=>play(id,()=>session.teachHeard(id)),'target demo',busy);
+    const id=session.teachingItem();const ready=teachReady===id;
+    $('signal').textContent=busy?'♫':ready?'✓':'☟';
+    const tile=button(prompt,'נגיעה באריח והשמעת הצליל','sound',()=>play(id,()=>{teachReady=id;}),'target '+(busy?'listening':'demo'),busy);
     tile.innerHTML=`<span aria-hidden="true">${letters[id]}</span> ${icon('sound')}`;
     const rail=document.createElement('div');rail.className='rail';rail.innerHTML='<span id="audio-progress"></span>';actions.append(rail);
+    if(ready&&!busy){actions.replaceChildren();const next=button(actions,'המשך להדגמה הבאה','next',()=>action(()=>{teachReady=null;session.teachHeard(id);}), 'primary advance demo');next.insertAdjacentHTML('beforeend','<small>המשך</small>');}
   }
   if(['PROMPT','SUPPORT','ERROR'].includes(phase)){
     const task=session.task;const auditory=task.family==='sound_to_letter';const visual=task.family==='visual_match';
-    if(auditory)button(prompt,'השמעת צליל השאלה','sound',()=>play(task.itemId),'target',busy||phase==='ERROR');
+    if(auditory){const heard=session.heard.has(task.itemId);$('signal').textContent=busy?'♫':heard?'👇':'☟';button(prompt,'השמעת צליל השאלה','sound',()=>play(task.itemId),'target '+(busy?'listening':heard?'':'primary demo'),busy||phase==='ERROR');}
     else {const text=document.createElement('span');text.textContent=letters[task.itemId];text.setAttribute('aria-hidden','true');prompt.append(text);}
     const supported=phase==='SUPPORT';
     if(phase==='ERROR'){
@@ -43,6 +50,7 @@ function render(){
       button(actions,'הדגמת תיקון וניסיון נוסף','retry',()=>{action(()=>session.correction());play(task.itemId);},'primary');
     }else{
       for(const [i,id] of task.options.entries()){
+        if(auditory&&!session.heard.has(task.itemId))continue;
         const label=(auditory||visual)?`האות ${letters[id]}`:`השמעת אפשרות ${i+1}`;
         const b=button(choices,label,'sound',()=>{
           if(auditory||visual)action(()=>session.choose(id));
@@ -65,7 +73,7 @@ function render(){
   if(phase==='SUCCESS'){
     $('signal').textContent='✓';$('signal').classList.add('success');
     const text=document.createElement('span');text.textContent=letters[session.task.itemId];prompt.append(text);
-    button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary');
+    const next=button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary advance demo');next.insertAdjacentHTML('beforeend','<small>המשך</small>');
   }
   if(phase==='COMPLETE'){
     $('signal').textContent='✓';button(prompt,'הפעלת המכונה','power',()=>{

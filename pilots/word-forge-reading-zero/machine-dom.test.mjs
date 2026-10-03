@@ -12,12 +12,13 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   const click=async b=>{assert.ok(b);assert.equal(b.disabled,false);b.click();await tick();};
   const end=async()=>{audios.at(-1).onended();await tick();};
   await click(button('התחלת הדגמת מגע וצליל'));
+  assert.equal(button('המשך להדגמה הבאה'),null);await click(button('השהיה'));await click(button('חזרה לפעילות'));
   fail=true;await click(button('נגיעה באריח והשמעת הצליל'));assert.equal(document.getElementById('audio-error').hidden,false);assert.ok(button('נגיעה באריח והשמעת הצליל'));
   fail=false;await click(button('נגיעה באריח והשמעת הצליל'));await click(button('השהיה'));await end();assert.ok(button('חזרה לפעילות'));await click(button('חזרה לפעילות'));assert.ok(button('נגיעה באריח והשמעת הצליל'));
-  for(let i=0;i<2;i++){await click(button('נגיעה באריח והשמעת הצליל'));await end();}
+  for(let i=0;i<2;i++){await click(button('נגיעה באריח והשמעת הצליל'));assert.equal(button('המשך להדגמה הבאה'),null);await end();assert.ok(button('נגיעה באריח והשמעת הצליל'));await click(button('המשך להדגמה הבאה'));}
   for(const target of ['m','s','a','t']){
-    if(button('נגיעה באריח והשמעת הצליל')){await click(button('נגיעה באריח והשמעת הצליל'));await end();}
-    const options=[...document.querySelectorAll('#choices button')];assert.ok(options.every(b=>b.disabled));
+    if(button('נגיעה באריח והשמעת הצליל')){await click(button('נגיעה באריח והשמעת הצליל'));await end();await click(button('המשך להדגמה הבאה'));}
+    const options=[...document.querySelectorAll('#choices button')];assert.equal(options.length,0);
     await click(button('השמעת צליל השאלה'));await end();
     if(target==='m'){await click([...document.querySelectorAll('#choices button')].find(b=>b.textContent==='s'));assert.ok(button('הדגמת תיקון וניסיון נוסף'));await click(button('הדגמת תיקון וניסיון נוסף'));await end();}
     await click([...document.querySelectorAll('#choices button')].find(b=>b.textContent===target));assert.equal(document.querySelectorAll('.connection.on').length,['m','s','a','t'].indexOf(target)+1);

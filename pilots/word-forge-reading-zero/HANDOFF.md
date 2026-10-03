@@ -52,3 +52,31 @@ adult permission to advance learning.
 Efficiency: keep the runtime and approved assets unchanged while collecting
 this focused device feedback; the deterministic offline builder avoids another
 hosting environment and supports exact reproduction.
+
+
+## Public entry correction — 2026-10-03
+
+Simon reported that the first sound was too brief and repeated touches did not
+advance the activity, and authorized immediate correction/publication on the
+existing isolated public route. This checkpoint supersedes the offline-only
+review instructions above: https://englishfornoar.co.il/word-forge-reading-zero/ .
+
+The first touch starts the accepted m audio. Successful teaching playback now
+reveals an explicit highlighted Continue button; it alone advances teaching.
+Question options appear after completed question audio, reducing competing
+controls. Native endpoint pause events with ended=true are accepted; actual
+pause/cancellation, failure and stalled playback cannot manufacture listening.
+Playback sustains m at 0.25x and s at 0.5x with preservesPitch; t, a and words
+retain normal speed. All eight approved WAVs and the learning engine are unchanged.
+
+Validation: 40 engine/controller/storage/DOM tests passed, including the native
+pause-before-ended sequence and explicit teaching continuation. Chromium native
+HTMLAudioElement completed m, s and question m, then one correct connection with
+no page errors. Simulated playback completed the full loop and existing storage,
+purchase and recovery scenarios. Widths 320/360/640/720 had no overflow. This is
+media lifecycle verification, not an audible or physical-device/child acceptance
+claim; Simon will review clarity on the public site.
+
+Artifact: 274557 bytes; SHA256
+3395dc21fab08c8dfc9a2a037ab4ddda3b0823e6ded589d1caa3720586049cda.
+Publish only to the existing detached route, preserving homepage and sitemap.
