@@ -135,3 +135,12 @@ unchanged; only mapping tasks are eligible in this short first round. No
 rewards, persistence, merge or deployment. Stage 3 remains **pending rendered
 local-preview acceptance**: Chromium is missing and installation returned an
 invalid ZIP. Next action is that same-version visual preview, not stage 4.
+
+
+## Stage 3 rendered-preview acceptance — completed
+
+The pending visual checkpoint above is superseded: local rendered Chromium
+completed one machine loop, touch emulation, keyboard start, correction,
+pause/resume, 320/360px layouts and 200% zoom. Audio completion was simulated;
+no physical phone, child or new audible review is claimed. See MACHINE.md.
+Stage 3 is complete. Next: stage 4 only after Simon authorizes that scoped task.

@@ -59,16 +59,30 @@ correction, delayed opposite-direction review, reduced-motion control, accessibl
 button labels and absence of local-storage writes. Engine tests verify all eight
 accepted asset hashes. No source audio, manifests or learning engine changed.
 
-## Still open — stage 3 acceptance
+## Stage 3 acceptance — completed
 
-No rendered browser preview was possible: Chromium is absent and its download
-returned invalid ZIP bytes. The DOM preview proves transitions, not layout,
-contrast, native keyboard behavior, audible playback or touch behavior. No
-browser-policy bypass was attempted. Verify one local rendered loop at 320px,
-360x640, landscape and enlarged text, visible focus, touch and pause/audio
-lifecycle before closing stage 3. Physical phone/child/perceptual tests remain
-separate and have not been performed. Prior listening approval is preserved.
+A rendered Chromium local preview completed the four-connection loop using
+simulated audio completion events. A second rendered pass exercised first error,
+correction, touch emulation, native Enter activation, pause/resume and visible
+focus. Screenshots were inspected for entry, prompt, error, corrected prompt,
+completion and 200% zoom. At widths 320, 360, 640 and 720 CSS pixels the document
+width matched the viewport; the 320px prompt also fit without horizontal scroll.
+At desktop width 1280 and CSS zoom 2 the document width remained 1280.
+All observed icon buttons were at least 56x56px. No page JavaScript errors.
+Evidence screenshots: qa/entry-360.png and qa/complete-360.png.
 
-Next action: rendered local preview of this same version in a browser-capable
-execution environment. Stage 4 remains unauthorized. Efficiency: reuse the
-existing engine/audio tests and add only controller/DOM coverage for this slice.
+Chromium was obtained as an npm development package containing a browser binary,
+extracted locally without ownership changes and run with CPU rendering. The
+original browser downloader remained unavailable; no site was deployed.
+The first real-media pass did not advance teaching in this headless environment;
+the successful visual pass explicitly simulated Audio events. This verifies
+rendered interaction/layout, not audible playback. Existing approved assets and
+listening acceptance remain unchanged. Physical phone and child tests, audible
+runtime verification and empirical model calibration remain open for integrated
+verification; no new perceptual approval is claimed.
+
+Stage 3's complete local learning/building preview is now accepted. The next
+scoped task is IMPLEMENTATION.md stage 4, rewards/persistence, only on Simon's
+explicit instruction. No stage 4 implementation is included. Reuse the 28 tests
+for the unchanged implementation; this checkpoint changes documentation and
+captures only, with no runtime/audio/model changes.
