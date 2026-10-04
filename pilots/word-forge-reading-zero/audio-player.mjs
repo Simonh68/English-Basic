@@ -1,8 +1,8 @@
 import {assets} from './learning-content.mjs';
 export class AudioPlayer {
-  constructor({create=path=>new Audio(path),onProgress=()=>{},onError=()=>{}}={}){this.create=create;this.onProgress=onProgress;this.onError=onError;this.serial=0;this.current=null;this.cancel=null;}
+  constructor({paths=assets,create=path=>new Audio(path),onProgress=()=>{},onError=()=>{}}={}){this.paths=paths;this.create=create;this.onProgress=onProgress;this.onError=onError;this.serial=0;this.current=null;this.cancel=null;}
   stop(){this.serial++;this.cancel?.();this.cancel=null;if(this.current){this.current.pause();this.current.removeAttribute('src');this.current.load();this.current=null;}this.onProgress(0);}
-  play(id){if(!assets[id])return Promise.resolve(false);this.stop();const token=this.serial;const audio=this.create(assets[id]);this.current=audio;
+  play(id){if(!this.paths[id])return Promise.resolve(false);this.stop();const token=this.serial;const audio=this.create(this.paths[id]);this.current=audio;
     return new Promise(resolve=>{
       let settled=false;const timer=setTimeout(()=>finish(false),15000);
       const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);if(token!==this.serial){resolve(false);return;}this.current=null;this.cancel=null;this.onProgress(0);if(!ok){audio.pause();this.onError();}resolve(ok);};

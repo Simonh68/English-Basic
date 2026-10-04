@@ -16,18 +16,13 @@ No universal pronunciation rule for ough is taught. No separate-letter or
 fabricated isolated ough sound is played.
 
 The eight approved WAVs, engine, spec, journal, coins and save schema are
-unchanged. thought is outside the scored curriculum. New audio is device
-SpeechSynthesis of the complete word with an explicitly English voice; it is
-NOT an approved recorded asset or a synthesized replacement for existing audio.
-No voice, error, interruption, timeout or closing the demo cannot grant the
-listening gate. Voice availability and audible pronunciation differ by device
-and remain open for physical-phone acceptance. No automatic playback on entry
-or refresh, extra storage or analytics. Returning leaves the beginner machine
-paused with its explicit resume control.
-
-Verification: 44 canonical tests, including missing voice, failed speech,
-late cancellation, hidden goal, guided groups, meaning retry, complete replay,
-return and unchanged local storage. Browser flow is verified with simulated
-SpeechSynthesis events, not claimed as actual listening. Responsive checks at
-320/360/640/720 px. Real-device voice/perceptual quality and child acceptance
-remain open.
+unchanged. thought is outside the scored curriculum. After Simon reported no audio,
+device SpeechSynthesis was removed. A recorded American English word by
+Dvortygirl from Wikimedia Commons is embedded as PCM WAV. See
+`audio/complex-word/ATTRIBUTION.md` for source, verification and CC BY-SA 3.0.
+No new synthesis or changes to the eight accepted recordings. Shared AudioPlayer
+supports an explicit per-instance path map, preserving the default engine map.
+No error, interruption, timeout or closing can grant the listening gate.
+No automatic playback on entry or refresh, extra storage or analytics.
+Returning leaves the beginner machine paused with its explicit resume control.
+Human perceptual/physical-phone acceptance remains open.
