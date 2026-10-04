@@ -58,3 +58,14 @@ the owned city also has a direct, gesture-required new-build button. Neither
 starts audio automatically. Existing aria labels and keyboard access remain.
 All new artwork is original SVG. The nine recorded audio files are byte-identical.
 Visual acceptance with a learner remains an observation to make, not a claim.
+
+## Whole-word challenge replaces guided thought assembly
+
+The current complex challenge accepts neutral provisional part selections and
+checks only an explicit whole-word submission. Exact thought completion awards
+one cosmetic machine; prefixes, wrong submissions and edits do not. The former
+three per-part checks and supported meaning-choice award gate are removed.
+Meaning is a post-success explanation, with no semantic evidence claim.
+Owned storage schema and all earlier claims remain unchanged. The new generated
+environment is decorative atmosphere; background architecture is never counted
+as owned. See THOUGHT.md and visuals/ART.md for current scope and provenance.

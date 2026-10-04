@@ -14,6 +14,8 @@ for name in modules:
     source=re.sub(r"import\s+\{([^}]+)\}\s+from\s+'\./([^']+)\.mjs';",lambda m:'const {'+m[1]+'}=reviewModules['+json.dumps(m[2])+'];',source)
     source=re.sub(r'\bexport\s+(?=const|class|function)','',source)
     if name in ['audio-player','build-world','complex-demo']:source=source.replace('new Audio(path)','new Audio(embeddedAudio[path])')
+    if name=='build-world':
+        for asset in ['forge-world','owned-engine']:source=source.replace('./visuals/'+asset+'.webp','data:image/webp;base64,'+base64.b64encode((root/('visuals/'+asset+'.webp')).read_bytes()).decode())
     if name=='machine-app':source='const fetch=async()=>({ok:true,json:async()=>('+json.dumps(spec)+')});\n'+source
     js+='reviewModules['+json.dumps(name)+']=(()=>{\n'+source+'\nreturn {'+','.join(exports)+'};})();\n'
 html=(root/'index.html').read_text().replace('<link rel="stylesheet" href="machine.css">','<style>'+(root/'machine.css').read_text()+'</style>')

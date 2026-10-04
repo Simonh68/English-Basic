@@ -1,35 +1,45 @@
-# Complex-word supported demonstration
+# Complex-word whole construction challenge
 
-Simon clarified the requested word as thought and authorized development and
-same-route publication without another confirmation. Baseline canonical 8d849da,
-site v68 / eeaf7d06; retain that site version for rollback.
+Simon reported excessive hints and no challenge in public v72 and authorized
+correction and richer artwork. Rollback v72 / 327bedd2cf1c314fa6120581550cf06f46e66301.
 
-Entry: the visible puzzle button “מילה מורכבת” in the detached Reading Zero
-route. The beginner machine is paused and its existing progress retained.
-A scene teaches the contextual verb meaning “חשב”, not every noun/verb sense.
-Whole-word audio precedes spelling; only natural successful playback unlocks
-building. The learner matches three intact spelling groups th / ough / t,
-then chooses the thinking scene and receives the assembled word plus replay.
-This is guided exposure, not independent decoding or a mastery assessment.
-The visual match and repeated semantic picture must not count as engine evidence.
-No universal pronunciation rule for ough is taught. No separate-letter or
-fabricated isolated ough sound is played.
+The puzzle entry pauses and preserves the beginner machine. Natural successful
+recorded whole-word playback unlocks construction. Neither spelling nor a
+meaning picture is shown before success. There is no displayed target group,
+correct-prefix signal, per-part acceptance/rejection or forced correct order.
 
-The eight approved WAVs, engine, spec, journal, coins and save schema are
-unchanged. thought is outside the scored curriculum. After Simon reported no audio,
-device SpeechSynthesis was removed. A recorded American English word by
-Dvortygirl from Wikimedia Commons is embedded as PCM WAV. See
-`audio/complex-word/ATTRIBUTION.md` for source, verification and CC BY-SA 3.0.
-No new synthesis or changes to the eight accepted recordings. Shared AudioPlayer
-supports an explicit per-instance path map, preserving the default engine map.
-No error, interruption, timeout or closing can grant the listening gate.
-No automatic playback on entry or refresh or added analytics.
-Returning leaves the beginner machine paused with its explicit resume control.
-Human perceptual/physical-phone acceptance remains open.
+Six intact groups (th, ough, t, f, ow, o) are shuffled once on each new attempt.
+The learner can assemble one to five groups, including repeated groups. All
+choices produce the same neutral mechanical installation response. Tapping a
+selected tile removes it; the reset icon clears the current attempt. The power
+button submits the entire concatenation. Only the exact whole word thought
+powers the completed machine and awards the attempt's cosmetic owned machine.
+A wrong whole word leaves the selected construction editable, shows an icon-only
+retry signal and reveals no correct spelling, meaning or correct/wrong part.
+Word replay stays available. Correct prefixes and passive construction never
+award a machine. Meaning (thinking illustration and חשב / מחשבה) appears after
+success alongside recorded whole-word replay and the next build action.
 
-Simon then requested icon actions, actual machine assembly and cumulative
-ownership. th/ough/t now install three colored machine parts; supported meaning
-completion installs the final rotor, powers the machine and awards one cosmetic
-machine to the persistent world. Entry/next/replay/power/back are SVG icons,
-with accessible labels; the word and groups remain learning content. Worlds
-are independent of the learner journal and coins. See BUILD-WORLD.md.
+This is a single irregular-word construction challenge, not proof of novel
+reading or independent semantic understanding. It uses supplied spelling groups
+and permits retries. No answer/guess is written to learning evidence, mastery,
+coins or analytics; repeated attempts are cosmetic constructions only. There is
+no universal ough pronunciation rule or fabricated isolated ough recording.
+The approved learning curriculum/engine remains unchanged.
+
+The existing nine word/phoneme recordings are unchanged. thought is the embedded
+24kHz PCM recording by Dvortygirl under CC BY-SA 3.0; credit remains visible.
+No audio error, cancellation, interruption or timeout unlocks the hearing gate.
+No automatic playback on entry, refresh, opening the city or next construction.
+Existing owned claims, reserved-id scheme and beginner snapshots remain compatible.
+
+Visuals: original generated workshop environment in visuals/forge-world.webp,
+shared by the background and owned city; metallic interactive SVG bench with
+neutral unchecked modules and an energized completed rotor. Background buildings
+are atmosphere, not owned items. All earned claims remain separate SVG objects.
+The reproducible build embeds the environment once, with no runtime media fetch.
+
+Tests cover absent answer/meaning hints, wrong prefixes/full constructions,
+manual edits, longer attempts, shuffled distractors, audio gating/cancellation,
+award-on-submit only, replay idempotency, existing storage and meaning reveal.
+Physical phone, learner comprehension and difficulty calibration remain open.
