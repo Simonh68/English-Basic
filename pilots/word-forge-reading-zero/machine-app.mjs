@@ -1,3 +1,4 @@
+import {BuildWorld,setupWorldView,glyph} from './build-world.mjs';
 import {setupComplexDemo} from './complex-demo.mjs';
 import {MachineSession,letters} from './session-controller.mjs';
 import {AudioPlayer} from './audio-player.mjs';
@@ -6,7 +7,7 @@ import {parts} from './rewards.mjs';
 const $=id=>document.getElementById(id);
 const shapes={sound:'M11 5L5 10H2V18H5L11 23ZM16 8Q24 14 16 20M15 12Q18 14 15 16',next:'M8 4L20 14L8 24',help:'M7 5Q2 10 8 15L18 25L23 20L13 10Q16 3 10 2L11 7L7 9Z',pause:'M8 4V24M20 4V24',play:'M8 4L23 14L8 24Z',motion:'M3 9H17M3 15H12M15 4L25 14L15 24',check:'M3 14L10 21L25 5',retry:'M6 7Q24 0 24 15Q24 26 8 24M6 2V10H14',finish:'M6 6H22V22H6ZM10 10H18V18H10Z',power:'M14 2V14M7 6Q-1 13 6 22Q14 30 23 22Q30 13 21 6'};
 function icon(name){return `<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="${shapes[name]}"/></svg>`;}
-let storage,spec,resetConfirm=false,teachReady=null,goalReady=false;let session,player,epoch=0,busy=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let world,worldView;let storage,spec,resetConfirm=false,teachReady=null,goalReady=false;let session,player,epoch=0,busy=false,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function button(host,label,name,act,cls='',disabled=false){const b=document.createElement('button');b.setAttribute('aria-label',label);b.title=label;b.className=cls;b.disabled=disabled;b.innerHTML=icon(name);b.addEventListener('click',act);host.append(b);return b;}
 // Meaning is taught in a reward demonstration, never inferred from a tap.
 function matPicture(){return `<svg class="mat-picture" viewBox="0 0 300 145" role="img" aria-label="שטיחון ארוג עם פסים וגדילים"><rect x="16" y="7" width="268" height="128" rx="18" fill="#203d4a"/><path d="M48 115L242 115L268 39L72 39Z" fill="#be8942"/><path d="M61 101L232 101L249 50L80 50Z" fill="#f1cb7f"/><path d="M74 89L238 89M79 76L242 76M83 63L246 63" stroke="#3f8e81" stroke-width="7"/><path d="M48 115L43 127M62 115L57 127M76 115L71 127M90 115L85 127M104 115L99 127M118 115L113 127M132 115L127 127M146 115L141 127M160 115L155 127M174 115L169 127M188 115L183 127M202 115L197 127M216 115L211 127M230 115L225 127M72 39L76 28M86 39L90 28M100 39L104 28M114 39L118 28M128 39L132 28M142 39L146 28M156 39L160 28M170 39L174 28M184 39L188 28M198 39L202 28M212 39L216 28M226 39L230 28M240 39L244 28M254 39L258 28" stroke="#f1cb7f" stroke-width="4" stroke-linecap="round"/></svg>`;}
@@ -17,7 +18,7 @@ function rewardPlay(id){if(session.rewardAudioAllowed(id))play(id,()=>session.re
 function rewardCard(host){
   const card=document.createElement('div');card.className='word-reward';const goal=session.wordGoal();card.innerHTML=goalPicture()+`<div class="meaning" lang="he" dir="rtl">${goal.meaning}</div>`;host.append(card);
   const word=button(card,`השמעת המילה ${goal.text} — ${goal.meaning}`,'sound',()=>rewardPlay(goal.id),'primary word-audio demo '+(busy?'listening':''),busy);
-  word.innerHTML=`<span lang="en" dir="ltr">${goal.text}</span> `+icon('sound')+'<small dir="rtl">השמעת המילה</small>';
+  word.innerHTML=`<span lang="en" dir="ltr">${goal.text}</span> `+icon('sound');
   const sounds=document.createElement('div');sounds.className='word-sounds';card.append(sounds);
   for(const id of goal.parts){const b=button(sounds,`השמעת צליל ${letters[id]} במילה ${goal.text}`,'sound',()=>rewardPlay(id),'',busy);b.innerHTML=`<span>${letters[id]}</span> ${icon('sound')}`;}
 }
@@ -26,7 +27,7 @@ function renderWordGoal(phase){
   if(goal.hidden)return;
   const slots=document.createElement('div');slots.className='word-slots';slots.dir='ltr';slots.setAttribute('aria-label','בונים מילה מצלילים');
   for(const [i,id] of session.wordGoal().parts.entries()){const earned=session.connections>=['RZ-G-M','RZ-G-S','RZ-G-A-AE','RZ-G-T'].indexOf(id)+1;const tile=document.createElement('span');tile.className=earned?'earned':'';tile.textContent=earned&&['TEACH','SUCCESS','COMPLETE','FINISHED'].includes(phase)?letters[id]:'·';slots.append(tile);}
-  const caption=document.createElement('span');caption.className='goal-caption';caption.innerHTML=goalPicture()+'<small>בונים מילה</small>';if(session.goalAudioAllowed()){const replay=button(goal,'השמעת מילת היעד בלי כתיב','sound',listenGoal,'goal-replay',busy);replay.insertAdjacentHTML('beforeend','<small>המטרה</small>');}goal.append(caption,slots);
+  const caption=document.createElement('span');caption.className='goal-caption';caption.innerHTML=goalPicture();if(session.goalAudioAllowed()){const replay=button(goal,'השמעת מילת היעד בלי כתיב','sound',listenGoal,'goal-replay',busy);}goal.append(caption,slots);
 }
 function canAct(){storage.current();if(storage.problem==='conflict'){clearAudio();render();return false;}return true;}
 function persist(){storage.save({machine:session.snapshot(),prefs:{reduced}});}
@@ -38,7 +39,7 @@ async function play(id,after=()=>{}){
 }
 function action(fn){if(!canAct())return;clearAudio();fn();persist();render();}
 function render(){
-  const phase=session.phase;renderWordGoal(phase);document.body.classList.toggle('word-built',session.rewardWordAvailable());document.body.classList.toggle('paused',phase==='PAUSED');document.body.classList.toggle('reduced',reduced);
+  const phase=session.phase;document.body.dataset.phase=phase;if(session.rewardWordAvailable())world?.award('basic:'+session.round,session.wordGoal().text);worldView?.refresh();renderWordGoal(phase);document.body.classList.toggle('word-built',session.rewardWordAvailable());document.body.classList.toggle('paused',phase==='PAUSED');document.body.classList.toggle('reduced',reduced);
   $('machine').classList.toggle('running',phase==='COMPLETE');$('machine').classList.toggle('paddle',session.rewards.state.part==='paddle');
   document.querySelector('.rotor').innerHTML=session.rewards.state.part==='paddle'?'<path d="M280 61L307 35" stroke="#f4d181" stroke-width="10" stroke-linecap="round"/><circle cx="309" cy="32" r="12" fill="#f4d181"/><circle cx="280" cy="61" r="10" class="hub"/>':'<circle cx="280" cy="61" r="35" class="rim"/><path d="M280 32V90M251 61H309M260 41L300 81M260 81L300 41" class="spokes"/><circle cx="280" cy="61" r="9" class="hub"/>';
   const bank=$('bank');bank.replaceChildren();const coin=document.createElement('span');coin.className='coin';coin.textContent=String(session.rewards.state.coins);bank.append(coin);bank.setAttribute('aria-label',`בנק המטבעות: ${session.rewards.state.coins}`);$('machine').setAttribute('aria-label',`מכונה: ${session.connections} מתוך ארבעה חיבורים מותקנים`);
@@ -51,8 +52,8 @@ function render(){
   if(phase==='READY'){
     $('signal').textContent=busy?'♫':goalReady?'✓':'☟';
     const picture=document.createElement('div');picture.className='goal-preview';picture.innerHTML=goalPicture()+`<div class="meaning" dir="rtl">${session.wordGoal().meaning}</div>`;prompt.append(picture);
-    const hear=button(prompt,'התחלת הדגמת מגע וצליל','sound',listenGoal,'primary target demo',busy);hear.innerHTML=icon('sound')+'<small>הקשיבו למילה</small>';
-    if(goalReady&&!busy){const start=button(actions,'בניית המילה ששמעת','next',()=>{action(()=>session.start());if(session.phase==='TEACH')play(session.teachingItem(),()=>{teachReady=session.teachingItem();});},'primary advance demo');start.insertAdjacentHTML('beforeend','<small>בואו נבנה</small>');}
+    const hear=button(prompt,'התחלת הדגמת מגע וצליל','sound',listenGoal,'primary target demo',busy);hear.innerHTML=icon('sound');
+    if(goalReady&&!busy){const start=button(actions,'בניית המילה ששמעת','next',()=>{action(()=>session.start());if(session.phase==='TEACH')play(session.teachingItem(),()=>{teachReady=session.teachingItem();});},'primary advance demo');}
   }
   if(phase==='TEACH'){
     const id=session.teachingItem();const ready=teachReady===id;
@@ -60,7 +61,7 @@ function render(){
     const tile=button(prompt,'נגיעה באריח והשמעת הצליל','sound',()=>play(id,()=>{teachReady=id;}),'target '+(busy?'listening':'demo'),busy);
     tile.innerHTML=`<span aria-hidden="true">${letters[id]}</span> ${icon('sound')}`;
     const rail=document.createElement('div');rail.className='rail';rail.innerHTML='<span id="audio-progress"></span>';actions.append(rail);
-    if(ready&&!busy){actions.replaceChildren();const next=button(actions,'המשך להדגמה הבאה','next',()=>action(()=>{teachReady=null;session.teachHeard(id);}), 'primary advance demo');next.insertAdjacentHTML('beforeend','<small>המשך</small>');}
+    if(ready&&!busy){actions.replaceChildren();const next=button(actions,'המשך להדגמה הבאה','next',()=>action(()=>{teachReady=null;session.teachHeard(id);}), 'primary advance demo');}
   }
   if(['PROMPT','SUPPORT','ERROR'].includes(phase)){
     const task=session.task;const auditory=task.family==='sound_to_letter';const visual=task.family==='visual_match';
@@ -93,29 +94,30 @@ function render(){
     button(actions,'סיום הפעילות','pause',()=>action(()=>session.dispose()));
   }
   if(phase==='SUCCESS'){
-    $('signal').textContent=session.rewardWordAvailable()?'✓ בנית מילה!':'✓ חיבור נוסף!';$('signal').classList.add('success');
+    $('signal').textContent='✓';$('signal').classList.add('success');
     if(session.rewardWordAvailable())rewardCard(prompt);
     else {const id=session.task.itemId;const tile=button(prompt,`השמעת הצליל שהצלחת לחבר: ${letters[id]}`,'sound',()=>rewardPlay(id),'target',busy);tile.innerHTML=`<span>${letters[id]}</span> ${icon('sound')}`;}
     const prize=document.createElement('span');prize.className='earned-prize';prize.textContent=`+${session.rewards.state.settled[session.lastEvent.id]} ●`;prize.setAttribute('aria-label','מטבעות שקיבלת על החיבור');prompt.append(prize);
-    const next=button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary advance demo',busy);next.insertAdjacentHTML('beforeend','<small>המשך</small>');
+    const next=button(actions,'המשך לחיבור הבא','next',()=>action(()=>session.next()),'primary advance demo',busy);
   }
   if(phase==='COMPLETE'){
-    $('signal').textContent='✓ בנית מילה!';rewardCard(prompt);button(actions,'הפעלת המכונה','power',()=>{
+    $('signal').textContent='✓';rewardCard(prompt);button(actions,'הפעלת המכונה','power',()=>{
       $('machine').classList.remove('running');requestAnimationFrame(()=>$('machine').classList.add('running'));
-    },'decision').insertAdjacentHTML('beforeend','<small>המכונה</small>');
+    },'decision');
     const shop=document.createElement('div');shop.className='parts';choices.append(shop);
     for(const part of parts){const owned=session.rewards.state.owned.includes(part.id);const b=button(shop,`${part.id==='fan'?'מניפה':'זרוע מקפיצה'} — ${owned?'בבעלותך':'4 מטבעות'}`,part.id==='fan'?'motion':'retry',()=>action(()=>session.buyPart(part.id)),session.rewards.state.part===part.id?'selected':'',!owned&&session.rewards.state.coins<part.price);b.dataset.part=part.id;b.innerHTML=part.id==='fan'?'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="M14 3V25M3 14H25M6 6L22 22M6 22L22 6"/></svg>':'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="M5 23L21 8"/><circle cx="22" cy="6" r="4"/><circle cx="5" cy="23" r="3"/></svg>';b.insertAdjacentHTML('beforeend',`<small>${owned?'✓':'● ● ● ●'}</small>`);}
-    button(actions,'המשך למכונה נוספת','next',()=>action(()=>{goalReady=false;session.continueRound();}),'decision').insertAdjacentHTML('beforeend','<small>עוד סבב</small>');
-    button(actions,'סיום ושמירת ההתקדמות','finish',()=>action(()=>session.finish()),'decision').insertAdjacentHTML('beforeend','<small>סיום</small>');
+    button(actions,'המשך למכונה נוספת','next',()=>action(()=>{goalReady=false;session.continueRound();}),'decision');
+    button(actions,'סיום ושמירת ההתקדמות','finish',()=>action(()=>session.finish()),'decision');
   }
   if(phase==='FINISHED'){rewardCard(prompt);button(actions,'חזרה לסדנה','play',()=>action(()=>session.reopen()),'primary');}
   if(phase==='PAUSED')button(prompt,'חזרה לפעילות','play',()=>action(()=>session.resume()),'primary');
   if(phase==='STOPPED')$('signal').textContent='□';
+  if(['☟','♫','👇'].includes($('signal').textContent))$('signal').innerHTML=glyph($('signal').textContent==='👇'?'next':'sound');
   const warning=$('storage-warning'),recovery=$('recovery');recovery.replaceChildren();warning.hidden=!storage.problem;
-  warning.textContent=storage.problem==='conflict'?'ההתקדמות השתנתה בלשונית אחרת. טענו את העותק האחרון.':storage.problem==='invalid'?'השמירה לא נקראה. אפשר לשחק זמנית; העותק הקודם נשמר.':storage.problem==='unavailable'?'השמירה אינה זמינה. ההתקדמות כרגע זמנית.':'';
+  warning.setAttribute('aria-label',storage.problem==='conflict'?'ההתקדמות השתנתה בלשונית אחרת. טענו את העותק האחרון.':storage.problem==='invalid'?'השמירה לא נקראה. אפשר לשחק זמנית; העותק הקודם נשמר.':storage.problem==='unavailable'?'השמירה אינה זמינה. ההתקדמות כרגע זמנית.':'');warning.innerHTML=storage.problem?glyph('warning')+glyph('save'):'';
   if(storage.problem==='conflict'){for(const b of document.querySelectorAll('button'))b.disabled=true;button(recovery,'טעינת ההתקדמות האחרונה','retry',()=>window.location.reload(),'primary');}
   if(storage.problem==='invalid')button(recovery,resetConfirm?'אישור איפוס שמירת הפיילוט בלבד':'התחלה מחדש — איפוס שמירת הפיילוט',resetConfirm?'check':'retry',()=>{if(!resetConfirm){resetConfirm=true;render();return;}if(storage.reset()){session=new MachineSession(spec);resetConfirm=false;persist();render();}});
-  document.querySelector('footer span').textContent=storage.problem?'התקדמות זמנית / שמירה לא זמינה':'התקדמות נשמרת במכשיר';
+  document.querySelector('footer span').innerHTML=glyph(storage.problem?'warning':'save');document.querySelector('footer span').setAttribute('aria-label',storage.problem?'התקדמות זמנית / שמירה לא זמינה':'התקדמות נשמרת במכשיר');
   // Rendering is synchronous; preserve keyboard access after every transition.
   if(!busy)queueMicrotask(()=>{if(document.activeElement===document.body)(actions.querySelector('button:not(:disabled)')||prompt.querySelector('button:not(:disabled)')||choices.querySelector('button:not(:disabled)'))?.focus({preventScroll:true});});
 }
@@ -126,7 +128,7 @@ async function init(){
   $('pause').onclick=()=>action(()=>session.phase==='PAUSED'?session.resume():session.pause());
   $('motion').onclick=()=>action(()=>{reduced=!reduced;});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAudio();session.pause();persist();render();}});
-  window.addEventListener('pagehide',()=>{clearAudio();persist();});window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY||event.key===null){storage.current();clearAudio();render();}});if(session.rewardWordShown()||!saved)persist();render();
-  setupComplexDemo({beforeOpen:()=>{clearAudio();session.pause();persist();},afterClose:()=>render()});
+  window.addEventListener('pagehide',()=>{clearAudio();persist();});window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY||event.key===null){storage.current();clearAudio();render();}});world=new BuildWorld(local);world.importCompletedRounds(session.round);worldView=setupWorldView(world,{beforeOpen:()=>{clearAudio();session.pause();persist();},afterClose:()=>render()});$('audio-error').innerHTML=glyph('retry')+glyph('sound');$('audio-error').setAttribute('aria-label','השמע לא הופעל. לחצו על הרמקול לנסות שוב.');if(session.rewardWordShown()||!saved)persist();render();
+  setupComplexDemo({world,onWorld:()=>document.querySelector('.world-preview').click(),beforeOpen:()=>{clearAudio();session.pause();persist();},afterClose:()=>render()});
 }
-init().catch(()=>{$('signal').textContent='לא ניתן לטעון את הפעילות. רעננו כדי לנסות שוב.';});
+init().catch(()=>{$('signal').innerHTML=glyph('warning')+glyph('retry');$('signal').setAttribute('aria-label','לא ניתן לטעון את הפעילות. רעננו כדי לנסות שוב.');});

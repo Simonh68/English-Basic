@@ -44,5 +44,5 @@ test('local DOM preview: full loop, error/help/retry, semantic button activation
   await click(button('התחלת הדגמת מגע וצליל'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/sat.wav');await end();await click(button('בניית המילה ששמעת'));
   for(const id of ['RZ-G-M','RZ-G-S','RZ-G-A-AE','RZ-G-T']){assert.equal(button('השמעת מילת היעד בלי כתיב'),null);assert.equal(document.querySelector('.word-audio'),null);for(let i=1;i<=2;i++){await click(button(`השמעת אפשרות ${i}`));await end();}await click(document.querySelector(`button[data-option="${id}"]`));await end();await click(button('אישור בחירת הצליל'));await click(button('המשך לחיבור הבא'));}
   assert.ok(button('השמעת המילה sat — ישב'));await click(button('השמעת המילה sat — ישב'));assert.equal(audios.at(-1).path,'audio/whole-word-candidates/sat.wav');await end();
-  assert.equal(dom.window.localStorage.length,1);assert.ok(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1'));dom.window.close();
+  assert.equal(dom.window.localStorage.length,2);assert.deepEqual(JSON.parse(dom.window.localStorage.getItem('efn:wf-reading-zero:world:v1')).claims,[{id:'basic:1',word:'mat'},{id:'basic:2',word:'sat'}]);assert.ok(dom.window.localStorage.getItem('efn:wf-reading-zero:pilot:v1'));dom.window.close();
 });

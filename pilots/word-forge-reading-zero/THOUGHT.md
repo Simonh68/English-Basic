@@ -23,6 +23,13 @@ Dvortygirl from Wikimedia Commons is embedded as PCM WAV. See
 No new synthesis or changes to the eight accepted recordings. Shared AudioPlayer
 supports an explicit per-instance path map, preserving the default engine map.
 No error, interruption, timeout or closing can grant the listening gate.
-No automatic playback on entry or refresh, extra storage or analytics.
+No automatic playback on entry or refresh or added analytics.
 Returning leaves the beginner machine paused with its explicit resume control.
 Human perceptual/physical-phone acceptance remains open.
+
+Simon then requested icon actions, actual machine assembly and cumulative
+ownership. th/ough/t now install three colored machine parts; supported meaning
+completion installs the final rotor, powers the machine and awards one cosmetic
+machine to the persistent world. Entry/next/replay/power/back are SVG icons,
+with accessible labels; the word and groups remain learning content. Worlds
+are independent of the learner journal and coins. See BUILD-WORLD.md.
