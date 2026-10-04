@@ -43,7 +43,7 @@ function render(){
   $('machine').classList.toggle('running',phase==='COMPLETE');$('machine').classList.toggle('paddle',session.rewards.state.part==='paddle');
   document.querySelector('.rotor').innerHTML=session.rewards.state.part==='paddle'?'<path d="M280 61L307 35" stroke="#f4d181" stroke-width="10" stroke-linecap="round"/><circle cx="309" cy="32" r="12" fill="#f4d181"/><circle cx="280" cy="61" r="10" class="hub"/>':'<circle cx="280" cy="61" r="35" class="rim"/><path d="M280 32V90M251 61H309M260 41L300 81M260 81L300 41" class="spokes"/><circle cx="280" cy="61" r="9" class="hub"/>';
   const bank=$('bank');bank.replaceChildren();const coin=document.createElement('span');coin.className='coin';coin.textContent=String(session.rewards.state.coins);bank.append(coin);bank.setAttribute('aria-label',`בנק המטבעות: ${session.rewards.state.coins}`);$('machine').setAttribute('aria-label',`מכונה: ${session.connections} מתוך ארבעה חיבורים מותקנים`);
-  $('connections').innerHTML=Array.from({length:4},(_,i)=>`<circle class="connection ${i<session.connections?'on':''}" cx="${40+i*60}" cy="${i%2?115:75}" r="13"/>`).join('');
+  $('connections').innerHTML=Array.from({length:4},(_,i)=>`<g class="connection-module ${i<session.connections?'installed':''}"><rect class="connection ${i<session.connections?'on':''}" x="${23+i*60}" y="${(i%2?115:75)-17}" width="34" height="34" rx="9"/><path d="M${32+i*60} ${i%2?115:75}h16m-8-8v16" stroke="${i<session.connections?'#fff2c3':'#648496'}" stroke-width="4"/></g>`).join('');
   $('dots').innerHTML=Array.from({length:4},(_,i)=>`<span class="dot ${i<session.connections?'on':''}"></span>`).join('');
   $('pause').innerHTML=icon(phase==='PAUSED'?'play':'pause');$('pause').setAttribute('aria-label',phase==='PAUSED'?'חזרה לפעילות':'השהיה');
   $('motion').innerHTML=icon('motion');$('motion').setAttribute('aria-pressed',String(reduced));
@@ -106,7 +106,7 @@ function render(){
     },'decision');
     const shop=document.createElement('div');shop.className='parts';choices.append(shop);
     for(const part of parts){const owned=session.rewards.state.owned.includes(part.id);const b=button(shop,`${part.id==='fan'?'מניפה':'זרוע מקפיצה'} — ${owned?'בבעלותך':'4 מטבעות'}`,part.id==='fan'?'motion':'retry',()=>action(()=>session.buyPart(part.id)),session.rewards.state.part===part.id?'selected':'',!owned&&session.rewards.state.coins<part.price);b.dataset.part=part.id;b.innerHTML=part.id==='fan'?'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11"/><path d="M14 3V25M3 14H25M6 6L22 22M6 22L22 6"/></svg>':'<svg class="icon" viewBox="0 0 28 28" aria-hidden="true"><path d="M5 23L21 8"/><circle cx="22" cy="6" r="4"/><circle cx="5" cy="23" r="3"/></svg>';b.insertAdjacentHTML('beforeend',`<small>${owned?'✓':'● ● ● ●'}</small>`);}
-    button(actions,'המשך למכונה נוספת','next',()=>action(()=>{goalReady=false;session.continueRound();}),'decision');
+    button(actions,'המשך למכונה נוספת','next',()=>action(()=>{goalReady=false;session.continueRound();}),'primary advance demo');
     button(actions,'סיום ושמירת ההתקדמות','finish',()=>action(()=>session.finish()),'decision');
   }
   if(phase==='FINISHED'){rewardCard(prompt);button(actions,'חזרה לסדנה','play',()=>action(()=>session.reopen()),'primary');}

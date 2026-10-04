@@ -42,3 +42,19 @@ coins. Native browser completed six thought constructions with goal/replay audio
 a tower and an airship, and silent reload. 320/360/640/720 no horizontal page
 scroll; zoom scroll is contained inside the map. Physical phone, icon comprehension
 and child acceptance remain open.
+
+## Visual structure revision
+
+Public v71 is the rollback baseline. The city now uses three large machines per
+row, an illustrated road, detailed gears/controls and word-specific attachments.
+Three ghost foundations show future capacity without becoming owned claims.
+The compact preview carries the next possession and a visual construction meter:
+first machine, robot, garden, tower, airship, then the nearest recurring milestone.
+The meter derives only from existing awarded claims; abandoned attempts, replay
+and power do not advance it. The original milestone/storage rules are unchanged.
+The complex bench shows the active hearing/building/meaning/collection step.
+Whole-word replay and a prominent new-build action remain after completion;
+the owned city also has a direct, gesture-required new-build button. Neither
+starts audio automatically. Existing aria labels and keyboard access remain.
+All new artwork is original SVG. The nine recorded audio files are byte-identical.
+Visual acceptance with a learner remains an observation to make, not a claim.
